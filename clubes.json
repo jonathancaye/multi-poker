@@ -1,0 +1,18 @@
+{
+  "clubes": [
+    {
+      "slug": "clube-exemplo",
+      "nome": "Clube Exemplo",
+      "cidade": "Rio do Sul, SC",
+      "simbolo": "♠",
+      "cor": "#D4A62A"
+    },
+    {
+      "slug": "noite-do-flop",
+      "nome": "Noite do Flop",
+      "cidade": "Ituporanga, SC",
+      "simbolo": "♦",
+      "cor": "#4FA8E0"
+    }
+  ]
+}

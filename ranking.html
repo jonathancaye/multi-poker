@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ranking</title>
+<meta name="theme-color" content="#0F2E23">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0F2E23; --bg-deep: #0A2018; --surface: #163B2C; --surface-2: #1D4837;
+    --border: #2C5744; --text: #F5EFE0; --text-muted: #9FB8AC;
+    --gold: #D4A62A; --gold-soft: #E8C766; --silver: #C7CDD1; --bronze: #C97C4D;
+    --red: #C1443A; --green-pos: #5CB587; --radius: 12px; --radius-sm: 8px;
+    --gold-rgb: 212,166,42; --border-rgb: 44,87,68; --text-rgb: 245,239,224; --muted-rgb: 159,184,172;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 600px at 15% -10%, rgba(var(--gold-rgb),0.07), transparent 60%),
+      radial-gradient(900px 500px at 100% 0%, rgba(92,181,135,0.06), transparent 55%),
+      var(--bg);
+    color:var(--text); font-family:'Inter',sans-serif; min-height:100vh;
+  }
+  ::selection{background:var(--gold); color:#1B1203;}
+  .wrap{max-width:960px; margin:0 auto; padding:28px 20px 80px;}
+  @media (max-width:640px){ .wrap{padding:14px 12px 60px;} }
+
+  header.top{
+    position:relative; padding:26px 24px 22px; border:1px solid var(--border);
+    border-radius:var(--radius); background:linear-gradient(160deg, var(--surface) 0%, var(--surface-2) 130%);
+    overflow:hidden; margin-bottom:22px;
+  }
+  header.top .suit{position:absolute; font-size:120px; opacity:0.05; line-height:1; font-family:'Fraunces',serif; color:var(--text); pointer-events:none;}
+  header.top .suit.s1{ top:-30px; right:-10px; transform:rotate(8deg);}
+  header.top .suit.s2{ bottom:-45px; right:120px; transform:rotate(-10deg); font-size:90px;}
+  .eyebrow{font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold-soft); margin:0 0 6px;}
+  h1{font-family:'Fraunces',serif; font-weight:700; font-size:32px; margin:0 0 4px; letter-spacing:-0.01em;}
+  header.top p.sub{margin:0; color:var(--text-muted); font-size:14px;}
+  @media (max-width:640px){
+    header.top{padding:18px 16px 16px; margin-bottom:14px; border-radius:10px;}
+    h1{font-size:22px;}
+    header.top p.sub{font-size:12.5px;}
+    .eyebrow{font-size:10px;}
+  }
+
+  .timeline-card{padding:18px 22px; margin-bottom:16px;}
+  .timeline-head{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:12px; gap:10px; flex-wrap:wrap;}
+  .timeline-label{font-family:'Fraunces',serif; font-weight:600; font-size:15px;}
+  .timeline-count{font-family:'Space Mono',monospace; font-size:12.5px; color:var(--gold-soft);}
+  .timeline-track{display:flex; gap:4px; flex-wrap:wrap;}
+  .timeline-tick{flex:1 1 0; min-width:6px; height:10px; border-radius:3px; background:var(--bg-deep); border:1px solid var(--border);}
+  .timeline-tick.filled{background:linear-gradient(160deg, var(--gold-soft), var(--gold)); border-color:var(--gold);}
+  .timeline-next{margin-top:12px; font-family:'Space Mono',monospace; font-size:12.5px; color:var(--text-muted);}
+  @media (max-width:640px){
+    .timeline-card{padding:14px 16px;}
+    .timeline-label{font-size:13.5px;}
+    .timeline-count, .timeline-next{font-size:11.5px;}
+    .timeline-tick{height:14px; min-width:9px;}
+  }
+
+  nav.tabs{display:flex; gap:6px; margin-bottom:20px; flex-wrap:wrap; border-bottom:1px solid var(--border);}
+  nav.tabs button{
+    font-family:'Inter',sans-serif; font-weight:600; font-size:13.5px; color:var(--text-muted);
+    background:transparent; border:none; padding:10px 16px; cursor:pointer; border-radius:8px 8px 0 0; position:relative; top:1px;
+  }
+  nav.tabs button.active{color:var(--text); background:var(--surface); border:1px solid var(--border); border-bottom:1px solid var(--surface);}
+  nav.tabs button:hover:not(.active){color:var(--text);}
+  @media (max-width:640px){
+    nav.tabs{gap:0; margin-bottom:14px;}
+    nav.tabs button{flex:1; padding:11px 6px; font-size:12px; text-align:center;}
+  }
+
+  section.panel{display:none;}
+  section.panel.active{display:block; animation:fade .18s ease;}
+  @keyframes fade{from{opacity:0; transform:translateY(3px);} to{opacity:1; transform:none;}}
+
+  .card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:22px;}
+  .card + .card{margin-top:16px;}
+  h2.section-title{font-family:'Fraunces',serif; font-size:19px; font-weight:600; margin:0 0 4px;}
+  p.hint{color:var(--text-muted); font-size:13px; margin:0 0 18px;}
+  @media (max-width:640px){
+    .card{padding:14px;}
+    h2.section-title{font-size:16px;}
+    p.hint{font-size:12px; margin:0 0 14px;}
+  }
+
+  table{width:100%; border-collapse:collapse; font-size:14px;}
+  thead th{text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--text-muted); font-weight:600; padding:0 10px 10px; border-bottom:1px solid var(--border);}
+  tbody td{padding:10px; border-bottom:1px solid rgba(var(--border-rgb),0.5); vertical-align:middle;}
+  tbody tr:last-child td{border-bottom:none;}
+  td.num, th.num{text-align:right; font-family:'Space Mono',monospace;}
+  td.player{font-weight:600;}
+  td.player-cell{display:flex; align-items:center; gap:10px; font-weight:600;}
+
+  /* Tabela do ranking vira lista de cards no celular, recolhidos por padrão */
+  .toggle-arrow{display:none; font-size:11px; color:var(--text-muted); transition:transform .2s ease; flex-shrink:0;}
+  .inline-pts{display:none; font-family:'Space Mono',monospace; font-size:12.5px; font-weight:700; color:var(--gold-soft); margin-left:auto; white-space:nowrap;}
+  @media (max-width:640px){
+    table.rank-table{font-size:13px;}
+    table.rank-table thead{display:none;}
+    table.rank-table, table.rank-table tbody, table.rank-table tr, table.rank-table td{display:block; width:100%;}
+    table.rank-table tr{
+      border:1px solid var(--border); border-radius:10px; margin-bottom:10px;
+      overflow:hidden; background:var(--bg-deep);
+    }
+    table.rank-table td{border-bottom:1px solid rgba(var(--border-rgb),0.4); padding:9px 14px;}
+    table.rank-table td:last-child{border-bottom:none;}
+    table.rank-table td.player-cell{
+      display:flex; align-items:center; gap:10px; background:var(--surface-2);
+      font-size:15px; padding:11px 14px; cursor:pointer; -webkit-tap-highlight-color:transparent;
+    }
+    table.rank-table td.player-cell .toggle-arrow{display:inline-block;}
+    table.rank-table td.player-cell .inline-pts{display:inline-block;}
+    table.rank-table tr.expanded td.player-cell .toggle-arrow{transform:rotate(180deg);}
+    table.rank-table tr:not(.expanded) td:not(.player-cell){display:none;}
+    table.rank-table tr.expanded td:not(.player-cell){
+      display:flex; justify-content:space-between; align-items:center; text-align:right; font-family:'Space Mono',monospace;
+    }
+    table.rank-table td:not(.player-cell)::before{
+      content:attr(data-label); font-family:'Inter',sans-serif; font-weight:600; font-size:11px;
+      text-transform:uppercase; letter-spacing:.03em; color:var(--text-muted); text-align:left;
+    }
+  }
+
+  .chip-badge{
+    width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-family:'Space Mono',monospace; font-weight:700; font-size:13px; border:2px dashed rgba(var(--text-rgb),0.3);
+  }
+  .chip-badge.rank-1{background:radial-gradient(circle at 35% 30%, var(--gold-soft), var(--gold) 75%); color:#1B1203;}
+  .chip-badge.rank-2{background:radial-gradient(circle at 35% 30%, #EDEFF1, var(--silver) 75%); color:#1B1203;}
+  .chip-badge.rank-3{background:radial-gradient(circle at 35% 30%, #E3A87A, var(--bronze) 75%); color:#2A1200;}
+  .chip-badge.rank-other{background:var(--surface-2); color:var(--text); border-color:var(--border);}
+
+  .profit-pos{color:var(--green-pos); font-weight:700;}
+  .profit-neg{color:var(--red); font-weight:700;}
+  .profit-zero{color:var(--text-muted);}
+
+  .chance-cell{text-align:center;}
+  .status-pill{display:inline-block; padding:4px 11px; border-radius:999px; font-family:'Space Mono',monospace; font-size:10.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; white-space:nowrap;}
+  .status-pill.alive{background:rgba(92,181,135,0.16); color:var(--green-pos); border:1px solid rgba(92,181,135,0.45);}
+  .status-pill.eliminated{background:rgba(var(--muted-rgb),0.08); color:var(--text-muted); border:1px solid var(--border);}
+  tr.eliminated-row{background:rgba(193,68,58,0.05);}
+  tr.eliminated-row td{opacity:0.5;}
+
+  .view-footer{
+    margin-top:26px; padding-top:18px; border-top:1px solid var(--border); text-align:center;
+    font-family:'Space Mono',monospace; font-size:10.5px; color:var(--text-muted); opacity:0.7;
+  }
+
+  .empty-state{text-align:center; padding:44px 20px; color:var(--text-muted);}
+  .empty-state .glyph{font-family:'Fraunces',serif; font-size:34px; color:var(--gold-soft); margin-bottom:10px;}
+
+  .round-card{border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px; background:var(--bg-deep); margin-bottom:12px;}
+  .round-card .round-head{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px; flex-wrap:wrap; gap:8px;}
+  .round-card .round-head h3{font-family:'Fraunces',serif; font-size:17px; margin:0; font-weight:600;}
+  .round-card .meta{font-family:'Space Mono',monospace; font-size:12px; color:var(--text-muted);}
+  .round-card ol{margin:0; padding-left:22px; font-size:13.5px; columns:2; column-gap:24px;}
+  .round-card ol li{margin-bottom:3px;}
+  @media (max-width:560px){ .round-card ol{columns:1;} }
+  .round-card .org-line{font-size:12.5px; color:var(--text-muted); margin:-4px 0 10px; font-family:'Space Mono',monospace;}
+  .round-card .prizes{font-size:12.5px; color:var(--text-muted); margin:8px 0 10px; font-family:'Space Mono',monospace;}
+  .guest-tag{
+    display:inline-block; padding:2px 8px; border-radius:999px; font-family:'Space Mono',monospace; font-size:10px;
+    font-weight:700; letter-spacing:.03em; text-transform:uppercase; white-space:nowrap;
+    background:rgba(217,124,77,0.16); color:var(--bronze); border:1px solid rgba(217,124,77,0.5); margin-left:6px;
+  }
+  @media (max-width:640px){
+    .round-card{padding:12px;}
+    .round-card .round-head h3{font-size:15px;}
+  }
+
+  .banner{background:rgba(var(--gold-rgb),0.1); border:1px solid var(--gold); color:var(--gold-soft); border-radius:var(--radius-sm); padding:12px 14px; font-size:13.5px; font-weight:600; margin-bottom:16px;}
+
+  .evo-scroll{overflow-x:auto; padding-bottom:6px; -webkit-overflow-scrolling:touch;}
+  .evo-scroll svg{display:block;}
+  .evo-hint{
+    display:none; font-family:'Space Mono',monospace; font-size:11px; color:var(--text-muted);
+    margin-bottom:10px;
+  }
+  @media (max-width:640px){ .evo-hint{display:block;} }
+
+
+  .champion-banner{
+    display:flex; align-items:center; gap:12px; margin-bottom:16px; padding:14px 16px;
+    border:1px solid var(--gold); border-radius:var(--radius-sm); background:rgba(var(--gold-rgb),0.1);
+  }
+  .champion-banner .lbl{font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--gold-soft);}
+  .champion-banner .nm{font-family:'Fraunces',serif; font-size:19px; font-weight:700;}
+  .champion-banner .pt{font-family:'Space Mono',monospace; font-size:12px; color:var(--text-muted);}
+  .hard-refresh-btn{
+    position:absolute; top:20px; right:20px; z-index:5;
+    font-family:'Space Mono',monospace; font-size:11px; font-weight:700; letter-spacing:.03em;
+    background:var(--surface-2); border:1px solid var(--border); color:var(--gold-soft);
+    border-radius:999px; padding:7px 14px; cursor:pointer;
+  }
+  .hard-refresh-btn:hover{border-color:var(--gold);}
+  @media (max-width:640px){
+    .hard-refresh-btn{top:14px; right:14px; padding:6px 11px; font-size:10.5px;}
+    header.top{padding-right:96px;}
+  }
+  .trophy-chip{width:32px; height:32px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+    background:radial-gradient(circle at 35% 30%, var(--gold-soft), var(--gold) 75%); color:#1B1203;}
+  .trophy-chip svg{width:17px; height:17px;}
+  .trophy-chip.live{background:var(--surface-2); color:var(--gold-soft); border:1px solid var(--border); font-size:16px;}
+  .season-card{display:flex; align-items:center; gap:12px; width:100%; text-align:left; cursor:pointer;
+    background:var(--bg-deep); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px 14px; margin-bottom:10px;
+    color:var(--text); font-family:'Inter',sans-serif;}
+  .season-card:hover{border-color:var(--gold-soft);}
+  .season-card.current{border-color:var(--gold);}
+  .season-card .meta-l{font-family:'Space Mono',monospace; font-size:11px; color:var(--text-muted);}
+  .season-card .who{font-weight:700; font-size:14.5px; margin:2px 0;}
+  .season-card .go{margin-left:auto; color:var(--text-muted); font-size:18px;}
+  .season-card .live-pill{margin-left:auto; font-family:'Space Mono',monospace; font-size:10.5px; font-weight:700; text-transform:uppercase;
+    letter-spacing:.04em; padding:3px 9px; border-radius:999px; color:var(--green-pos); border:1px solid rgba(92,181,135,0.45); background:rgba(92,181,135,0.12); white-space:nowrap;}
+  .season-card .live-pill.inline{display:none; margin:6px 0 0; width:max-content;}
+  @media (max-width:640px){
+    .season-card .live-pill.side{display:none;}
+    .season-card .live-pill.inline{display:block;}
+  }
+  .season-card.viewing{outline:1px dashed var(--gold-soft); outline-offset:2px;}
+  .titles-note{text-align:center; color:var(--text-muted); font-size:12.5px; margin-top:4px;}
+  .past-banner{display:none; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+    background:rgba(var(--gold-rgb),0.12); border:1px solid var(--gold); color:var(--gold-soft); border-radius:var(--radius-sm);
+    padding:9px 14px; font-size:13px; font-weight:600; margin-bottom:12px;}
+  .past-banner.show{display:flex;}
+  .past-banner button{background:transparent; border:none; color:var(--gold-soft); font-weight:700; font-size:13px; text-decoration:underline; cursor:pointer; padding:0; font-family:'Inter',sans-serif;}
+  @media (max-width:640px){
+    nav.tabs button{font-size:11.5px; padding:11px 3px;}
+    .past-banner{font-size:12px; padding:8px 12px;}
+  }
+  @media (max-width:420px){
+    nav.tabs button{font-size:10.5px; padding:11px 2px;}
+  }
+
+  /* ---------- Estatísticas ---------- */
+  .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0;}
+  .stats-bar{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:10px; margin-bottom:16px;}
+  .seg{display:inline-flex; padding:4px; border:1px solid var(--border); border-radius:999px; background:var(--bg-deep);}
+  .seg button{font-family:'Inter',sans-serif; font-weight:600; font-size:13px; color:var(--text-muted); background:transparent;
+    border:none; border-radius:999px; padding:9px 16px; cursor:pointer; white-space:nowrap;}
+  .seg button.on{background:var(--gold-soft); color:#211502; font-weight:700;}
+  .seg.soft button.on{background:var(--surface-2); color:var(--text);}
+  @media (max-width:640px){ .seg button{font-size:12px; padding:8px 12px;} .stats-bar{gap:8px;} }
+
+  .rec-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(205px, 1fr)); gap:12px;}
+  .rec-card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:16px 16px 14px; display:flex; flex-direction:column; gap:9px;}
+  .rec-label{font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--text-muted); display:flex; align-items:center; gap:6px;}
+  .rec-value{display:flex; align-items:baseline; gap:6px;}
+  .rec-value .v{font-family:'Space Mono',monospace; font-weight:700; font-size:32px; line-height:1; color:var(--gold-soft);}
+  .rec-value .u{font-family:'Space Mono',monospace; font-size:12px; color:var(--text-muted);}
+  .rec-who{font-weight:700; font-size:14.5px;}
+  .rec-detail{font-size:12px; color:var(--text-muted); margin-top:2px;}
+  .rec-runners{border-top:1px solid var(--border); padding-top:9px; display:flex; flex-direction:column; gap:4px;}
+  .rec-runners div{display:flex; justify-content:space-between; gap:8px; font-size:12.5px; color:#C9D6CF;}
+  .rec-runners .p{font-family:'Space Mono',monospace; color:var(--text-muted);}
+  .rec-runners .n{font-family:'Space Mono',monospace; white-space:nowrap;}
+  @media (max-width:640px){ .rec-grid{grid-template-columns:1fr 1fr; gap:8px;} .rec-card{padding:12px;} .rec-value .v{font-size:24px;} .rec-who{font-size:13px;} }
+  @media (max-width:380px){ .rec-grid{grid-template-columns:1fr;} }
+
+  .info-wrap{position:relative; display:inline-flex;}
+  .info-btn{width:18px; height:18px; border-radius:50%; border:1px solid var(--text-muted); background:transparent; color:var(--text-muted);
+    font-family:'Fraunces',serif; font-style:italic; font-weight:700; font-size:11px; line-height:1; padding:0; cursor:pointer;
+    display:inline-flex; align-items:center; justify-content:center; text-transform:none; letter-spacing:0;}
+  .info-btn:hover, .info-btn[aria-expanded="true"]{border-color:var(--gold-soft); color:var(--gold-soft);}
+  .info-pop{position:fixed; z-index:60; top:0; left:0; width:260px; max-width:calc(100vw - 24px); box-sizing:border-box;
+    white-space:normal; overflow-wrap:break-word; padding:11px 13px; border-radius:var(--radius-sm);
+    background:var(--surface-2); border:1px solid var(--gold); color:var(--text); font-family:'Inter',sans-serif; font-size:12.5px;
+    font-weight:500; line-height:1.45; letter-spacing:0; text-transform:none; box-shadow:0 8px 24px rgba(0,0,0,.35); text-align:left;}
+  .info-pop[hidden]{display:none;}
+
+  .sort-row{display:flex; align-items:center; gap:8px; margin-bottom:12px;}
+  .sort-row label{font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.04em; color:var(--text-muted);}
+  .sort-row select, .player-pick select{background:var(--bg-deep); border:1px solid var(--border); color:var(--text); border-radius:var(--radius-sm);
+    padding:8px 10px; font-family:'Inter',sans-serif; font-size:13.5px; font-weight:600;}
+  .sort-row select:focus, .player-pick select:focus{outline:none; border-color:var(--gold);}
+  th.sortable{cursor:pointer; user-select:none; white-space:nowrap;}
+  th.sortable:hover{color:var(--text);}
+  th.sortable.on{color:var(--gold-soft);}
+  td.num.on{color:var(--gold-soft); font-weight:700;}
+  tr.low-sample td.aprov{color:var(--text-muted); opacity:.6;}
+  .stats-note{color:var(--text-muted); font-size:12px; font-style:italic; margin:14px 0 0;}
+
+  .player-pick{display:flex; align-items:center; gap:8px;}
+  .player-pick label{font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.04em; color:var(--text-muted);}
+  .player-pick select{border-color:var(--gold); min-width:210px;}
+  @media (max-width:640px){ .player-pick{width:100%;} .player-pick select{flex:1; min-width:0;} }
+
+  .prof-head{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-end; gap:12px; margin-bottom:16px;}
+  .prof-name{font-family:'Fraunces',serif; font-weight:700; font-size:26px; margin:0 0 4px;}
+  .prof-sub{color:var(--text-muted); font-size:13px; margin:0;}
+  .prof-chips{display:flex; flex-wrap:wrap; gap:8px;}
+  .prof-chip{padding:5px 12px; border-radius:999px; border:1px solid var(--border); color:#C9D6CF; font-family:'Space Mono',monospace;
+    font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; white-space:nowrap;}
+  .prof-chip.gold{border-color:var(--gold); color:var(--gold-soft);}
+  .kpi-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(128px, 1fr)); gap:10px;}
+  .kpi{background:var(--bg-deep); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px 13px; display:flex; flex-direction:column; gap:5px;}
+  .kpi .l{font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.07em; text-transform:uppercase; color:var(--text-muted); display:flex; align-items:center; gap:6px;}
+  .kpi .v{font-family:'Space Mono',monospace; font-weight:700; font-size:21px; line-height:1.1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .kpi .v.long{font-size:17px;}
+  .kpi .v.gold{color:var(--gold-soft);}
+  .kpi .s{font-size:11.5px; color:var(--text-muted);}
+  @media (max-width:640px){ .prof-name{font-size:21px;} .kpi-grid{grid-template-columns:1fr 1fr; gap:8px;} .kpi .v{font-size:18px;} }
+
+  .prof-row{display:flex; flex-wrap:wrap; gap:16px; margin-top:16px;}
+  .prof-row > .card{margin-top:0;}
+  .prof-chart{flex:999 1 500px; min-width:0;}
+  .prof-dist{flex:1 1 260px; min-width:0;}
+  .prof-chart svg{width:100%; height:auto; display:block;}
+  h3.sub-title{font-family:'Fraunces',serif; font-weight:600; font-size:16px; margin:0 0 4px;}
+  .dist-row{display:grid; grid-template-columns:56px 1fr 32px; align-items:center; gap:10px; margin-bottom:9px;}
+  .dist-row .l{font-family:'Space Mono',monospace; font-size:12px; color:#C9D6CF;}
+  .dist-row .c{font-family:'Space Mono',monospace; font-size:12px; text-align:right;}
+  .dist-track{height:14px; border-radius:4px; background:var(--bg-deep);}
+  .dist-fill{height:14px; border-radius:4px; background:#4F7D69;}
+  .dist-fill.gold{background:var(--gold);}
+  .table-scroll{overflow-x:auto; -webkit-overflow-scrolling:touch;}
+  .season-table{min-width:620px; font-size:13.5px;}
+  .season-table td, .season-table th{white-space:nowrap;}
+  .season-table tr.career td{background:var(--surface-2); font-weight:700;}
+  .season-table td.champ{color:var(--gold-soft); font-weight:700;}
+
+  @media (max-width:640px){
+    .seg.views{display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); width:100%;}
+    .seg.views button{padding:8px 2px; font-size:11.5px;}
+  }
+  .rec-detail.mono{font-family:'Space Mono',monospace; font-size:11px;}
+  .rec-card.bad .rec-label{color:#E07A70;}
+  .rec-card.bad .rec-value .v{color:#E07A70;}
+
+  /* Confronto direto: jogador 1 = dourado, jogador 2 = azul */
+  .h2h-pick{display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:end; gap:10px; margin-bottom:18px;}
+  .h2h-side{display:flex; flex-direction:column; gap:6px; min-width:0;}
+  .h2h-side label{font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.04em;}
+  .h2h-side label.a{color:var(--gold-soft);} .h2h-side label.b{color:#8FB5E3; text-align:right;}
+  .h2h-side select{background:var(--bg-deep); color:var(--text); border-radius:var(--radius-sm); padding:10px 8px; min-height:44px;
+    font-family:'Inter',sans-serif; font-size:13.5px; font-weight:700; width:100%; min-width:0;}
+  .h2h-side select.a{border:1px solid var(--gold-soft);} .h2h-side select.b{border:1px solid #8FB5E3;}
+  .h2h-swap{width:44px; height:44px; border-radius:50%; border:1px solid var(--border); background:var(--surface-2); color:var(--text); font-size:16px; cursor:pointer;}
+  .h2h-swap:hover{border-color:var(--gold-soft);}
+  .h2h-cap{text-align:center; margin:0 0 6px; font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-muted);}
+  .h2h-score{display:flex; justify-content:center; align-items:baseline; gap:18px;}
+  .h2h-score .sa, .h2h-score .sb{font-family:'Space Mono',monospace; font-weight:700; font-size:52px; line-height:1;}
+  .h2h-score .sa{color:var(--gold-soft);} .h2h-score .sb{color:#8FB5E3;}
+  .h2h-score .x{font-family:'Fraunces',serif; font-size:22px; color:var(--text-muted);}
+  .h2h-sub{text-align:center; margin:8px 0 14px; color:#C9D6CF; font-size:13px;}
+  .h2h-bar{display:flex; height:12px; border-radius:6px; overflow:hidden; background:var(--bg-deep);}
+  .h2h-bar.thin{height:12px; border-radius:4px;}
+  .h2h-bar .a{background:var(--gold-soft);} .h2h-bar .b{background:#8FB5E3;}
+  .h2h-pcts{display:flex; justify-content:space-between; font-family:'Space Mono',monospace; font-size:12px; color:var(--text-muted); margin-top:5px;}
+  .h2h-note{text-align:center; margin:16px 0 4px; padding-top:12px; border-top:1px solid var(--border); font-size:12px; color:var(--text-muted);}
+  .h2h-row{display:grid; grid-template-columns:1fr minmax(110px,auto) 1fr; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid rgba(var(--border-rgb),0.5);}
+  .h2h-row:last-child{border-bottom:none;}
+  .h2h-row .lb{text-align:center; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.05em; color:var(--text-muted); display:inline-flex; justify-content:center; align-items:center; gap:6px;}
+  .h2h-row .va, .h2h-row .vb{font-family:'Space Mono',monospace; font-size:15px; color:#C9D6CF;}
+  .h2h-row .va{text-align:right;}
+  .h2h-row .va.win{color:var(--gold-soft); font-weight:700;} .h2h-row .vb.win{color:#8FB5E3; font-weight:700;}
+  .h2h-srow{display:grid; grid-template-columns:44px 26px 1fr 26px; align-items:center; gap:8px; margin-bottom:8px;}
+  .h2h-srow .sl{font-family:'Space Mono',monospace; font-size:12px; color:#C9D6CF;}
+  .h2h-srow .na, .h2h-last .na{font-family:'Space Mono',monospace; font-size:12.5px; color:var(--gold-soft); text-align:right;}
+  .h2h-srow .nb, .h2h-last .nb{font-family:'Space Mono',monospace; font-size:12.5px; color:#8FB5E3;}
+  .h2h-srow .win, .h2h-last .win{font-weight:700;}
+  .h2h-srow .na:not(.win), .h2h-srow .nb:not(.win), .h2h-last .na:not(.win), .h2h-last .nb:not(.win){opacity:.7;}
+  .h2h-last{display:grid; grid-template-columns:1fr 34px 34px; align-items:center; gap:8px; padding:8px 10px; border-radius:var(--radius-sm); background:var(--bg-deep); margin-bottom:6px;}
+  .h2h-last .rt{font-family:'Space Mono',monospace; font-size:12px; color:var(--text-muted);}
+  .rival-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:14px;}
+  .rival-head{margin:0 0 8px; font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;}
+  .rival-head.good{color:var(--green-pos);} .rival-head.bad{color:#E07A70;}
+  .rival{display:grid; grid-template-columns:1fr auto auto; gap:10px; align-items:center; width:100%; text-align:left; cursor:pointer;
+    padding:10px 12px; margin-bottom:8px; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--bg-deep); color:var(--text); font-family:'Inter',sans-serif;}
+  .rival:hover{border-color:var(--gold-soft);}
+  .rival .rn{font-weight:600; font-size:13.5px;}
+  .rival .rs{font-family:'Space Mono',monospace; font-size:12px; color:var(--text-muted); white-space:nowrap;}
+  .rival .rp{font-family:'Space Mono',monospace; font-size:13px; font-weight:700;}
+  .rival.good .rp{color:var(--green-pos);} .rival.bad .rp{color:#E07A70;}
+  @media (max-width:640px){
+    .h2h-score .sa, .h2h-score .sb{font-size:40px;}
+    .h2h-pick{grid-template-columns:1fr; gap:6px;}
+    .h2h-swap{justify-self:center; width:40px; height:40px;}
+    .h2h-side label.b{text-align:left;}
+    .h2h-row .va, .h2h-row .vb{font-size:13.5px;}
+  }
+
+  /* Forma recente */
+  .form-head{display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; margin-bottom:14px;}
+  .form-badge{font-family:'Space Mono',monospace; font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:5px 12px; border-radius:999px; white-space:nowrap;}
+  .form-badge.up{background:rgba(92,181,135,0.16); color:var(--green-pos); border:1px solid rgba(92,181,135,0.45);}
+  .form-badge.down{background:rgba(224,122,112,0.12); color:#E07A70; border:1px solid rgba(224,122,112,0.45);}
+  .form-badge.flat{background:rgba(var(--muted-rgb),0.08); color:var(--text-muted); border:1px solid var(--border);}
+  .form-strip{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px;}
+  .form-chip{width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Space Mono',monospace; font-weight:700; font-size:12px; border:2px dashed rgba(var(--text-rgb),0.25);}
+  .form-chip.win{background:radial-gradient(circle at 35% 30%, var(--gold-soft), var(--gold) 75%); color:#1B1203;}
+  .form-chip.itm{background:rgba(92,181,135,0.22); color:var(--green-pos); border-color:rgba(92,181,135,0.6);}
+  .form-chip.bub{background:rgba(201,124,77,0.2); color:var(--bronze); border-color:rgba(201,124,77,0.6);}
+  .form-chip.out{background:var(--bg-deep); color:var(--text-muted); border-color:var(--border);}
+  .form-legend{display:flex; gap:14px; flex-wrap:wrap; font-size:11.5px; color:var(--text-muted); margin-bottom:14px;}
+  .form-legend i{display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:5px; vertical-align:0;}
+  .form-table{width:100%;}
+  .form-table th{font-size:11px;} .form-table td{padding:9px 10px;}
+  .form-table td.up{color:var(--green-pos); font-weight:700;} .form-table td.down{color:#E07A70; font-weight:700;}
+  .form-table td.num{white-space:nowrap;}
+  @media (max-width:640px){ .form-strip{gap:4px;} .form-chip{width:30px; height:30px; font-size:10.5px;} .form-table th, .form-table td{padding:8px 6px;} }
+  .heat-item{display:flex; justify-content:space-between; align-items:center; gap:10px; padding:10px 12px; border-radius:var(--radius-sm); background:var(--bg-deep); margin-bottom:8px;}
+  .heat-item .hn{font-weight:600; font-size:13px;} .heat-item .hs{font-size:11px; color:var(--text-muted); margin-top:2px;}
+  .heat-item .hd{font-family:'Space Mono',monospace; font-weight:700; font-size:14px; color:var(--lc); white-space:nowrap;}
+
+  /* Sequências */
+  .rec-grid.streaks{grid-template-columns:repeat(auto-fit, minmax(170px, 1fr));}
+  @media (max-width:640px){ .rec-grid.streaks{grid-template-columns:1fr 1fr;} }
+  .live-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:16px;}
+  .live-head{margin:0 0 8px; font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;}
+  .live-col.gold{--lc:var(--gold-soft);} .live-col.green{--lc:var(--green-pos);} .live-col.red{--lc:#E07A70;}
+  .live-col .live-head, .live-col .lv{color:var(--lc);}
+  .live-item{padding:10px 12px; border-radius:var(--radius-sm); background:var(--bg-deep); margin-bottom:8px; display:flex; flex-direction:column; gap:6px;}
+  .live-item .lt{display:flex; justify-content:space-between; gap:10px; align-items:center;}
+  .live-item .ln{font-weight:600; font-size:13px;}
+  .live-item .lv{font-family:'Space Mono',monospace; font-weight:700; font-size:13px;}
+  .live-item .lbar{height:5px; border-radius:3px; background:var(--surface-2);}
+  .live-item .lbar div{height:5px; border-radius:3px; background:var(--lc);}
+  .live-item .lnote{font-size:11px; color:var(--text-muted);}
+
+  .lock-box{max-width:380px; margin:10px auto; text-align:center; padding:12px 0 6px;}
+  .lock-icon{width:52px; height:52px; margin:0 auto 12px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    background:var(--bg-deep); border:1px solid var(--gold); color:var(--gold-soft);}
+  .lock-icon svg{width:22px; height:22px;}
+  .lock-box h2{font-family:'Fraunces',serif; font-size:20px; font-weight:600; margin:0 0 6px;}
+  .lock-box p{color:var(--text-muted); font-size:13.5px; margin:0 0 18px;}
+  .lock-form{display:flex; gap:8px;}
+  .lock-form input{flex:1; min-width:0; background:var(--bg-deep); border:1px solid var(--border); color:var(--text); border-radius:var(--radius-sm);
+    padding:11px 12px; font-family:'Inter',sans-serif; font-size:16px; outline:none;}
+  .lock-form input:focus{border-color:var(--gold);}
+  .lock-form button{background:linear-gradient(160deg, var(--gold-soft), var(--gold)); color:#211502; border:none; border-radius:var(--radius-sm);
+    padding:0 20px; font-family:'Inter',sans-serif; font-weight:700; font-size:14px; cursor:pointer;}
+  .lock-err{min-height:18px; margin:10px 0 0 !important; color:#E07A70 !important; font-size:13px !important; font-weight:600;}
+  .lock-out{display:block; margin:18px auto 0; background:transparent; border:none; color:var(--text-muted); font-size:12px;
+    text-decoration:underline; cursor:pointer; font-family:'Inter',sans-serif;}
+  .foot-links{display:flex; gap:14px; flex-wrap:wrap; justify-content:center; margin-top:8px;}
+  .foot-links a{color:var(--text-muted); font-size:12.5px; text-decoration:none; border-bottom:1px dotted var(--border);}
+  .foot-links a:hover{color:var(--gold-soft);}
+  .disc-note{font-size:11.5px; color:var(--text-muted); font-weight:400;}
+  .reb-tag{font-family:'Space Mono',monospace; font-size:10.5px; color:var(--gold-soft); margin-left:6px; border:1px solid rgba(var(--gold-rgb),0.35); padding:1px 5px; border-radius:6px;}
+</style>
+<script src="assets/core.js"></script>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="past-banner" id="pastBanner">
+    <span id="pastBannerText"></span>
+    <button type="button" id="backToCurrentBtn">voltar para a atual</button>
+  </div>
+
+  <header class="top">
+    <div class="suit s1" id="suit1">♠</div>
+    <div class="suit s2">♦</div>
+    <p class="eyebrow" id="seasonEyebrow">&nbsp;</p>
+    <h1 id="clubName">&nbsp;</h1>
+    <p class="sub" id="clubSub"></p>
+    <button class="hard-refresh-btn" id="hardRefreshBtn" type="button" title="Forçar atualização (ignora cache do navegador)">↻ Atualizar</button>
+  </header>
+
+  <div class="card timeline-card" id="timelineCard">
+    <div class="timeline-head">
+      <span class="timeline-label">Progresso da temporada</span>
+      <span class="timeline-count" id="timelineCount"></span>
+    </div>
+    <div class="timeline-track" id="timelineTrack"></div>
+    <div class="timeline-next" id="timelineNext"></div>
+  </div>
+
+  <nav class="tabs" id="viewTabs">
+    <button class="tab-btn active" data-tab="geral">Ranking Geral</button>
+    <button class="tab-btn" data-tab="evolucao">Evolução</button>
+    <button class="tab-btn" data-tab="historico">Histórico</button>
+    <button class="tab-btn" data-tab="temporadas">Temporadas</button>
+    <button class="tab-btn" data-tab="estatisticas">Estatísticas</button>
+  </nav>
+
+  <section class="panel active" id="tab-geral">
+    <div class="card">
+      <h2 class="section-title">Ranking geral</h2>
+      <p class="hint" id="geralHint">Ordenado por pontos acumulados na temporada.</p>
+      <div id="geralContent"></div>
+    </div>
+  </section>
+
+  <section class="panel" id="tab-evolucao">
+    <div class="card">
+      <h2 class="section-title">Evolução do ranking</h2>
+      <p class="hint">Posição acumulada, rodada a rodada, dos atuais 10 primeiros colocados.</p>
+      <div id="evolucaoContent"></div>
+    </div>
+  </section>
+
+  <section class="panel" id="tab-historico">
+    <div class="card">
+      <h2 class="section-title">Histórico de rodadas</h2>
+      <p class="hint">Todas as rodadas já publicadas na temporada.</p>
+      <div id="historicoContent"></div>
+    </div>
+  </section>
+
+  <section class="panel" id="tab-temporadas">
+    <div class="card">
+      <h2 class="section-title">Temporadas</h2>
+      <p class="hint">Toque numa temporada para ver o ranking, a evolução e o histórico dela.</p>
+      <div id="temporadasContent"></div>
+    </div>
+  </section>
+
+  <section class="panel" id="tab-estatisticas">
+    <div id="estatisticasContent"></div>
+  </section>
+
+  <footer class="view-footer" id="viewFooter">
+    <span id="versionNote"></span>
+    <nav class="foot-links" id="footLinks"></nav>
+  </footer>
+
+</div>
+
+<script>
+/* ---------- Versão deste arquivo (atualizar manualmente a cada upload) ---------- */
+const PAGE_VERSION = '0.1.0';
+
+/* ---------- Clube e regras (vêm do config.json do clube; ver assets/core.js) ---------- */
+const SLUG = MP.slugFromUrl();
+const BASE = SLUG ? MP.clubBase(SLUG) : '';
+const ST = SLUG ? MP.store(SLUG) : MP.store('_');
+let CFG = MP.normalizeConfig({});
+let RULES = MP.makeRules(CFG);
+function pointsForPosition(rank){ return RULES.pointsFor(rank) + CFG.pontuacao.presenca; }
+/* convidado fica fora das contas quando o clube não deixa convidado pontuar */
+function skipEntry(e){ return stIsGuest(e) && !CFG.pontuacao.convidadoPontua; }
+function clubName(){ return CFG.clube.nome; }
+
+let data = { rounds: [], players: [], totalRounds: 22, topPositions: 4, roundDates: {}, roundOrganizers: {} };
+
+/* ---------- Temporadas ----------
+   dados.json = temporada em andamento (campo season + lista archive das encerradas).
+   Cada temporada encerrada fica no seu próprio arquivo (ex.: temporada-2026-2.json). */
+const DEFAULT_SEASON = (()=>{ const d = new Date(); const sem = d.getMonth() < 6 ? 1 : 2; return { id:`${d.getFullYear()}-${sem}`, label:`Temporada ${d.getFullYear()}/${sem}` }; })();
+const TROPHY_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10"/><path d="M17 4v8a5 5 0 0 1 -10 0v-8"/><circle cx="5" cy="9" r="2"/><circle cx="19" cy="9" r="2"/></svg>';
+const seasonCache = {};   // id -> dados já carregados
+let currentData = null;   // conteúdo do dados.json
+let seasons = [];         // [{id, label, file, current}]
+let viewFinal = false;    // temporada exibida está encerrada?
+let viewingId = null;     // temporada exibida agora
+
+function fmtMoney(v){ return MP.money(v, CFG.premiacao.moeda, 2); }
+function fmtPercent(v){ return (v>=0?'+':'') + v.toFixed(1) + '%'; }
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+function stName(entry){ return typeof entry === 'string' ? entry : entry.name; }
+function stIsGuest(entry){ return typeof entry === 'string' ? false : !!entry.guest; }
+
+function computeStatsFromRounds(roundsSubset){ return RULES.seasonStats(roundsSubset); }
+function computeStats(){ return computeStatsFromRounds(data.rounds); }
+
+function comparePlayers(a, b){ return RULES.compare(a, b); }
+
+function formatDateBR(iso){
+  const parts = String(iso).split('-');
+  if(parts.length !== 3) return iso;
+  const [y,m,d] = parts;
+  return `${d}/${m}/${y}`;
+}
+
+function nextRoundText(n){
+  const date = data.roundDates[n];
+  const org = (data.roundOrganizers||{})[n];
+  let t = `Próxima rodada (${n}): ${date ? formatDateBR(date) : 'data a definir'}`;
+  if(org) t += ` · Organização: ${org}`;
+  return t;
+}
+
+function renderTimeline(){
+  const total = data.totalRounds || 22;
+  const played = data.rounds.length;
+  document.getElementById('timelineCount').textContent = `${played} de ${total} rodadas`;
+  const track = document.getElementById('timelineTrack');
+  let ticks = '';
+  for(let i=1;i<=total;i++){
+    const filled = i<=played;
+    ticks += `<div class="timeline-tick${filled?' filled':''}" title="Rodada ${i}${filled?' — realizada':''}"></div>`;
+  }
+  track.innerHTML = ticks;
+  const nextEl = document.getElementById('timelineNext');
+  const nextRoundNum = played + 1;
+  if(viewFinal){
+    nextEl.textContent = 'Temporada encerrada.';
+  } else if(played >= total){
+    nextEl.textContent = 'Temporada concluída.';
+  } else {
+    nextEl.textContent = nextRoundText(nextRoundNum);
+  }
+}
+
+document.querySelectorAll('#viewTabs .tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#viewTabs .tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+    renderForTab(btn.dataset.tab);
+  });
+});
+function renderForTab(tab){
+  if(tab==='geral') renderGeral();
+  if(tab==='evolucao') renderEvolucao();
+  if(tab==='historico') renderRoundsList();
+  if(tab==='temporadas') renderSeasonsTab();
+  if(tab==='estatisticas') renderStats();
+}
+
+function chipBadge(pos){
+  const cls = pos===1?'rank-1':pos===2?'rank-2':pos===3?'rank-3':'rank-other';
+  return `<div class="chip-badge ${cls}">${pos}</div>`;
+}
+function profitClass(v){
+  if(v > 0.05) return 'profit-pos';
+  if(v < -0.05) return 'profit-neg';
+  return 'profit-zero';
+}
+function emptyState(title, sub){
+  return `<div class="empty-state"><div class="glyph">♠ ♥</div><div style="font-weight:600; color:var(--text); margin-bottom:4px;">${title}</div><div>${sub}</div></div>`;
+}
+
+function renderGeral(){
+  const el = document.getElementById('geralContent');
+  const stats = computeStats().sort(comparePlayers);
+  if(stats.length === 0){
+    el.innerHTML = emptyState('Nenhuma rodada publicada ainda', 'Assim que o organizador publicar a primeira rodada, o ranking aparece aqui.');
+    return;
+  }
+  const topN = data.topPositions || CFG.temporada.classificados;
+  const totalRounds = data.totalRounds || CFG.temporada.rodadas;
+  const roundsRemaining = Math.max(0, totalRounds - data.rounds.length);
+  // piso: pontos atuais do Nº colocado (nunca caem); teto: pontos + máximo por rodada × rodadas restantes
+  const floor = stats.length >= topN ? stats[topN-1].points : null;
+
+  const rows = stats.map((s,idx)=>{
+    const pos = idx+1;
+    let alive = true;
+    if(floor !== null && pos > topN){
+      const ceiling = s.points + RULES.maxPerRound*roundsRemaining;
+      alive = ceiling >= floor;
+    }
+    const chanceHtml = viewFinal ? '' : alive
+      ? `<span class="status-pill alive" title="Ainda com chance matemática de Top ${topN}">Na disputa</span>`
+      : `<span class="status-pill eliminated" title="Eliminado matematicamente do Top ${topN}">Eliminado</span>`;
+    const rowClass = (alive || viewFinal) ? '' : ' class="eliminated-row"';
+    return `<tr${rowClass}>
+      <td class="player-cell">${chipBadge(pos)}<span>${escapeHtml(s.name)}</span><span class="inline-pts">${s.points} pts</span><span class="toggle-arrow">▾</span></td>
+      <td class="num" data-label="Pts"${s.discarded?` title="${s.gross} brutos − ${s.discarded} descartados"`:''}>${s.points}${s.discarded?`<div class="disc-note">−${s.discarded}</div>`:''}</td>
+      <td class="num" data-label="Rodadas">${s.roundsPlayed}</td>
+      <td class="num" data-label="Buy-in total">${fmtMoney(s.buyInTotal)}</td>
+      <td class="num" data-label="Prêmio total">${fmtMoney(s.prizeTotal)}</td>
+      <td class="num ${profitClass(s.profit)}" data-label="Profit">${fmtPercent(s.profit)}</td>
+      ${viewFinal ? '' : `<td class="chance-cell" data-label="Top ${topN}">${chanceHtml}</td>`}
+    </tr>`;
+  }).join('');
+  const champ = stats[0];
+  const championHtml = viewFinal ? `<div class="champion-banner"><div class="trophy-chip">${TROPHY_SVG}</div><div>
+      <div class="lbl">Campeão da ${escapeHtml(seasonLabelOf(data))}</div>
+      <div class="nm">${escapeHtml(champ.name)}</div>
+      <div class="pt">${winsLine(champ)}</div>
+    </div></div>` : '';
+  el.innerHTML = `${championHtml}<table class="rank-table"><thead><tr>
+      <th>Jogador</th><th class="num">Pts</th><th class="num">Rodadas</th>
+      <th class="num">Buy-in total</th><th class="num">Prêmio total</th><th class="num">Profit</th>
+      ${viewFinal ? '' : `<th style="text-align:center;">Top ${topN}</th>`}
+    </tr></thead><tbody>${rows}</tbody></table>`;
+
+  el.querySelectorAll('table.rank-table tbody tr').forEach(tr=>{
+    const cell = tr.querySelector('.player-cell');
+    if(cell) cell.addEventListener('click', ()=> tr.classList.toggle('expanded'));
+  });
+}
+
+const EVO_COLORS = ['var(--gold-soft)','#5CB587','#D97C4D','#7EA8D8','#C1443A','#B98CD9','#E0A5C4','#8FBF7F','#D9C25C','#6FB8C9'];
+
+function renderEvolucao(){
+  const el = document.getElementById('evolucaoContent');
+  const sortedRounds = [...data.rounds].sort((a,b)=>a.roundNumber-b.roundNumber);
+  if(sortedRounds.length < 2){
+    el.innerHTML = emptyState('Ainda não há dados suficientes', 'São necessárias ao menos 2 rodadas publicadas para ver a evolução do ranking.');
+    return;
+  }
+  const finalStats = computeStats().sort(comparePlayers);
+  const top10Names = finalStats.slice(0,10).map(s=>s.name);
+
+  const rankSeries = {};
+  top10Names.forEach(n=> rankSeries[n] = []);
+  let maxRank = 10;
+  const cumulative = [];
+  sortedRounds.forEach((round, i)=>{
+    cumulative.push(round);
+    const statsUpToHere = computeStatsFromRounds(cumulative).sort(comparePlayers);
+    statsUpToHere.forEach((s, idx)=>{
+      const rank = idx+1;
+      if(top10Names.includes(s.name)){
+        rankSeries[s.name].push({roundIdx:i, rank});
+        if(rank > maxRank) maxRank = rank;
+      }
+    });
+  });
+
+  const colWidth = 58, leftPad = 34, rightPad = 150, topPad = 24, rowH = 25;
+  const n = sortedRounds.length;
+  const width = leftPad + (n-1)*colWidth + rightPad + 20;
+  const height = topPad + maxRank*rowH + 44;
+  const xFor = i => leftPad + i*colWidth;
+  const yFor = rank => topPad + (rank-0.5)*rowH;
+
+  let gridLines = '';
+  for(let r=1;r<=maxRank;r++){
+    gridLines += `<line x1="${leftPad-8}" y1="${yFor(r)}" x2="${leftPad+(n-1)*colWidth+8}" y2="${yFor(r)}" style="stroke:rgba(var(--text-rgb),0.06)" stroke-width="1"/>`;
+    gridLines += `<text x="${leftPad-16}" y="${yFor(r)+4}" font-family="Space Mono, monospace" font-size="11" style="fill:var(--text-muted)" text-anchor="end">${r}</text>`;
+  }
+  let xLabels = '';
+  sortedRounds.forEach((round,i)=>{
+    xLabels += `<text x="${xFor(i)}" y="${topPad+maxRank*rowH+22}" font-family="Space Mono, monospace" font-size="11" style="fill:var(--text-muted)" text-anchor="middle">${round.roundNumber}</text>`;
+  });
+  xLabels += `<text x="${leftPad+(n-1)*colWidth/2}" y="${topPad+maxRank*rowH+38}" font-family="Space Mono, monospace" font-size="10" style="fill:var(--text-muted);opacity:.7" text-anchor="middle" letter-spacing="1">RODADA</text>`;
+
+  let lines = '';
+  top10Names.forEach((name, idx)=>{
+    const color = EVO_COLORS[idx % EVO_COLORS.length];
+    const series = rankSeries[name];
+    if(series.length===0) return;
+    const pointsAttr = series.map(pt => `${xFor(pt.roundIdx)},${yFor(pt.rank)}`).join(' ');
+    const dots = series.map(pt => `<circle cx="${xFor(pt.roundIdx)}" cy="${yFor(pt.rank)}" r="3.5" fill="${color}"/>`).join('');
+    const last = series[series.length-1];
+    lines += `<polyline points="${pointsAttr}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" opacity="0.9"/>`;
+    lines += dots;
+    lines += `<text x="${xFor(last.roundIdx)+11}" y="${yFor(last.rank)+4}" font-family="Inter, sans-serif" font-size="12.5" font-weight="600" fill="${color}">${escapeHtml(name)}</text>`;
+  });
+
+  const svg = `<svg viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+      ${gridLines}${xLabels}${lines}
+    </svg>`;
+  el.innerHTML = `<p class="evo-hint">→ arraste para o lado para ver todas as rodadas</p><div class="evo-scroll">${svg}</div>`;
+}
+
+function renderRoundsList(){
+  const el = document.getElementById('historicoContent');
+  if(data.rounds.length === 0){
+    el.innerHTML = emptyState('Nenhuma rodada publicada ainda', 'As rodadas publicadas vão aparecer aqui, em ordem.');
+    return;
+  }
+  const sorted = [...data.rounds].sort((a,b)=> b.roundNumber - a.roundNumber);
+  el.innerHTML = sorted.map(r=>{
+    const sc = RULES.scoreRound(r);
+    const items = r.standings.map((entry,idx)=>{
+      const name = stName(entry);
+      const isGuest = stIsGuest(entry);
+      const prize = RULES.prizeAt(r, idx);
+      const prizeStr = prize > 0 ? ` — ${fmtMoney(prize)}` : '';
+      const pts = sc[idx].pts;
+      const ptsStr = pts === null ? 'convidado' : `${pts} pt${pts===1?'':'s'}`;
+      const guestTag = isGuest ? '<span class="guest-tag">Convidado</span>' : '';
+      const extra = (entry.rebuys ? `<span class="reb-tag">${entry.rebuys}R</span>` : '') + (entry.addon ? '<span class="reb-tag">A</span>' : '');
+      return `<li>${escapeHtml(name)}${guestTag}${extra} <span style="color:var(--text-muted)">(${ptsStr}${prizeStr})</span></li>`;
+    }).join('');
+    const prizeList = (r.prizes||[]).map((v,i)=>({v:Number(v)||0, i})).filter(x=>x.v>0).map(x=>`${x.i+1}º ${fmtMoney(x.v)}`).join(' · ');
+    const nRb = r.standings.reduce((t,e)=>t+(Number(e.rebuys)||0),0), nAd = r.standings.filter(e=>e.addon).length;
+    const extraMeta = (nRb ? ` · ${nRb} rebuy${nRb===1?'':'s'}` : '') + (nAd ? ` · ${nAd} add-on${nAd===1?'':'s'}` : '');
+    return `<div class="round-card">
+        <div class="round-head">
+          <h3>Rodada ${r.roundNumber}</h3>
+          <span class="meta">${r.totalPlayers || r.standings.length} jogadores · buy-in ${fmtMoney(r.buyIn)}${extraMeta}${data.roundDates && data.roundDates[r.roundNumber] ? ' · ' + formatDateBR(data.roundDates[r.roundNumber]) : ''}</span>
+        </div>
+        <div class="prizes">Premiação: ${prizeList || '—'}</div>
+        ${(data.roundOrganizers||{})[r.roundNumber] ? `<div class="org-line">Organização: ${escapeHtml(data.roundOrganizers[r.roundNumber])}</div>` : ''}
+        <ol>${items}</ol>
+      </div>`;
+  }).join('');
+}
+
+/* ---------- Carregamento dos dados publicados ---------- */
+function normalizeData(p){
+  if(!Array.isArray(p.rounds)) throw new Error('formato inválido');
+  if(!Array.isArray(p.players)) p.players = [];
+  if(typeof p.totalRounds !== 'number' || p.totalRounds < 1) p.totalRounds = CFG.temporada.rodadas;
+  if(typeof p.topPositions !== 'number' || p.topPositions < 1) p.topPositions = CFG.temporada.classificados;
+  if(!p.roundDates || typeof p.roundDates !== 'object') p.roundDates = {};
+  if(!p.roundOrganizers || typeof p.roundOrganizers !== 'object') p.roundOrganizers = {};
+  if(!Array.isArray(p.archive)) p.archive = [];
+  return p;
+}
+function seasonLabelOf(d){ return (d.season && d.season.label) || DEFAULT_SEASON.label; }
+
+async function fetchJson(file){ return MP.fetchJson(BASE + file); }
+
+function activeViewTab(){
+  const b = document.querySelector('#viewTabs .tab-btn.active');
+  return b ? b.dataset.tab : 'geral';
+}
+
+async function showSeason(id, goToRanking){
+  const s = seasons.find(x=>x.id===id) || seasons[0];
+  let loadError = null;
+  if(s.current){
+    data = currentData;
+    viewFinal = !!currentData.final;
+  } else {
+    try{
+      data = seasonCache[s.id] || normalizeData(await fetchJson(s.file));
+      seasonCache[s.id] = data;
+    }catch(e){
+      data = normalizeData({ rounds: [] });
+      loadError = s.file;
+    }
+    if(!data.season) data.season = { id:s.id, label:s.label };
+    viewFinal = true;
+  }
+  viewingId = s.id;
+  document.getElementById('seasonEyebrow').textContent = s.current ? s.label : `${s.label} · encerrada`;
+  document.title = `${s.label} — ${clubName()}`;
+  document.getElementById('pastBannerText').textContent = `Você está vendo a ${s.label}`;
+  document.getElementById('pastBanner').classList.toggle('show', !s.current);
+  if(goToRanking){
+    document.querySelectorAll('#viewTabs .tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.tab==='geral'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active', p.id==='tab-geral'));
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  // mantém a temporada escolhida no endereço (link direto); a atual fica sem parâmetro
+  const url = new URL(window.location.href);
+  url.searchParams.delete('_');
+  if(s.current) url.searchParams.delete('temporada'); else url.searchParams.set('temporada', s.id);
+  try{ history.replaceState(null, '', url.pathname + url.search); }catch(e){}
+
+  renderTimeline();
+  if(loadError){
+    const msg = emptyState('Não foi possível carregar esta temporada', `O arquivo ${escapeHtml(loadError)} não foi encontrado no site.`);
+    ['geralContent','evolucaoContent','historicoContent'].forEach(idEl => document.getElementById(idEl).innerHTML = msg);
+    return;
+  }
+  renderForTab(activeViewTab());
+}
+
+function winsLine(p){
+  return `${p.points} pts · ${p.firsts} vitória${p.firsts===1?'':'s'} em ${p.roundsPlayed} rodada${p.roundsPlayed===1?'':'s'}`;
+}
+
+function seasonLeader(d){
+  const st = computeStatsFromRounds(d.rounds).sort(comparePlayers);
+  return st[0] || null;
+}
+
+async function renderSeasonsTab(){
+  const el = document.getElementById('temporadasContent');
+  if(seasons.length === 0){ el.innerHTML = emptyState('Nenhuma temporada publicada', 'As temporadas aparecem aqui assim que forem publicadas.'); return; }
+  el.innerHTML = '<p class="hint" style="margin:0;">Carregando temporadas…</p>';
+  const loaded = await Promise.all(seasons.map(async s=>{
+    try{
+      if(!seasonCache[s.id]) seasonCache[s.id] = normalizeData(await fetchJson(s.file));
+      return { s, d: seasonCache[s.id] };
+    }catch(e){ return { s, d:null }; }
+  }));
+  const titles = {};
+  const cards = loaded.map(({s, d})=>{
+    const viewing = (s.id === viewingId && !s.current) ? ' viewing' : '';
+    if(!d) return `<button type="button" class="season-card${viewing}" disabled><div class="trophy-chip live">♠</div><div><div class="meta-l">${escapeHtml(s.label)}</div><div class="who">Arquivo não encontrado</div></div></button>`;
+    const leader = seasonLeader(d);
+    const played = d.rounds.length, total = d.totalRounds || played;
+    if(s.current && !d.final){
+      return `<button type="button" class="season-card current${viewing}" data-id="${escapeHtml(s.id)}">
+        <div class="trophy-chip live">♠</div>
+        <div><div class="meta-l">${escapeHtml(s.label.replace('Temporada ',''))} · ${played} de ${total} rodadas</div>
+        <div class="who">${leader ? escapeHtml(leader.name) + ' lidera' : 'Ainda sem rodadas'}</div>
+        ${leader ? `<div class="meta-l">${winsLine(leader)}</div>` : ''}
+        <span class="live-pill inline">em andamento</span></div>
+        <span class="live-pill side">em andamento</span>
+      </button>`;
+    }
+    if(leader) titles[leader.name] = (titles[leader.name]||0) + 1;
+    return `<button type="button" class="season-card${viewing}" data-id="${escapeHtml(s.id)}">
+      <div class="trophy-chip">${TROPHY_SVG}</div>
+      <div><div class="meta-l">${escapeHtml(s.label.replace('Temporada ',''))} · ${played} rodada${played===1?'':'s'}</div>
+      <div class="who">${leader ? escapeHtml(leader.name) : '—'}</div>
+      ${leader ? `<div class="meta-l">${winsLine(leader)}</div>` : ''}</div>
+      <span class="go">›</span>
+    </button>`;
+  }).join('');
+  const tl = Object.entries(titles).sort((a,b)=> b[1]-a[1] || a[0].localeCompare(b[0],'pt-BR'));
+  const titlesHtml = tl.length ? `<p class="titles-note">Mais títulos: ${tl.map(([n,c])=>`${escapeHtml(n)} (${c})`).join(' · ')}</p>` : '';
+  el.innerHTML = cards + titlesHtml;
+  el.querySelectorAll('.season-card[data-id]').forEach(b=> b.addEventListener('click', ()=> showSeason(b.dataset.id, true)));
+}
+
+async function loadPublishedData(){
+  try{
+    currentData = normalizeData(await fetchJson('dados.json'));
+  }catch(e){
+    document.getElementById('seasonEyebrow').textContent = DEFAULT_SEASON.label;
+    document.getElementById('geralContent').innerHTML = emptyState(
+      'Nenhum dado publicado ainda',
+      'Assim que o organizador publicar a primeira rodada (arquivo dados.json), o ranking aparece aqui.'
+    );
+    renderTimeline();
+    return;
+  }
+  if(!currentData.season) currentData.season = {...DEFAULT_SEASON};
+  // temporadas antigas: lista do dados.json (encerradas pelo Lançador) + temporadas.json (mantida no GitHub)
+  let extra = [];
+  try{
+    const idx = await fetchJson('temporadas.json');
+    extra = Array.isArray(idx.seasons) ? idx.seasons : [];
+  }catch(e){ /* arquivo opcional */ }
+  const seen = new Set();
+  const archived = [...currentData.archive, ...extra]
+    .filter(a => a && a.id && !seen.has(String(a.id)) && seen.add(String(a.id)))
+    .filter(a => a && a.id && a.id !== currentData.season.id)
+    .map(a => ({ id:String(a.id), label:a.label || `Temporada ${String(a.id).replace('-','/')}`, file:a.file || `temporada-${a.id}.json`, current:false }))
+    .sort((a,b)=> b.id.localeCompare(a.id));
+  seasons = [{ id:currentData.season.id, label:currentData.season.label, file:'dados.json', current:true }, ...archived];
+  seasonCache[currentData.season.id] = currentData;
+
+  const wanted = new URLSearchParams(window.location.search).get('temporada');
+  await showSeason(wanted && seasons.some(x=>x.id===wanted) ? wanted : currentData.season.id);
+}
+
+/* ==========================================================================
+   ESTATÍSTICAS — área com senha simples (só afasta curiosos: os dados
+   continuam públicos no dados.json e nos arquivos de temporada).
+   Para trocar a senha: STATS_PASS_HASH = statsHash('nova senha').
+   ========================================================================== */
+let STATS_PASS_HASH = '';
+const STATS_UNLOCK_KEY = 'statsUnlock';
+let STATS_MIN_ROUNDS_ALL = 100;         // mínimo de rodadas p/ recorde de consistência (todas as temporadas)
+const UNKNOWN_PLAYER_RE = /^membro n[aã]o identificado$/i;
+const APROV_INFO = 'Mede o quanto o jogador vai longe nas rodadas, não o quanto ganha (para isso, veja o Lucro). Cada rodada vale de 0% (último) a 100% (campeão), corrigindo o tamanho da mesa: 5º de 20 vale mais que 5º de 10.';
+const BUBBLE_INFO = 'Vezes que o jogador terminou na primeira posição sem prêmio (normalmente o 5º): bateu na trave.';
+const LOCK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
+let statsView = 'hall';      // 'hall' | 'perfil'
+let statsScope = 'all';      // 'all' | 'season' (temporada em exibição)
+let statsSort = 'wins';
+let statsPlayer = null;
+let statsSessionOk = false;  // fallback quando o navegador bloqueia o localStorage
+
+function statsHash(str){ return MP.hash(str); }
+function statsUnlocked(){
+  if(!STATS_PASS_HASH) return true;           // clube sem senha nas estatísticas
+  if(statsSessionOk) return true;
+  return ST.get(STATS_UNLOCK_KEY, '') === STATS_PASS_HASH;
+}
+function statsSetUnlocked(ok){
+  statsSessionOk = ok;
+  ok ? ST.set(STATS_UNLOCK_KEY, STATS_PASS_HASH) : ST.del(STATS_UNLOCK_KEY);
+}
+function statsPref(key, val){
+  if(val === undefined) return ST.get('stats_' + key, null);
+  ST.set('stats_' + key, val);
+}
+
+function infoBtn(text, alignRight){
+  return `<span class="info-wrap"><button type="button" class="info-btn" aria-label="O que é isso?" aria-expanded="false">i</button><span class="info-pop${alignRight?' right':''}" role="tooltip" hidden>${escapeHtml(text)}</span></span>`;
+}
+function fmtSigned(v){
+  const r = Math.round(v);
+  return (r>0?'+':r<0?'−':'') + 'R$ ' + Math.abs(r).toLocaleString('pt-BR');
+}
+function fmtPct(v){ return Math.round(v*100) + '%'; }
+function shortSeason(label){ return String(label).replace('Temporada ',''); }
+
+async function loadAllSeasonData(){
+  const loaded = await Promise.all(seasons.map(async s=>{
+    try{
+      if(!seasonCache[s.id]) seasonCache[s.id] = normalizeData(await fetchJson(s.file));
+      return { s, d: seasonCache[s.id] };
+    }catch(e){ return { s, d:null }; }
+  }));
+  return loaded.filter(x=>x.d).sort((a,b)=> a.s.id.localeCompare(b.s.id)); // cronológico
+}
+
+/* Agrega carreira de cada jogador a partir de uma lista de temporadas [{s,d}] */
+function buildCareers(list){
+  const P = {};
+  const get = name => P[name] || (P[name] = { name, rounds:0, wins:0, podiums:0, itm:0, buyIn:0, prize:0,
+    aprovSum:0, aprovN:0, bubble:0, dist:[0,0,0,0,0,0], titles:[], seasons:{}, firstSeason:null });
+  const seasonInfo = [];
+  let totalRounds = 0, bestSeasonPts = [];
+  list.forEach(({s, d})=>{
+    const isFinal = !s.current || !!d.final;
+    const label = (d.season && d.season.label) || s.label;
+    const ranking = computeStatsFromRounds(d.rounds).sort(comparePlayers);
+    seasonInfo.push({ id:s.id, label, final:isFinal, rounds:d.rounds.length, champion: isFinal && ranking[0] ? ranking[0].name : null });
+    totalRounds += d.rounds.length;
+    ranking.forEach((st, idx)=>{
+      if(UNKNOWN_PLAYER_RE.test(st.name)) return;
+      const p = get(st.name);
+      if(!p.firstSeason) p.firstSeason = label;
+      p.seasons[s.id] = { id:s.id, label, final:isFinal, pos:idx+1, field:ranking.length, pts:st.points,
+        rounds:0, wins:0, podiums:0, itm:0, buyIn:0, prize:0 };
+      if(isFinal && idx===0) p.titles.push(shortSeason(label));
+      if(isFinal) bestSeasonPts.push({ name:st.name, pts:st.points, label });
+    });
+    d.rounds.forEach(r=>{
+      const N = Math.max(Number(r.totalPlayers)||0, r.standings.length);
+      // bolha = primeira posição da mesa sem prêmio (normalmente o 5º)
+      const paid = RULES.paidCount(r);
+      let mr = 0;
+      r.standings.forEach((e, idx)=>{
+        if(skipEntry(e)) return;
+        mr += 1;
+        const name = stName(e);
+        if(UNKNOWN_PLAYER_RE.test(name)) return;
+        const p = get(name), ps = p.seasons[s.id];
+        const buy = RULES.entryCost(r, e);
+        const prize = RULES.prizeAt(r, idx);
+        [p, ps].forEach(o=>{
+          o.rounds += 1; o.buyIn += buy; o.prize += prize;
+          if(prize > 0) o.itm += 1;
+          if(mr === 1) o.wins += 1;
+          if(mr <= 3) o.podiums += 1;
+        });
+        p.dist[mr<=4 ? mr-1 : (mr<=10 ? 4 : 5)] += 1;
+        if(N > 1){ p.aprovSum += (N-(idx+1))/(N-1); p.aprovN += 1; }
+        if(paid > 0 && idx === paid) p.bubble += 1;
+      });
+    });
+  });
+  const players = Object.values(P).filter(p=>p.rounds>0).map(p=>({
+    ...p, aprov: p.aprovN ? p.aprovSum/p.aprovN : 0, profit: p.prize - p.buyIn,
+    profitPct: p.buyIn ? (p.prize - p.buyIn)/p.buyIn : 0, nSeasons: Object.keys(p.seasons).length
+  }));
+  bestSeasonPts.sort((a,b)=> b.pts-a.pts || a.name.localeCompare(b.name,'pt-BR'));
+  return { players, seasonInfo, totalRounds, bestSeasonPts };
+}
+
+function topBy(players, key, filter){
+  return players.filter(filter || (()=>true))
+    .sort((a,b)=> (typeof key==='function' ? key(b)-key(a) : b[key]-a[key]) || b.rounds-a.rounds || a.name.localeCompare(b.name,'pt-BR'))
+    .slice(0,3);
+}
+
+function recordCard(label, info, value, unit, who, detail, runners){
+  return `<div class="rec-card">
+    <div class="rec-label">${escapeHtml(label)}${info ? infoBtn(info) : ''}</div>
+    <div class="rec-value"><span class="v">${value}</span><span class="u">${escapeHtml(unit)}</span></div>
+    <div><div class="rec-who">${escapeHtml(who)}</div>${detail ? `<div class="rec-detail">${escapeHtml(detail)}</div>` : ''}</div>
+    ${runners.length ? `<div class="rec-runners">${runners.map((r,i)=>`<div><span><span class="p">${i+2}º</span> ${escapeHtml(r[0])}</span><span class="n">${r[1]}</span></div>`).join('')}</div>` : ''}
+  </div>`;
+}
+
+function minRoundsFor(agg){ return statsScope === 'all' ? STATS_MIN_ROUNDS_ALL : Math.max(1, Math.ceil(agg.totalRounds/2)); }
+
+function renderHall(agg){
+  const pl = agg.players;
+  if(pl.length === 0) return `<div class="card">${emptyState('Sem rodadas nesse período', 'Assim que houver rodadas publicadas, os recordes aparecem aqui.')}</div>`;
+  const pctOf = (n, d) => d ? Math.round(n/d*100) + '% das rodadas jogadas' : '';
+  const cards = [];
+  const all = statsScope === 'all';
+
+  if(all){
+    const t = topBy(pl, p=>p.titles.length, p=>p.titles.length>0);
+    if(t.length) cards.push(recordCard('Títulos de temporada', null, t[0].titles.length, t[0].titles.length===1?'título':'títulos', t[0].name,
+      t[0].titles.join(' · '), t.slice(1).map(p=>[p.name, p.titles.length])));
+  }
+  let t = topBy(pl, 'wins');
+  cards.push(recordCard('Vitórias de rodada', null, t[0].wins, t[0].wins===1?'vitória':'vitórias', t[0].name, pctOf(t[0].wins, t[0].rounds), t.slice(1).map(p=>[p.name, p.wins])));
+  t = topBy(pl, 'podiums');
+  cards.push(recordCard('Pódios (1º a 3º)', null, t[0].podiums, t[0].podiums===1?'pódio':'pódios', t[0].name, pctOf(t[0].podiums, t[0].rounds), t.slice(1).map(p=>[p.name, p.podiums])));
+  t = topBy(pl, 'itm');
+  cards.push(recordCard('Vezes premiado', null, t[0].itm, 'vezes', t[0].name, pctOf(t[0].itm, t[0].rounds), t.slice(1).map(p=>[p.name, p.itm])));
+  t = topBy(pl, 'rounds');
+  cards.push(recordCard('Rodadas jogadas', null, t[0].rounds, 'rodadas', t[0].name, agg.totalRounds ? Math.round(t[0].rounds/agg.totalRounds*100) + '% de todas as rodadas' : '', t.slice(1).map(p=>[p.name, p.rounds])));
+  if(all && agg.bestSeasonPts.length){
+    const b = agg.bestSeasonPts.slice(0,3);
+    cards.push(recordCard('Pontos numa temporada', null, b[0].pts, 'pts', b[0].name, b[0].label, b.slice(1).map(x=>[`${x.name} · ${shortSeason(x.label)}`, x.pts])));
+  }
+  t = topBy(pl, 'bubble', p=>p.bubble>0);
+  if(t.length) cards.push(recordCard('Rei da bolha', BUBBLE_INFO, t[0].bubble, t[0].bubble===1?'vez':'vezes', t[0].name, pctOf(t[0].bubble, t[0].rounds), t.slice(1).map(p=>[p.name, p.bubble])));
+  const minR = minRoundsFor(agg);
+  t = topBy(pl, 'aprov', p=>p.rounds>=minR);
+  if(t.length) cards.push(recordCard('Consistência', APROV_INFO, Math.round(t[0].aprov*100), '%', t[0].name, `mínimo de ${minR} rodada${minR===1?'':'s'}`, t.slice(1).map(p=>[p.name, fmtPct(p.aprov)])));
+
+  const head = all
+    ? `${agg.seasonInfo.length} temporadas · ${shortSeason(agg.seasonInfo[0].label)} a ${shortSeason(agg.seasonInfo[agg.seasonInfo.length-1].label)} · ${agg.totalRounds} rodadas`
+    : `${agg.seasonInfo[0].label} · ${agg.totalRounds} rodada${agg.totalRounds===1?'':'s'}`;
+
+  return `<div style="margin-bottom:12px;"><h2 class="section-title">Recordes do clube</h2><p class="hint" style="margin:0;">${escapeHtml(head)}</p></div>
+    <div class="rec-grid">${cards.join('')}</div>
+    <div class="card" style="margin-top:16px;">${renderCareerTable(agg)}</div>`;
+}
+
+const SORTS = {
+  wins:    { label:'Vitórias',       fn:p=>p.wins },
+  titles:  { label:'Títulos',        fn:p=>p.titles.length },
+  rounds:  { label:'Rodadas',        fn:p=>p.rounds },
+  podiums: { label:'Pódios',         fn:p=>p.podiums },
+  itm:     { label:'Premiado',       fn:p=>p.itm },
+  aprov:   { label:'Consistência', fn:p=>p.aprov },
+  profit:  { label:'Lucro',          fn:p=>p.profit }
+};
+
+function renderCareerTable(agg){
+  const all = statsScope === 'all';
+  if(!all && statsSort === 'titles') statsSort = 'wins';
+  const sort = SORTS[statsSort] || SORTS.wins;
+  const minR = minRoundsFor(agg);
+  const rows = [...agg.players].sort((a,b)=>{
+    if(statsSort === 'aprov'){
+      const la = a.rounds < minR, lb = b.rounds < minR;
+      if(la !== lb) return la ? 1 : -1;
+    }
+    return (sort.fn(b)-sort.fn(a)) || b.wins-a.wins || b.podiums-a.podiums || b.rounds-a.rounds || a.name.localeCompare(b.name,'pt-BR');
+  });
+  const on = k => statsSort===k ? ' on' : '';
+  const th = (k, txt, extra) => `<th class="num sortable${on(k)}" data-sort="${k}">${txt}${statsSort===k?' ▾':''}${extra||''}</th>`;
+  const body = rows.map((p, idx)=>{
+    const low = p.rounds < minR;
+    return `<tr${low?' class="low-sample"':''}>
+      <td class="player-cell">${chipBadge(idx+1)}<span>${escapeHtml(p.name)}</span><span class="inline-pts">${statsSort==='profit' ? fmtSigned(p.profit) : statsSort==='aprov' ? fmtPct(p.aprov) : sort.fn(p)}</span><span class="toggle-arrow">▾</span></td>
+      ${all ? `<td class="num${on('titles')}" data-label="Títulos">${p.titles.length}</td><td class="num" data-label="Temporadas">${p.nSeasons}</td>` : ''}
+      <td class="num${on('rounds')}" data-label="Rodadas">${p.rounds}</td>
+      <td class="num${on('wins')}" data-label="Vitórias">${p.wins}</td>
+      <td class="num${on('podiums')}" data-label="Pódios">${p.podiums}</td>
+      <td class="num${on('itm')}" data-label="Premiado">${p.itm}</td>
+      <td class="num aprov${on('aprov')}" data-label="Consistência">${fmtPct(p.aprov)}</td>
+      <td class="num ${profitClass(p.profit)}" data-label="Lucro">${fmtSigned(p.profit)}</td>
+    </tr>`;
+  }).join('');
+  const opts = Object.entries(SORTS).filter(([k])=> all || k!=='titles')
+    .map(([k,v])=>`<option value="${k}"${k===statsSort?' selected':''}>${v.label}</option>`).join('');
+  return `<h2 class="section-title">${all ? 'Ranking histórico' : 'Números da temporada'}</h2>
+    <p class="hint">${all ? 'Todas as temporadas somadas.' : 'Só a temporada em exibição.'} Toque num jogador para ver os detalhes.</p>
+    <div class="sort-row"><label for="statsSortSel">Ordenar por</label><select id="statsSortSel">${opts}</select></div>
+    <table class="rank-table career-table"><thead><tr>
+      <th>Jogador</th>${all ? th('titles','Títulos') + '<th class="num">Temp.</th>' : ''}${th('rounds','Rodadas')}${th('wins','Vitórias')}${th('podiums','Pódios')}${th('itm','Premiado')}
+      ${th('aprov','Consist.', ' ' + infoBtn(APROV_INFO, true))}${th('profit','Lucro')}
+    </tr></thead><tbody>${body}</tbody></table>
+    <p class="stats-note">Premiado = rodadas em que recebeu prêmio. Consistência em cinza = menos de ${minR} rodada${minR===1?'':'s'}, amostra pequena. ${CFG.pontuacao.convidadoPontua ? 'Convidados entram nas estatísticas, como no ranking.' : 'Convidados não entram nas estatísticas; vitórias e pódios seguem a colocação entre os membros, como no ranking.'}${all ? ' Temporadas antigas vindas do Excel podem ter rodadas incompletas.' : ''}</p>`;
+}
+
+function renderProfile(agg, log){
+  const pl = [...agg.players].sort((a,b)=> a.name.localeCompare(b.name,'pt-BR'));
+  if(pl.length === 0) return `<div class="card">${emptyState('Sem jogadores ainda', 'Os perfis aparecem assim que houver rodadas publicadas.')}</div>`;
+  if(!statsPlayer || !pl.some(p=>p.name===statsPlayer)){
+    const saved = statsPref('player');
+    statsPlayer = (saved && pl.some(p=>p.name===saved)) ? saved : topBy(agg.players, 'wins')[0].name;
+  }
+  const p = pl.find(x=>x.name===statsPlayer);
+  const seasonList = agg.seasonInfo.map(si=>({ si, ps: p.seasons[si.id] || null }));
+  const played = seasonList.filter(x=>x.ps);
+  const current = agg.seasonInfo.find(si=>!si.final);
+  const curPs = current ? p.seasons[current.id] : null;
+  const finals = played.filter(x=>x.ps.final);
+  const avgPos = finals.length ? finals.reduce((s,x)=>s+x.ps.pos,0)/finals.length : null;
+  const pct = n => p.rounds ? Math.round(n/p.rounds*100) + '%' : '—';
+
+  const chips = [];
+  if(p.titles.length) chips.push(`<span class="prof-chip gold">${p.titles.length} título${p.titles.length===1?'':'s'} · ${escapeHtml(p.titles.join(', '))}</span>`);
+  if(curPs) chips.push(`<span class="prof-chip">${curPs.pos}º na ${escapeHtml(shortSeason(current.label))}</span>`);
+
+  const kpis = [
+    ['Rodadas', p.rounds, `em ${p.nSeasons} temporada${p.nSeasons===1?'':'s'}`, ''],
+    ['Vitórias', p.wins, `${pct(p.wins)} das jogadas`, 'gold'],
+    ['Pódios', p.podiums, `1º a 3º · ${pct(p.podiums)}`, ''],
+    ['Premiado', p.itm, `${pct(p.itm)} das jogadas`, ''],
+    ['Consistência', fmtPct(p.aprov), 'média por rodada', '', APROV_INFO],
+    ['Lucro', fmtSigned(p.profit), `${p.profitPct>=0?'+':''}${Math.round(p.profitPct*100)}% sobre os buy-ins`, p.profit>0.5 ? 'pos' : p.profit<-0.5 ? 'neg' : '']
+  ].map(([l,v,s,c,info])=>`<div class="kpi"><span class="l">${l}${info ? infoBtn(info, true) : ''}</span>
+    <span class="v ${c==='gold'?'gold':c==='pos'?'profit-pos':c==='neg'?'profit-neg':''}${String(v).length>8?' long':''}">${v}</span><span class="s">${escapeHtml(s)}</span></div>`).join('');
+
+  const maxD = Math.max(1, ...p.dist);
+  const distLabels = ['1º','2º','3º','4º','5º–10º','11º+'];
+  const dist = p.dist.map((c,i)=>`<div class="dist-row"><span class="l">${distLabels[i]}</span>
+    <div class="dist-track"><div class="dist-fill${i<4?' gold':''}" style="width:${Math.round(c/maxD*100)}%"></div></div><span class="c">${c}</span></div>`).join('');
+
+  const tableRows = [...played].reverse().map(({si, ps})=>{
+    const champ = si.final && ps.pos===1;
+    const posTxt = `${ps.pos}º de ${ps.field}${champ ? ' · campeão' : ''}${si.final ? '' : ' · em andamento'}`;
+    return `<tr><td class="player">${escapeHtml(shortSeason(si.label))}</td>
+      <td class="${champ?'champ':''}" style="font-family:'Space Mono',monospace;">${posTxt}</td>
+      <td class="num">${ps.pts}</td><td class="num">${ps.rounds}</td><td class="num">${ps.wins}</td>
+      <td class="num">${ps.podiums}</td><td class="num">${ps.itm}</td>
+      <td class="num ${profitClass(ps.prize-ps.buyIn)}">${fmtSigned(ps.prize-ps.buyIn)}</td></tr>`;
+  }).join('');
+  const totalPts = played.reduce((s,x)=>s+x.ps.pts,0);
+  const careerRow = `<tr class="career"><td>Carreira</td>
+    <td style="font-family:'Space Mono',monospace; color:var(--text-muted);">${avgPos ? 'média ' + avgPos.toLocaleString('pt-BR',{maximumFractionDigits:1}) + 'º' : '—'}</td>
+    <td class="num">${totalPts}</td><td class="num">${p.rounds}</td><td class="num">${p.wins}</td><td class="num">${p.podiums}</td><td class="num">${p.itm}</td>
+    <td class="num ${profitClass(p.profit)}">${fmtSigned(p.profit)}</td></tr>`;
+
+  const options = pl.map(x=>`<option value="${escapeHtml(x.name)}"${x.name===p.name?' selected':''}>${escapeHtml(x.name)}</option>`).join('');
+  return `<div class="card">
+      <div class="prof-head">
+        <div><h2 class="prof-name">${escapeHtml(p.name)}</h2>
+          <p class="prof-sub">No clube desde a ${escapeHtml(p.firstSeason)} · ${p.nSeasons} temporada${p.nSeasons===1?'':'s'} disputada${p.nSeasons===1?'':'s'}</p></div>
+        <div class="prof-chips">${chips.join('')}</div>
+      </div>
+      <div class="kpi-grid">${kpis}</div>
+    </div>
+    ${renderFormCard(log, p.name)}
+    <div class="prof-row">
+      <div class="card prof-chart"><h3 class="sub-title">Posição final em cada temporada</h3>
+        <p class="hint" style="margin-bottom:10px;">Quanto mais alto, melhor. Ponto dourado com anel = título; vazado = temporada em andamento.</p>
+        ${positionChart(seasonList)}</div>
+      <div class="card prof-dist"><h3 class="sub-title">Onde costuma terminar</h3>
+        <p class="hint" style="margin-bottom:12px;">${p.rounds} rodada${p.rounds===1?'':'s'}, por colocação entre os membros</p>${dist}</div>
+    </div>
+    <div class="card" style="margin-top:16px;"><h3 class="sub-title" style="margin-bottom:12px;">Temporada a temporada</h3>
+      <div class="table-scroll"><table class="season-table"><thead><tr>
+        <th>Temporada</th><th>Posição</th><th class="num">Pts</th><th class="num">Rodadas</th><th class="num">Vitórias</th>
+        <th class="num">Pódios</th><th class="num">Premiado</th><th class="num">Lucro</th>
+      </tr></thead><tbody>${tableRows}${careerRow}</tbody></table></div></div>
+    <template id="statsPlayerOptions">${options}</template>`;
+}
+
+function renderFormCard(log, name){
+  const f = formOf(log, name);
+  if(!f) return `<div class="card" style="margin-top:16px;"><h3 class="sub-title">Forma recente</h3><p class="hint" style="margin:0;">Disponível a partir de ${FORM_MIN_CAREER} rodadas na carreira.</p></div>`;
+  const badge = f.trend === 'up' ? '<span class="form-badge up">▲ Em alta</span>'
+    : f.trend === 'down' ? '<span class="form-badge down">▼ Em baixa</span>' : '<span class="form-badge flat">Estável</span>';
+  const chips = f.recent.map(r=>{
+    const cls = r.mr === 1 ? 'win' : r.prize > 0 ? 'itm' : r.bubble ? 'bub' : 'out';
+    return `<div class="form-chip ${cls}" title="${escapeHtml(r.tag)}: ${r.raw}º de ${r.N}">${r.raw}º</div>`;
+  }).join('');
+  const fmt1 = v => v.toLocaleString('pt-BR',{minimumFractionDigits:1, maximumFractionDigits:1});
+  const row = (label, a, b, d, dTxt) => `<tr><td class="player">${label}</td><td class="num">${a}</td><td class="num">${b}</td>
+    <td class="num ${d>0.0001?'up':d<-0.0001?'down':''}">${d>0.0001?'↑ ':d<-0.0001?'↓ ':''}${dTxt}</td></tr>`;
+  const dp = (x, y) => Math.round((x-y)*100);
+  const sgn = v => (v>0?'+':v<0?'−':'') + Math.abs(v);
+  return `<div class="card" style="margin-top:16px;">
+      <div class="form-head"><div><h3 class="sub-title" style="margin:0 0 4px;">Forma recente</h3>
+        <p class="hint" style="margin:0;">Últimas ${f.recent.length} rodadas jogadas, da mais antiga para a mais recente</p></div>${badge}</div>
+      <div class="form-strip">${chips}</div>
+      <div class="form-legend"><span><i style="background:var(--gold);"></i>venceu</span><span><i style="background:var(--green-pos);"></i>premiado</span>
+        <span><i style="background:var(--bronze);"></i>bolha</span><span><i style="background:var(--border);"></i>sem prêmio</span></div>
+      <table class="form-table"><thead><tr><th></th><th class="num">Últ. ${f.recent.length}</th><th class="num">Carreira</th><th class="num">Diferença</th></tr></thead><tbody>
+        ${row('Consistência', fmtPct(f.r.cons), fmtPct(f.c.cons), f.r.cons-f.c.cons, sgn(dp(f.r.cons, f.c.cons)))}
+        ${row('Premiado', fmtPct(f.r.itm), fmtPct(f.c.itm), f.r.itm-f.c.itm, sgn(dp(f.r.itm, f.c.itm)))}
+        ${row('Pontos por rodada', fmt1(f.r.pts), fmt1(f.c.pts), f.r.pts-f.c.pts, (f.r.pts-f.c.pts>=0?'+':'−') + fmt1(Math.abs(f.r.pts-f.c.pts)))}
+      </tbody></table>
+      <p class="hint small-note" style="margin:12px 0 0;">Selo "Em alta" ou "Em baixa" quando a Consistência das últimas ${FORM_WINDOW} difere ${FORM_THRESHOLD} pontos percentuais ou mais da carreira. Diferenças de Consistência e Premiado em pontos percentuais.</p>
+    </div>`;
+}
+
+function positionChart(seasonList){
+  const n = seasonList.length;
+  const maxPos = Math.max(10, ...seasonList.filter(x=>x.ps).map(x=>x.ps.pos));
+  const W = 620, left = 40, right = 22, top = 18, plotH = 200;
+  const step = n > 1 ? (W-left-right)/(n-1) : 0;
+  const xFor = i => n > 1 ? left + i*step : (W+left-right)/2;
+  const yFor = pos => top + (pos-1)/(maxPos-1)*plotH;
+  const H = top + plotH + 34;
+  const ticks = [1, 3, 5, 10, 15, 20, 30].filter(t=>t<=maxPos);
+  if(!ticks.includes(maxPos) && maxPos - ticks[ticks.length-1] > 2) ticks.push(maxPos);
+  let g = ticks.map(t=>`<line x1="${left-6}" y1="${yFor(t)}" x2="${W-right+6}" y2="${yFor(t)}" style="stroke:var(--border)" stroke-width="1"/>
+    <text x="${left-12}" y="${yFor(t)+4}" font-family="Space Mono, monospace" font-size="11" style="fill:var(--text-muted)" text-anchor="end">${t}º</text>`).join('');
+  // linha contínua entre temporadas seguidas; tracejada até a temporada em andamento
+  let lines = '', dots = '';
+  for(let i=1;i<n;i++){
+    const a = seasonList[i-1], b = seasonList[i];
+    if(!a.ps || !b.ps) continue;
+    const dash = !b.si.final ? ' stroke-dasharray="5 5"' : '';
+    lines += `<line x1="${xFor(i-1)}" y1="${yFor(a.ps.pos)}" x2="${xFor(i)}" y2="${yFor(b.ps.pos)}" style="stroke:var(--gold-soft)" stroke-width="2.5" stroke-linecap="round"${dash}/>`;
+  }
+  seasonList.forEach((x,i)=>{
+    const lbl = shortSeason(x.si.label).replace(/^20/, '');
+    const showLbl = n <= 12 || i % 2 === 0 || i === n-1;
+    if(showLbl) g += `<text x="${xFor(i)}" y="${top+plotH+26}" font-family="Space Mono, monospace" font-size="10.5" style="fill:var(--text-muted)" text-anchor="middle">${lbl}</text>`;
+    if(!x.ps) return;
+    const cx = xFor(i), cy = yFor(x.ps.pos);
+    const tip = `<title>${escapeHtml(x.si.label)}: ${x.ps.pos}º${x.si.final?'':' (em andamento)'}</title>`;
+    if(!x.si.final) dots += `<circle cx="${cx}" cy="${cy}" r="5" style="fill:var(--surface);stroke:var(--gold-soft)" stroke-width="2.5">${tip}</circle>`;
+    else if(x.ps.pos === 1) dots += `<circle cx="${cx}" cy="${cy}" r="9" fill="none" style="stroke:var(--gold-soft)" stroke-width="2"/><circle cx="${cx}" cy="${cy}" r="5.5" style="fill:var(--gold-soft)">${tip}</circle>`;
+    else dots += `<circle cx="${cx}" cy="${cy}" r="4.5" style="fill:var(--gold-soft)">${tip}</circle>`;
+  });
+  const desc = seasonList.filter(x=>x.ps).map(x=>`${shortSeason(x.si.label)}: ${x.ps.pos}º`).join(', ');
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Posição final por temporada — ${escapeHtml(desc)}">${g}${lines}${dots}</svg>`;
+}
+
+/* ---------- Forma recente ---------- */
+const FORM_WINDOW = 10;         // últimas N rodadas jogadas
+let FORM_MIN_CAREER = 100;    // carreira mínima para comparar
+const FORM_THRESHOLD = 10;      // diferença (pontos percentuais) de consistência para o selo
+function formMetrics(rs){
+  const n = rs.length || 1;
+  return {
+    cons: rs.reduce((s,r)=> s + (r.N>1 ? (r.N-r.raw)/(r.N-1) : 0), 0)/n,
+    itm: rs.filter(r=>r.prize>0).length/n,
+    pts: rs.reduce((s,r)=> s + pointsForPosition(r.mr), 0)/n
+  };
+}
+function formOf(log, name){
+  const all = log.filter(x=>x.res[name]).map(x=>({ ...x.res[name], tag: roundTag(x) }));
+  if(all.length < FORM_MIN_CAREER) return null;
+  const recent = all.slice(-FORM_WINDOW);
+  const r = formMetrics(recent), c = formMetrics(all);
+  const delta = Math.round((r.cons - c.cons)*100);
+  const trend = delta >= FORM_THRESHOLD ? 'up' : delta <= -FORM_THRESHOLD ? 'down' : 'flat';
+  return { recent, r, c, delta, trend, careerN: all.length };
+}
+
+/* ---------- Linha do tempo de rodadas (base do Confronto e das Sequências) ---------- */
+function buildRoundLog(list){
+  const log = [];
+  list.forEach(({s, d})=>{
+    const short = shortSeason((d.season && d.season.label) || s.label);
+    [...d.rounds].sort((a,b)=>a.roundNumber-b.roundNumber).forEach(r=>{
+      const N = Math.max(Number(r.totalPlayers)||0, r.standings.length);
+      const res = {};
+      const paid = RULES.paidCount(r);
+      let mr = 0;
+      r.standings.forEach((e, idx)=>{
+        if(skipEntry(e)) return;
+        mr += 1;
+        const name = stName(e);
+        if(UNKNOWN_PLAYER_RE.test(name)) return;
+        res[name] = { mr, raw: idx+1, N, bubble: paid > 0 && idx === paid, prize: RULES.prizeAt(r, idx), buy: RULES.entryCost(r, e) };
+      });
+      log.push({ sid:s.id, season:short, n:r.roundNumber, res, final: !s.current || !!d.final });
+    });
+  });
+  return log;
+}
+function roundTag(x){ return `${x.season} R${x.n}`; }
+function spanTag(a, b){
+  if(!a) return '';
+  if(a === b) return roundTag(a);
+  return a.sid === b.sid ? `${a.season} R${a.n} → R${b.n}` : `${roundTag(a)} → ${roundTag(b)}`;
+}
+
+/* ---------- Confronto direto ---------- */
+let H2H_MIN_ROUNDS = 20;
+let h2hA = null, h2hB = null;
+
+function setH2H(a, b){
+  h2hA = a; h2hB = b;
+  statsPref('h2hA', a || '');
+  if(b) statsPref('h2hB', b);
+  renderStats();
+}
+function togetherRounds(log, a, b){ return log.filter(x=> x.res[a] && x.res[b]); }
+
+function renderH2H(agg, log){
+  const names = agg.players.map(p=>p.name).sort((a,b)=>a.localeCompare(b,'pt-BR'));
+  if(names.length < 2) return `<div class="card">${emptyState('Jogadores insuficientes', 'São necessários ao menos dois jogadores com rodadas publicadas.')}</div>`;
+  const valid = n => n && names.includes(n);
+  if(!valid(h2hA)){ const s = statsPref('h2hA'); h2hA = valid(s) ? s : (valid(statsPlayer) ? statsPlayer : topBy(agg.players,'wins')[0].name); }
+  if(!valid(h2hB) || h2hB === h2hA){
+    const s = statsPref('h2hB');
+    if(valid(s) && s !== h2hA) h2hB = s;
+    else {
+      // padrão: o adversário com quem mais jogou
+      const cnt = {};
+      log.forEach(x=>{ if(x.res[h2hA]) Object.keys(x.res).forEach(n=>{ if(n!==h2hA) cnt[n]=(cnt[n]||0)+1; }); });
+      h2hB = Object.keys(cnt).sort((a,b)=> cnt[b]-cnt[a] || a.localeCompare(b,'pt-BR'))[0] || names.find(n=>n!==h2hA);
+    }
+  }
+  const A = h2hA, B = h2hB;
+  const optsA = names.map(n=>`<option value="${escapeHtml(n)}"${n===A?' selected':''}>${escapeHtml(n)}</option>`).join('');
+  const optsB = names.filter(n=>n!==A).map(n=>`<option value="${escapeHtml(n)}"${n===B?' selected':''}>${escapeHtml(n)}</option>`).join('');
+  const pickers = `<div class="h2h-pick" id="h2hTop">
+      <div class="h2h-side"><label for="h2hSelA" class="a">Jogador 1</label><select id="h2hSelA" class="a">${optsA}</select></div>
+      <button type="button" class="h2h-swap" id="h2hSwap" aria-label="Inverter jogadores">⇄</button>
+      <div class="h2h-side"><label for="h2hSelB" class="b">Jogador 2</label><select id="h2hSelB" class="b">${optsB}</select></div>
+    </div>`;
+
+  const tog = togetherRounds(log, A, B);
+  let main, detail = '';
+  if(!tog.length){
+    main = emptyState('Nunca jogaram juntos', 'Esses dois ainda não estiveram na mesma rodada.');
+  } else {
+    const aAhead = tog.filter(x=> x.res[A].mr < x.res[B].mr).length, bAhead = tog.length - aAhead;
+    const aPct = Math.round(aAhead/tog.length*100);
+    const side = who => {
+      const xs = tog.map(x=>x.res[who]);
+      return {
+        wins: xs.filter(r=>r.mr===1).length, podiums: xs.filter(r=>r.mr<=3).length, itm: xs.filter(r=>r.prize>0).length,
+        aprov: xs.reduce((s,r)=> s + (r.N>1 ? (r.N-r.raw)/(r.N-1) : 0), 0)/xs.length,
+        profit: xs.reduce((s,r)=> s + r.prize - r.buy, 0)
+      };
+    };
+    const sa = side(A), sb = side(B);
+    const row = (label, va, vb, fa, fb) => `<div class="h2h-row">
+        <span class="va${va>vb?' win':''}">${fa}</span><span class="lb">${label}</span><span class="vb${vb>va?' win':''}">${fb}</span></div>`;
+    const rows = row('Vitórias', sa.wins, sb.wins, sa.wins, sb.wins)
+      + row('Pódios', sa.podiums, sb.podiums, sa.podiums, sb.podiums)
+      + row('Premiado', sa.itm, sb.itm, sa.itm, sb.itm)
+      + row(`Consistência ${infoBtn(APROV_INFO, true)}`, Math.round(sa.aprov*100), Math.round(sb.aprov*100), fmtPct(sa.aprov), fmtPct(sb.aprov))
+      + row('Lucro', Math.round(sa.profit), Math.round(sb.profit), fmtSigned(sa.profit), fmtSigned(sb.profit));
+
+    const bySeason = [];
+    tog.forEach(x=>{
+      let s = bySeason.find(y=>y.season===x.season);
+      if(!s){ s = { season:x.season, a:0, b:0 }; bySeason.push(s); }
+      x.res[A].mr < x.res[B].mr ? s.a++ : s.b++;
+    });
+    const seasonsHtml = bySeason.map(s=>{
+      const t = s.a + s.b;
+      return `<div class="h2h-srow"><span class="sl">${escapeHtml(s.season)}</span><span class="na${s.a>s.b?' win':''}">${s.a}</span>
+        <div class="h2h-bar thin"><div class="a" style="width:${(s.a/t*100).toFixed(1)}%"></div><div class="b" style="width:${(s.b/t*100).toFixed(1)}%"></div></div>
+        <span class="nb${s.b>s.a?' win':''}">${s.b}</span></div>`;
+    }).join('');
+    const lastHtml = tog.slice(-5).reverse().map(x=>{
+      const ra = x.res[A].mr, rb = x.res[B].mr;
+      return `<div class="h2h-last"><span class="rt">${escapeHtml(roundTag(x))}</span>
+        <span class="na${ra<rb?' win':''}">${ra}º</span><span class="nb${rb<ra?' win':''}">${rb}º</span></div>`;
+    }).join('');
+
+    main = `<p class="h2h-cap">Quem terminou à frente</p>
+      <div class="h2h-score"><span class="sa">${aAhead}</span><span class="x">×</span><span class="sb">${bAhead}</span></div>
+      <p class="h2h-sub">em ${tog.length} rodada${tog.length===1?'':'s'} jogada${tog.length===1?'':'s'} juntos · desde a ${escapeHtml(tog[0].season)}</p>
+      <div class="h2h-bar"><div class="a" style="width:${aPct}%"></div><div class="b" style="width:${100-aPct}%"></div></div>
+      <div class="h2h-pcts"><span>${aPct}%</span><span>${100-aPct}%</span></div>
+      <p class="h2h-note">Só nas rodadas em que os dois jogaram</p>
+      <div class="h2h-rows">${rows}</div>`;
+    detail = `<div class="prof-row">
+      <div class="card prof-chart"><h3 class="sub-title" style="margin-bottom:12px;">Temporada a temporada</h3>${seasonsHtml}</div>
+      <div class="card prof-dist"><h3 class="sub-title" style="margin-bottom:12px;">Últimos ${Math.min(5, tog.length)} confrontos</h3>${lastHtml}
+        <p class="hint" style="margin:8px 0 0; font-size:11.5px;">Colocação de cada um entre os membros; em negrito quem terminou à frente.</p></div>
+    </div>`;
+  }
+
+  // fregueses e carrascos do jogador 1
+  const opp = {};
+  log.forEach(x=>{
+    const me = x.res[A];
+    if(!me) return;
+    Object.entries(x.res).forEach(([n, r])=>{
+      if(n === A) return;
+      const o = opp[n] || (opp[n] = { name:n, t:0, w:0 });
+      o.t += 1; if(me.mr < r.mr) o.w += 1;
+    });
+  });
+  const cands = Object.values(opp).filter(o=>o.t >= H2H_MIN_ROUNDS).map(o=>({ ...o, pct:o.w/o.t }));
+  const best = [...cands].sort((a,b)=> b.pct-a.pct || b.t-a.t).slice(0,3);
+  const worst = [...cands].sort((a,b)=> a.pct-b.pct || b.t-a.t).filter(o=>!best.includes(o)).slice(0,3);
+  const rivalList = (arr, cls) => arr.length ? arr.map(o=>`<button type="button" class="rival ${cls}" data-rival="${escapeHtml(o.name)}">
+      <span class="rn">${escapeHtml(o.name)}</span><span class="rs">${o.w} × ${o.t-o.w}</span><span class="rp">${fmtPct(o.pct)}</span></button>`).join('')
+    : `<p class="hint" style="margin:0;">Ninguém com ${H2H_MIN_ROUNDS} rodadas ou mais junto.</p>`;
+  const rivals = `<div class="card" style="margin-top:16px;">
+      <h3 class="sub-title">Fregueses e carrascos de ${escapeHtml(A)}</h3>
+      <p class="hint">Contra quem ele mais termina à frente e contra quem mais fica atrás · mínimo de ${H2H_MIN_ROUNDS} rodadas juntos. Toque num nome para abrir o confronto.</p>
+      <div class="rival-grid">
+        <div><p class="rival-head good">Vai melhor contra</p>${rivalList(best, 'good')}</div>
+        <div><p class="rival-head bad">Vai pior contra</p>${rivalList(worst, 'bad')}</div>
+      </div>
+    </div>`;
+
+  return `<div class="card">${pickers}${main}</div>${detail}${rivals}`;
+}
+
+/* ---------- Sequências ---------- */
+const STREAK_KINDS = [
+  { key:'presenca', label:'Presença seguida', unit:'rodadas', test:null },
+  { key:'premiado', label:'Premiado em sequência', unit:'rodadas', test:r=>r.prize>0 },
+  { key:'podio',    label:'Pódios seguidos', unit:'rodadas', test:r=>r.mr<=3 },
+  { key:'vitoria',  label:'Vitórias seguidas', unit:'vitórias', test:r=>r.mr===1 },
+  { key:'jejum',    label:'Maior jejum', unit:'rodadas', test:r=>r.prize<=0, bad:true }
+];
+
+function computeStreaks(log){
+  const names = [...new Set(log.flatMap(x=>Object.keys(x.res)))];
+  const out = {};
+  names.forEach(n=>{
+    out[n] = {};
+    STREAK_KINDS.forEach(k=>{
+      let best = { len:0 }, cur = 0, start = null, last = null;
+      log.forEach(x=>{
+        const r = x.res[n];
+        if(!r){ if(!k.test) cur = 0; return; }   // presença: faltar quebra; demais: ignora a rodada
+        if(!k.test || k.test(r)){
+          if(cur === 0) start = x;
+          cur += 1; last = x;
+          if(cur > best.len) best = { len:cur, start, end:x };
+        } else cur = 0;
+      });
+      out[n][k.key] = { best, cur, curStart: cur ? start : null };
+    });
+  });
+  return out;
+}
+
+function renderStreaks(log){
+  if(!log.length) return `<div class="card">${emptyState('Sem rodadas ainda', 'As sequências aparecem assim que houver rodadas publicadas.')}</div>`;
+  const st = computeStreaks(log);
+  const names = Object.keys(st);
+  const lastRound = log[log.length-1];
+  const records = {};
+  const cards = STREAK_KINDS.map(k=>{
+    const top = names.map(n=>({ name:n, ...st[n][k.key].best, cur:st[n][k.key].cur }))
+      .filter(x=>x.len>0)
+      .sort((a,b)=> b.len-a.len || (log.indexOf(a.end) - log.indexOf(b.end)) || a.name.localeCompare(b.name,'pt-BR'));
+    if(!top.length) return '';
+    const L = top[0];
+    records[k.key] = L.len;
+    const tied = top.filter(x=>x.len===L.len && x.name!==L.name);
+    let note = '';
+    if(k.key === 'presenca' && L.cur === L.len) note = 'em andamento';
+    if(tied.length) note = (note ? note + ' · ' : '') + `empatado com ${tied[0].name}${tied.length>1 ? ` e mais ${tied.length-1}` : ''}`;
+    if(k.bad) note = 'sem prêmio' + (note ? ' · ' + note : '');
+    return `<div class="rec-card${k.bad?' bad':''}">
+      <div class="rec-label">${k.label}</div>
+      <div class="rec-value"><span class="v">${L.len}</span><span class="u">${k.unit}</span></div>
+      <div><div class="rec-who">${escapeHtml(L.name)}</div><div class="rec-detail mono">${escapeHtml(spanTag(L.start, L.end))}</div>
+        ${note ? `<div class="rec-detail">${escapeHtml(note)}</div>` : ''}</div>
+      <div class="rec-runners">${top.slice(1,3).map((x,i)=>`<div><span><span class="p">${i+2}º</span> ${escapeHtml(x.name)}</span><span class="n">${x.len}</span></div>`).join('')}</div>
+    </div>`;
+  }).join('');
+
+  // em andamento: só quem jogou na temporada da última rodada
+  const active = names.filter(n=> log.some(x=> x.sid===lastRound.sid && x.res[n]));
+  const liveCol = (key, title, cls, noteFn) => {
+    const rec = records[key] || 1;
+    const items = active.map(n=>({ name:n, cur:st[n][key].cur, from:st[n][key].curStart }))
+      .filter(x=>x.cur>0).sort((a,b)=> b.cur-a.cur || a.name.localeCompare(b.name,'pt-BR')).slice(0,5);
+    const body = items.length ? items.map(x=>`<div class="live-item">
+        <div class="lt"><span class="ln">${escapeHtml(x.name)}</span><span class="lv">${x.cur}</span></div>
+        <div class="lbar"><div style="width:${Math.min(100, Math.round(x.cur/rec*100))}%"></div></div>
+        <span class="lnote">${escapeHtml(noteFn(x, rec))}</span></div>`).join('')
+      : '<p class="hint" style="margin:0;">Ninguém no momento.</p>';
+    return `<div class="live-col ${cls}"><p class="live-head">${title}</p>${body}</div>`;
+  };
+  const toRecord = (x, rec) => x.cur >= rec ? (x.cur > rec ? 'novo recorde!' : 'igualou o recorde') : `faltam ${rec - x.cur} para o recorde`;
+  const live = liveCol('presenca', 'Presença', 'gold', x=> x.cur >= (records.presenca||0) ? 'é o recorde do clube' : `desde ${roundTag(x.from)}`)
+    + liveCol('premiado', 'Premiado', 'green', (x, rec)=> x.cur === 1 ? 'premiado na última que jogou' : toRecord(x, rec))
+    + liveCol('jejum', 'Jejum', 'red', (x, rec)=> x.cur >= rec ? (x.cur > rec ? 'novo recorde de jejum' : 'igualou o recorde de jejum') : `a ${rec - x.cur} do recorde`);
+  const nextTxt = lastRound.final ? `Situação ao fim da ${lastRound.season}.` : `Como cada um chega para a próxima rodada (${lastRound.n + 1} da ${lastRound.season}).`;
+
+  return `<div style="margin-bottom:12px;"><h2 class="section-title">Recordes de sequência</h2>
+      <p class="hint" style="margin:0;">Contadas de uma temporada para a outra. Presença quebra quando o jogador falta; as demais contam só as rodadas que ele jogou.</p></div>
+    <div class="rec-grid streaks">${cards}</div>
+    <div class="card" style="margin-top:16px;">
+      <h2 class="section-title">Sequências em andamento</h2>
+      <p class="hint">${escapeHtml(nextTxt)} A barra mostra o quanto cada um está perto do recorde do clube.</p>
+      <div class="live-grid">${live}</div>
+    </div>
+    ${renderHeatCard(log, active)}`;
+}
+
+function renderHeatCard(log, active){
+  const fs = active.map(n=>({ name:n, f: formOf(log, n) })).filter(x=>x.f);
+  const ups = fs.filter(x=>x.f.trend==='up').sort((a,b)=> b.f.delta-a.f.delta).slice(0,3);
+  const downs = fs.filter(x=>x.f.trend==='down').sort((a,b)=> a.f.delta-b.f.delta).slice(0,3);
+  const item = x => `<div class="heat-item"><div><div class="hn">${escapeHtml(x.name)}</div>
+      <div class="hs">${fmtPct(x.f.r.cons)} nas últimas ${x.f.recent.length} · ${fmtPct(x.f.c.cons)} na carreira</div></div>
+      <span class="hd">${x.f.delta>0?'+':'−'}${Math.abs(x.f.delta)}</span></div>`;
+  const col = (list, title, cls) => `<div class="live-col ${cls}"><p class="live-head">${title}</p>${list.length ? list.map(item).join('') : '<p class="hint" style="margin:0;">Ninguém no momento.</p>'}</div>`;
+  return `<div class="card" style="margin-top:16px;">
+      <h2 class="section-title">Quem está quente e quem está frio</h2>
+      <p class="hint">Consistência nas últimas ${FORM_WINDOW} rodadas jogadas comparada com a carreira, em pontos percentuais. Só quem jogou na temporada atual e tem ${FORM_MIN_CAREER}+ rodadas.</p>
+      <div class="live-grid">${col(ups, '▲ Em alta', 'green')}${col(downs, '▼ Em baixa', 'red')}</div>
+    </div>`;
+}
+
+function renderStatsLock(el, errMsg){
+  el.innerHTML = `<div class="card"><div class="lock-box">
+      <div class="lock-icon">${LOCK_SVG}</div>
+      <h2>Área restrita</h2>
+      <p>As estatísticas são exclusivas para os participantes do clube. Digite a senha para entrar.</p>
+      <form class="lock-form" id="statsLockForm" autocomplete="off">
+        <label for="statsPass" class="sr-only">Senha</label>
+        <input type="password" id="statsPass" placeholder="Senha" autocomplete="current-password">
+        <button type="submit">Entrar</button>
+      </form>
+      <p class="lock-err" id="statsLockErr" role="alert">${errMsg ? escapeHtml(errMsg) : ''}</p>
+    </div></div>`;
+  const form = document.getElementById('statsLockForm');
+  form.addEventListener('submit', e=>{
+    e.preventDefault();
+    const val = document.getElementById('statsPass').value;
+    if(statsHash(val) === STATS_PASS_HASH){
+      statsSetUnlocked(true);
+      renderStats();
+    } else {
+      document.getElementById('statsLockErr').textContent = val.trim() ? 'Senha incorreta.' : 'Digite a senha.';
+      document.getElementById('statsPass').select();
+    }
+  });
+}
+
+let statsRenderSeq = 0;
+async function renderStats(){
+  const el = document.getElementById('estatisticasContent');
+  if(!el) return;
+  if(!statsUnlocked()){ renderStatsLock(el); return; }
+  const seq = ++statsRenderSeq;
+  if(!el.querySelector('.stats-bar')) el.innerHTML = '<div class="card"><p class="hint" style="margin:0;">Carregando estatísticas…</p></div>';
+  let list;
+  if(statsView === 'hall' && statsScope === 'season'){
+    const s = seasons.find(x=>x.id===viewingId) || seasons[0];
+    list = s ? [{ s, d: data }] : [];
+  } else {
+    list = await loadAllSeasonData();
+  }
+  if(seq !== statsRenderSeq) return; // um clique mais novo já está renderizando
+  if(!list.length){ el.innerHTML = `<div class="card">${emptyState('Nada para mostrar ainda', 'As estatísticas aparecem assim que houver temporadas publicadas.')}</div>`; return; }
+  const agg = buildCareers(list);
+  const viewingLabel = (data && data.season && data.season.label) || '';
+  const seg = (attr, items, cur, cls) => `<div class="seg${cls?' '+cls:''}" role="group">${items.map(([k,t])=>
+    `<button type="button" data-${attr}="${k}" class="${k===cur?'on':''}" aria-pressed="${k===cur}">${t}</button>`).join('')}</div>`;
+  let side = '';
+  if(statsView === 'hall') side = seg('scope', [['all','Todas as temporadas'],['season', 'Só ' + escapeHtml(shortSeason(viewingLabel))]], statsScope, 'soft');
+  if(statsView === 'perfil') side = `<div class="player-pick"><label for="statsPlayerSel">Jogador</label><select id="statsPlayerSel"></select></div>`;
+  const bar = `<div class="stats-bar">
+      ${seg('view', [['hall','Hall da Fama'],['perfil','Perfil'],['confronto','Confronto'],['sequencias','Sequências']], statsView, 'views')}
+      ${side}
+    </div>`;
+  let body;
+  if(statsView === 'perfil') body = renderProfile(agg, buildRoundLog(list));
+  else if(statsView === 'confronto') body = renderH2H(agg, buildRoundLog(list));
+  else if(statsView === 'sequencias') body = renderStreaks(buildRoundLog(list));
+  else body = renderHall(agg);
+  el.innerHTML = bar + body
+    + (STATS_PASS_HASH ? `<button type="button" class="lock-out" id="statsLockOut">Bloquear estatísticas neste aparelho</button>` : '');
+
+  const sel = document.getElementById('statsPlayerSel');
+  const tpl = document.getElementById('statsPlayerOptions');
+  if(sel && tpl){ sel.innerHTML = tpl.innerHTML; tpl.remove(); }
+  bindStatsEvents(el);
+}
+
+function bindStatsEvents(el){
+  el.querySelectorAll('[data-view]').forEach(b=> b.addEventListener('click', ()=>{ statsView = b.dataset.view; renderStats(); }));
+  el.querySelectorAll('[data-scope]').forEach(b=> b.addEventListener('click', ()=>{ statsScope = b.dataset.scope; renderStats(); }));
+  el.querySelectorAll('th.sortable').forEach(th=> th.addEventListener('click', e=>{
+    if(e.target.closest('.info-wrap')) return;
+    statsSort = th.dataset.sort; renderStats();
+  }));
+  const sortSel = document.getElementById('statsSortSel');
+  if(sortSel) sortSel.addEventListener('change', ()=>{ statsSort = sortSel.value; renderStats(); });
+  const playerSel = document.getElementById('statsPlayerSel');
+  if(playerSel) playerSel.addEventListener('change', ()=>{ statsPlayer = playerSel.value; statsPref('player', statsPlayer); renderStats(); });
+  const h2hA = document.getElementById('h2hSelA'), h2hB = document.getElementById('h2hSelB');
+  if(h2hA) h2hA.addEventListener('change', ()=>{ setH2H(h2hA.value, h2hB.value === h2hA.value ? null : h2hB.value); });
+  if(h2hB) h2hB.addEventListener('change', ()=>{ setH2H(h2hA.value, h2hB.value); });
+  const swap = document.getElementById('h2hSwap');
+  if(swap) swap.addEventListener('click', ()=> setH2H(h2hB.value, h2hA.value));
+  el.querySelectorAll('[data-rival]').forEach(b=> b.addEventListener('click', ()=>{
+    setH2H(h2hA.value, b.dataset.rival);
+    const box = document.getElementById('h2hTop');
+    if(box) box.scrollIntoView({behavior:'smooth', block:'start'});
+  }));
+  el.querySelectorAll('table.career-table tbody tr').forEach(tr=>{
+    const cell = tr.querySelector('.player-cell');
+    if(cell) cell.addEventListener('click', ()=> tr.classList.toggle('expanded'));
+  });
+  el.querySelectorAll('.info-btn').forEach(btn=> btn.addEventListener('click', e=>{
+    e.stopPropagation();
+    const pop = btn.nextElementSibling;
+    const open = pop.hidden;
+    closeInfoPops();
+    if(!open) return;
+    pop.hidden = false;
+    placeInfoPop(btn, pop);
+    btn.setAttribute('aria-expanded', 'true');
+  }));
+  const out = document.getElementById('statsLockOut');
+  if(out) out.addEventListener('click', ()=>{ statsSetUnlocked(false); renderStats(); window.scrollTo({top:0}); });
+}
+/* Posiciona o balão do ⓘ sempre dentro da tela (abaixo do ícone; acima se não couber) */
+function placeInfoPop(btn, pop){
+  const m = 12, vw = document.documentElement.clientWidth, vh = window.innerHeight;
+  const r = btn.getBoundingClientRect();
+  const w = Math.min(260, vw - 2*m);
+  pop.style.width = w + 'px';
+  const left = Math.max(m, Math.min(r.left + r.width/2 - w/2, vw - w - m));
+  const h = pop.offsetHeight;
+  let top = r.bottom + 8;
+  if(top + h > vh - m && r.top - 8 - h >= m) top = r.top - 8 - h;
+  pop.style.left = left + 'px';
+  pop.style.top = top + 'px';
+}
+window.addEventListener('scroll', ()=> closeInfoPops(), {passive:true});
+window.addEventListener('resize', ()=> closeInfoPops());
+function closeInfoPops(){
+  document.querySelectorAll('.info-pop').forEach(p=> p.hidden = true);
+  document.querySelectorAll('.info-btn').forEach(b=> b.setAttribute('aria-expanded','false'));
+}
+document.addEventListener('click', e=>{ if(!e.target.closest('.info-wrap')) closeInfoPops(); });
+document.addEventListener('keydown', e=>{ if(e.key === 'Escape') closeInfoPops(); });
+
+document.getElementById('backToCurrentBtn').addEventListener('click', ()=> showSeason(currentData.season.id, true));
+
+document.getElementById('hardRefreshBtn').addEventListener('click', ()=>{
+  const t = new URLSearchParams(window.location.search).get('temporada');
+  window.location.href = window.location.pathname + '?c=' + encodeURIComponent(SLUG) + '&' + (t ? 'temporada=' + encodeURIComponent(t) + '&' : '') + '_=' + Date.now();
+});
+
+document.getElementById('versionNote').textContent = `Ranking v${PAGE_VERSION} · núcleo ${MP.CORE_VERSION}`;
+(async function init(){
+  if(!SLUG){ document.querySelector('.wrap').innerHTML = MP.noClubHtml('Nenhum clube escolhido'); return; }
+  try{
+    const { config } = await MP.loadConfig(SLUG);
+    CFG = config; RULES = MP.makeRules(CFG);
+  }catch(e){ document.querySelector('.wrap').innerHTML = MP.noClubHtml('Clube não encontrado'); return; }
+  MP.applyTheme(CFG);
+  STATS_PASS_HASH = CFG.acesso.senhaEstatisticas || '';
+  STATS_MIN_ROUNDS_ALL = CFG.estatisticas.minRodadasConsistencia;
+  FORM_MIN_CAREER = CFG.estatisticas.minRodadasForma;
+  H2H_MIN_ROUNDS = CFG.estatisticas.minRodadasConfronto;
+  document.getElementById('clubName').textContent = CFG.clube.nome;
+  document.getElementById('clubSub').textContent = [CFG.clube.slogan, CFG.clube.cidade].filter(Boolean).join(' · ');
+  document.getElementById('suit1').textContent = CFG.clube.simbolo || '♠';
+  const T = CFG.temporada, P = CFG.pontuacao;
+  const hint = ['Ordenado por pontos acumulados na temporada.'];
+  if(T.descartes) hint.push(`Descartados os ${T.descartes} piores resultados de cada jogador (faltas contam como 0).`);
+  if(P.presenca) hint.push(`Inclui ${P.presenca} pt${P.presenca===1?'':'s'} por presença.`);
+  document.getElementById('geralHint').textContent = hint.join(' ');
+  document.getElementById('footLinks').innerHTML = `<a href="index.html">Portal</a><a href="${MP.clubUrl('rodada.html', SLUG)}">Lançar rodada</a><a href="${MP.clubUrl('admin.html', SLUG)}">Gestão</a>`;
+  loadPublishedData();
+})();
+</script>
+</body>
+</html>

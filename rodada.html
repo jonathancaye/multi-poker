@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Lançamento da rodada</title>
+<meta name="theme-color" content="#0F2E23">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0F2E23; --bg-deep:#0A2018; --surface:#163B2C; --surface-2:#1D4837; --border:#2C5744;
+    --text:#F5EFE0; --text-muted:#9FB8AC; --gold:#D4A62A; --gold-soft:#E8C766;
+    --silver:#C7CDD1; --bronze:#C97C4D; --red:#C1443A; --red-soft:#E8857C; --green-pos:#5CB587;
+    --f-display:'Fraunces',Georgia,serif; --f-body:'Inter',system-ui,sans-serif; --f-mono:'Space Mono',ui-monospace,monospace;
+    --radius:12px; --radius-sm:8px;
+    --gold-rgb:212,166,42; --border-rgb:44,87,68; --text-rgb:245,239,224; --muted-rgb:159,184,172;
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%; margin:0; background:var(--bg);}
+  body{
+    color:var(--text); font-family:var(--f-body); font-size:15px; overflow:hidden;
+    background:radial-gradient(900px 500px at 10% -10%, rgba(var(--gold-rgb),.07), transparent 60%), var(--bg);
+  }
+  ::selection{background:var(--gold); color:#1B1203;}
+  .app{height:100%; height:100dvh; display:flex; flex-direction:column;}
+  .gutter{padding-left:max(16px, env(safe-area-inset-left,0px)); padding-right:max(16px, env(safe-area-inset-right,0px));}
+  .inner{max-width:600px; margin:0 auto; width:100%;}
+
+  /* Cabeçalho + etapas */
+  header.bar{flex:none; background:var(--bg-deep); border-bottom:1px solid var(--border); padding-top:calc(10px + env(safe-area-inset-top,0px)); padding-bottom:9px;}
+  .bar-top{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:9px;}
+  .brand{font-family:var(--f-display); font-weight:700; font-size:16px; white-space:nowrap;}
+  .brand span{color:var(--gold-soft);}
+  .bar-right{display:flex; align-items:center; gap:8px; min-width:0;}
+  .round-chip{font-family:var(--f-mono); font-size:11px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .btn-reset{background:transparent; border:1px solid var(--border); color:var(--text-muted); font-family:var(--f-body); font-size:12px; font-weight:600; border-radius:999px; padding:5px 10px; cursor:pointer; white-space:nowrap;}
+  .btn-reset:hover{border-color:var(--red); color:var(--red-soft);}
+  .stepper{display:grid; grid-template-columns:repeat(5,1fr); gap:4px;}
+  .step{background:none; border:0; padding:0; cursor:pointer; text-align:left; color:var(--text-muted); font-family:var(--f-body);}
+  .step .line{height:4px; border-radius:2px; background:var(--surface-2); margin-bottom:5px;}
+  .step .lbl{font-size:10.5px; font-weight:600; display:flex; gap:4px; align-items:baseline; white-space:nowrap; overflow:hidden;}
+  .step .n{font-family:var(--f-mono); font-weight:700;}
+  .step.done .line{background:var(--gold);}
+  .step.cur .line{background:linear-gradient(90deg, var(--gold-soft), var(--gold));}
+  .step.cur{color:var(--text);}
+  .step.locked{opacity:.38; cursor:not-allowed;}
+  .step:focus-visible{outline:2px solid var(--gold-soft); outline-offset:3px; border-radius:4px;}
+  @media (max-width:420px){ .step .t{display:none;} }
+
+  /* Área principal: uma tela por etapa, sem rolagem da página */
+  main{flex:1; min-height:0; overflow-y:auto; padding-top:14px; padding-bottom:14px;}
+  main > .inner{height:100%;}
+  .screen{height:100%; display:flex; flex-direction:column; gap:12px; animation:fade .18s ease;}
+  .screen.free{height:auto; min-height:100%;}
+  @keyframes fade{from{opacity:.4; transform:translateY(3px);} to{opacity:1; transform:none;}}
+  @media (prefers-reduced-motion:reduce){ .screen, .sheet{animation:none;} }
+  .head{flex:none;}
+  .eyebrow{font-family:var(--f-mono); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold-soft); margin:0;}
+  h1{font-family:var(--f-display); font-size:23px; font-weight:700; margin:2px 0 3px; letter-spacing:-.01em; text-wrap:balance;}
+  .lead{color:var(--text-muted); margin:0; font-size:13.5px; line-height:1.45;}
+  .small{font-size:12.5px;}
+  .muted{color:var(--text-muted); font-size:12.5px;}
+
+  .card{flex:none; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:14px;}
+  .card.fill{flex:1; min-height:0; display:flex; flex-direction:column;}
+  .card .scroll{flex:1; min-height:0; overflow-y:auto; margin-right:-6px; padding-right:6px; -webkit-overflow-scrolling:touch;}
+  .card h2{font-family:var(--f-display); font-size:16px; font-weight:600; margin:0;}
+  .card-head{flex:none; display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:10px;}
+  .kv{display:grid; grid-template-columns:auto 1fr auto; gap:12px 14px; align-items:center;}
+  .kv .k{font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted);}
+  .kv .v{font-weight:600; font-size:15.5px; min-width:0;}
+  .kv .v.mono{font-family:var(--f-mono);}
+  .kv .v.empty{color:var(--text-muted); font-weight:500; font-style:italic;}
+  .link{background:none; border:0; color:var(--gold-soft); font-family:var(--f-body); font-size:13px; font-weight:600; cursor:pointer; padding:2px 4px; text-decoration:underline; text-underline-offset:3px; white-space:nowrap;}
+  .banner{flex:none; background:rgba(var(--gold-rgb),.1); border:1px solid var(--gold); color:var(--gold-soft); border-radius:var(--radius-sm); padding:10px 12px; font-size:13px; line-height:1.45;}
+  .banner.muted{background:rgba(var(--muted-rgb),.08); border-color:var(--border); color:var(--text-muted);}
+  .banner.success{background:rgba(92,181,135,.12); border-color:var(--green-pos); color:var(--green-pos);}
+  .resume{border-color:var(--gold); background:linear-gradient(160deg, var(--surface) 0%, var(--surface-2) 130%);}
+  .resume p{margin:6px 0 12px; color:var(--text-muted); font-size:13.5px; line-height:1.5;}
+  .resume p b{color:var(--text);}
+  .row{display:flex; gap:8px; flex-wrap:wrap;}
+
+  input[type=text], input[type=number]{
+    width:100%; background:var(--bg-deep); border:1px solid var(--border); color:var(--text);
+    border-radius:var(--radius-sm); padding:10px 12px; font-family:var(--f-body); font-size:16px; outline:none;
+  }
+  input:focus{border-color:var(--gold);}
+  input::placeholder{color:var(--text-muted); opacity:.6;}
+
+  .btn{font-family:var(--f-body); font-weight:600; font-size:14px; border-radius:var(--radius-sm); padding:10px 15px; cursor:pointer; border:1px solid var(--border); background:var(--surface-2); color:var(--text);}
+  .btn:hover{border-color:var(--gold-soft);}
+  .btn.primary{background:linear-gradient(160deg, var(--gold-soft), var(--gold)); color:#211502; border:0; font-weight:700;}
+  .btn.danger{border-color:rgba(193,68,58,.6); color:var(--red-soft); background:transparent;}
+  .btn.danger.solid{background:var(--red); color:var(--text); border-color:var(--red);}
+  .btn.ghost{background:transparent;}
+  .btn:disabled{opacity:.4; cursor:not-allowed;}
+  .btn:focus-visible{outline:2px solid var(--gold-soft); outline-offset:2px;}
+
+  .num-stepper{display:inline-flex; align-items:center; border:1px solid var(--border); border-radius:var(--radius-sm); overflow:hidden;}
+  .num-stepper button{background:var(--surface-2); border:0; color:var(--text); width:34px; height:32px; font-size:17px; cursor:pointer;}
+  .num-stepper span{font-family:var(--f-mono); font-weight:700; min-width:38px; text-align:center;}
+
+  /* Presença */
+  .count-line{display:flex; align-items:baseline; gap:10px;}
+  .count-line .big{font-family:var(--f-mono); font-size:24px; font-weight:700; color:var(--gold-soft); font-variant-numeric:tabular-nums;}
+  .grid-players{display:grid; grid-template-columns:repeat(auto-fill, minmax(160px,1fr)); gap:7px;}
+  .pcard{display:flex; align-items:center; gap:9px; padding:9px 10px; border-radius:var(--radius-sm); background:var(--bg-deep); border:1px solid var(--border); color:var(--text); cursor:pointer; font-family:var(--f-body); font-size:13.5px; font-weight:600; text-align:left; min-width:0; -webkit-tap-highlight-color:transparent;}
+  .pcard .box{flex:none; width:20px; height:20px; border-radius:6px; border:2px solid var(--border); display:grid; place-items:center; font-size:12px; color:#211502;}
+  .pcard .nm{flex:1; min-width:0; line-height:1.2; overflow-wrap:break-word;}
+  .pcard.on{border-color:var(--gold); background:rgba(var(--gold-rgb),.09);}
+  .pcard.on .box{background:var(--gold); border-color:var(--gold);}
+  .pcard.guest{border-color:rgba(201,124,77,.6); background:rgba(201,124,77,.08);}
+  .pcard.guest .box{background:var(--bronze); border-color:var(--bronze);}
+  .pcard:focus-visible{outline:2px solid var(--gold-soft); outline-offset:2px;}
+  .guest-tag{display:inline-block; padding:1px 7px; border-radius:999px; font-family:var(--f-mono); font-size:9.5px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; background:rgba(201,124,77,.16); color:var(--bronze); border:1px solid rgba(201,124,77,.5); white-space:nowrap; vertical-align:middle;}
+  .guest-add{flex:none; display:grid; grid-template-columns:1fr auto; gap:8px; margin-top:10px; padding-top:10px; border-top:1px solid var(--border);}
+  @media (max-width:400px){ .grid-players{grid-template-columns:1fr 1fr;} }
+
+  /* Conferência e sorteio */
+  .prize-card{padding:9px 12px;}
+  .prize-line{display:flex; align-items:baseline; gap:4px 9px; flex-wrap:wrap; font-family:var(--f-mono); font-size:12.5px; font-weight:700; font-variant-numeric:tabular-nums;}
+  .prize-line .pl-k{font-family:var(--f-body); font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:.04em; color:var(--text-muted);}
+  .prize-line .pz{white-space:nowrap;}
+  .prize-line .pz.first{color:var(--gold-soft);}
+  .prize-line .p{color:var(--text-muted); font-weight:400;}
+  .prize-line .pl-sp{flex:1;}
+  .prize-line .link{margin-left:auto;}
+  .prize-edit{display:grid; grid-template-columns:repeat(5,1fr); gap:6px;}
+  .prize-edit label{display:block; font-family:var(--f-mono); font-size:10px; color:var(--text-muted); margin-bottom:3px; text-align:center;}
+  .prize-edit input{padding:7px 4px; text-align:center; font-family:var(--f-mono); font-size:16px;}
+  @media (max-width:400px){ .prize-edit{grid-template-columns:repeat(3,1fr);} }
+  .draw-ctrl{flex:none; display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;}
+  .numlist{margin:0; padding:0; list-style:none; columns:2; column-gap:16px; font-size:14px;}
+  .numlist li{display:grid; grid-template-columns:26px 1fr; gap:4px; align-items:baseline; padding:4px 0; border-bottom:1px solid rgba(var(--border-rgb),.5); break-inside:avoid;}
+  .numlist .i{font-family:var(--f-mono); font-size:11.5px; color:var(--text-muted); text-align:right; padding-right:4px;}
+  @media (max-width:360px){ .numlist{columns:1;} }
+  .tables{display:grid; grid-template-columns:repeat(auto-fit, minmax(270px,1fr)); gap:8px;}
+  .table-block{background:var(--bg-deep); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+  .table-block h3{font-family:var(--f-display); font-size:14.5px; margin:0 0 6px; color:var(--gold-soft); font-weight:600;}
+  .table-block h3 small{font-family:var(--f-body); font-size:11.5px; color:var(--text-muted); font-weight:500;}
+  .table-block ol{margin:0; padding:0; list-style:none; font-size:13.5px; display:flex; flex-direction:column;}
+  .table-block li{display:grid; grid-template-columns:62px 1fr; gap:6px; align-items:baseline; padding:2px 0; border-bottom:1px dashed rgba(var(--border-rgb),.5);}
+  .table-block li:last-child{border-bottom:0;}
+  .table-block li > span:last-child{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .table-block li .s{font-family:var(--f-mono); font-size:11px; color:var(--text-muted);}
+  .table-block li .s.key{color:var(--gold-soft); font-weight:700;}
+
+  /* Partida */
+  .live{flex:none; display:grid; grid-template-columns:repeat(3,1fr); gap:8px;}
+  .live .cell{background:var(--bg-deep); border:1px solid var(--border); border-radius:var(--radius-sm); padding:8px 11px; min-width:0;}
+  .live .k{font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted);}
+  .live .v{font-family:var(--f-mono); font-weight:700; font-size:19px; margin-top:1px; font-variant-numeric:tabular-nums; white-space:nowrap;}
+  .live .v.gold{color:var(--gold-soft);}
+  .alive-list{display:grid; grid-template-columns:repeat(auto-fill, minmax(240px,1fr)); gap:7px;}
+  .alive{display:grid; grid-template-columns:1fr auto; gap:8px; align-items:center; background:var(--bg-deep); border:1px solid var(--border); border-radius:var(--radius-sm); padding:7px 7px 7px 12px;}
+  .alive .nm{font-weight:600; font-size:14px; min-width:0;}
+  .alive .mesa{display:block; font-family:var(--f-mono); font-size:10.5px; color:var(--text-muted); font-weight:400;}
+  .btn.elim{background:transparent; border-color:rgba(193,68,58,.6); color:var(--red-soft); padding:8px 12px; font-size:13px; min-height:40px;}
+  .btn.elim:hover{background:rgba(193,68,58,.12);}
+  .last-out{flex:none; display:flex; align-items:center; justify-content:space-between; gap:10px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:10px 14px; font-size:13.5px;}
+  .last-out .lbl{font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); display:block;}
+  .last-out .acts{display:flex; gap:2px; flex:none;}
+  .out-list{margin:0; padding:0; list-style:none;}
+  .out-list li{display:grid; grid-template-columns:34px 1fr auto; gap:8px; padding:7px 0; border-bottom:1px solid rgba(var(--border-rgb),.5); font-size:13.5px; align-items:baseline;}
+  .out-list .pos{font-family:var(--f-mono); font-weight:700; color:var(--text-muted);}
+  .out-list .tm{font-family:var(--f-mono); font-size:12px; color:var(--text-muted);}
+
+  /* Fechamento */
+  table.final{width:100%; border-collapse:collapse; font-size:13.5px;}
+  .final th{position:sticky; top:0; background:var(--surface); text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); font-weight:600; padding:0 5px 7px; border-bottom:1px solid var(--border);}
+  .final td{padding:6px 5px; border-bottom:1px solid rgba(var(--border-rgb),.5); vertical-align:middle;}
+  .final .num{text-align:right; font-family:var(--f-mono); font-variant-numeric:tabular-nums;}
+  .final .prize-v{color:var(--green-pos); font-weight:700;}
+  .chip-badge{width:26px; height:26px; border-radius:50%; display:grid; place-items:center; font-family:var(--f-mono); font-weight:700; font-size:11.5px; border:2px dashed rgba(var(--text-rgb),.3); background:var(--surface-2);}
+  .chip-badge.rank-1{background:radial-gradient(circle at 35% 30%, var(--gold-soft), var(--gold) 75%); color:#1B1203;}
+  .chip-badge.rank-2{background:radial-gradient(circle at 35% 30%, #EDEFF1, var(--silver) 75%); color:#1B1203;}
+  .chip-badge.rank-3{background:radial-gradient(circle at 35% 30%, #E3A87A, var(--bronze) 75%); color:#2A1200;}
+  .done-card{flex:1; display:flex; flex-direction:column; justify-content:center; text-align:center; padding:24px 18px;}
+  .done-card .suit{font-family:var(--f-display); font-size:34px; color:var(--gold-soft);}
+  .done-card h2{font-size:21px; margin:6px 0;}
+  .done-card .row{justify-content:center; margin-top:16px;}
+
+  /* Rodapé com a ação principal */
+  .dock{flex:none; background:var(--bg-deep); border-top:1px solid var(--border); padding-top:10px; padding-bottom:calc(8px + env(safe-area-inset-bottom,0px));}
+  .dock .inner.actions{display:flex; gap:10px; align-items:center; min-height:46px;}
+  .dock .btn.primary, .dock .btn.grow{flex:1; padding:13px 16px; font-size:15px;}
+  .dock .hint{font-size:12.5px; color:var(--text-muted); flex:1; line-height:1.4;}
+  .ver{font-family:var(--f-mono); font-size:9.5px; color:var(--text-muted); opacity:.6; text-align:center; margin-top:6px;}
+
+  /* Folhas de confirmação */
+  .sheet-bg{position:fixed; inset:0; background:rgba(0,0,0,.66); z-index:20; display:flex; align-items:flex-end; justify-content:center;}
+  .sheet{width:100%; max-width:600px; background:var(--surface); border:1px solid var(--border); border-bottom:0; border-radius:16px 16px 0 0;
+    padding-top:18px; padding-bottom:calc(18px + env(safe-area-inset-bottom,0px)); padding-left:max(18px, env(safe-area-inset-left,0px)); padding-right:max(18px, env(safe-area-inset-right,0px));
+    max-height:85%; overflow:auto; animation:up .18s ease;}
+  @keyframes up{from{transform:translateY(20px); opacity:.5;} to{transform:none; opacity:1;}}
+  .sheet h3{font-family:var(--f-display); font-size:19px; margin:0 0 4px;}
+  .sheet p{color:var(--text-muted); font-size:13.5px; margin:0 0 14px; line-height:1.45;}
+  .sheet p b{color:var(--text);}
+  .pick{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px;}
+  .pick button{text-align:left; min-height:46px;}
+
+  .toast{position:fixed; left:50%; bottom:calc(84px + env(safe-area-inset-bottom,0px)); transform:translateX(-50%); background:var(--surface-2); border:1px solid var(--gold); color:var(--text); padding:10px 16px; border-radius:10px; font-size:13.5px; font-weight:600; z-index:30; opacity:0; pointer-events:none; transition:opacity .2s; max-width:calc(100% - 32px); text-align:center;}
+  .toast.show{opacity:1;}
+
+  /* Multi-clube: blinds, rebuy/add-on, senha */
+  .blinds{flex:none; background:linear-gradient(160deg, var(--surface) 0%, var(--surface-2) 130%); border:1px solid var(--border); border-radius:var(--radius); padding:10px 12px; display:grid; grid-template-columns:1fr auto; gap:4px 10px; align-items:center;}
+  .blinds.paused{border-color:var(--gold);}
+  .blinds .lv{font-family:var(--f-mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--gold-soft);}
+  .blinds .bb{font-family:var(--f-mono); font-weight:700; font-size:26px; font-variant-numeric:tabular-nums; line-height:1.1; white-space:nowrap;}
+  .blinds .bb small{font-size:12px; color:var(--text-muted); font-weight:400;}
+  .blinds .cd{font-family:var(--f-mono); font-weight:700; font-size:26px; color:var(--gold-soft); text-align:right; font-variant-numeric:tabular-nums;}
+  .blinds .nx{font-size:12px; color:var(--text-muted);}
+  .blinds .ctl{display:flex; gap:6px; justify-content:flex-end;}
+  .blinds .ctl button{background:var(--bg-deep); border:1px solid var(--border); color:var(--text); border-radius:8px; width:36px; height:32px; font-size:14px; cursor:pointer;}
+  .blinds .ctl button:hover{border-color:var(--gold-soft);}
+  .blinds .bar{grid-column:1 / -1; height:4px; border-radius:2px; background:var(--bg-deep); overflow:hidden;}
+  .blinds .bar div{height:100%; background:linear-gradient(90deg, var(--gold-soft), var(--gold));}
+  .alive .tags{display:flex; gap:4px; margin-top:3px; flex-wrap:wrap;}
+  .rb-tag{font-family:var(--f-mono); font-size:10px; font-weight:700; padding:1px 6px; border-radius:6px; border:1px solid rgba(var(--gold-rgb),.45); color:var(--gold-soft);}
+  .alive .acts2{display:flex; gap:6px; align-items:center;}
+  .btn.addon{padding:8px 10px; font-size:12px; min-height:40px;}
+  .btn.addon.on{border-color:var(--gold); color:var(--gold-soft); background:rgba(var(--gold-rgb),.1);}
+  .pool-line{display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; font-size:12.5px; color:var(--text-muted);}
+  .pool-line b{color:var(--text); font-family:var(--f-mono);}
+  .gate{max-width:360px; margin:10vh auto 0; text-align:center;}
+  .gate h1{margin-bottom:6px;}
+  .gate form{display:flex; gap:8px; margin-top:16px;}
+  .gate .err{color:var(--red-soft); font-size:13px; min-height:18px; margin-top:8px;}
+</style>
+<script src="assets/core.js"></script>
+</head>
+<body>
+<div class="app">
+  <header class="bar gutter"><div class="inner">
+    <div class="bar-top">
+      <div class="brand"><span id="brandName">&nbsp;</span> <span>· Rodada</span></div>
+      <div class="bar-right">
+        <span class="round-chip" id="roundChip"></span>
+        <button class="btn-reset" id="btnReset" type="button" hidden>⟲ Reiniciar</button>
+      </div>
+    </div>
+    <nav class="stepper" id="stepper" aria-label="Etapas da rodada"></nav>
+  </div></header>
+  <main class="gutter" id="mainArea"><div class="inner" id="main"></div></main>
+  <div class="dock gutter"><div class="inner actions" id="dock"></div><div class="ver" id="versionNote"></div></div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<div id="overlay"></div>
+
+<script>
+/* ---------- Versão deste arquivo (atualizar manualmente a cada upload) ---------- */
+const PAGE_VERSION = '0.1.0';
+
+/* ---------- Clube e regras (config.json do clube; ver assets/core.js) ---------- */
+const SLUG = MP.slugFromUrl();
+const BASE = SLUG ? MP.clubBase(SLUG) : '';
+const ST = MP.store(SLUG || '_');
+let CFG = MP.normalizeConfig({});
+let RULES = MP.makeRules(CFG);
+let MAX_PER_TABLE = 9;
+let BUY_IN = 100;
+const STEPS = ['Abertura','Presença','Sorteio','Partida','Fechamento'];
+const REB = () => CFG.mesa.rebuy, ADD = () => CFG.mesa.addon, BLD = () => CFG.mesa.blinds;
+
+/* ---------- Estado (salvo neste aparelho, separado por clube) ---------- */
+const STORAGE_KEY = 'rodada';
+
+function normalizePlayerEntry(entry){
+  if(typeof entry === 'string'){
+    const name = entry.trim();
+    return name ? { name, guest:false, present:false } : null;
+  }
+  if(entry && typeof entry === 'object' && typeof entry.name === 'string' && entry.name.trim()){
+    return { name: entry.name.trim(), guest: !!entry.guest, present: !!entry.present };
+  }
+  return null;
+}
+function blankRound(keep){
+  return {
+    step:1, maxStep:1, closed:false, exportJson:null, search:'',
+    participants: (keep.publishedPlayers||[]).map(name=>({name, guest:false, present:false})),
+    tables:null, roundPlayers:[], eliminatedOrder:[], elimInfo:{}, startedAt:null, endedAt:null,
+    round:{ roundNumber:null, buyIn:BUY_IN, prizes:null, prizesFor:null, prizesManual:false, organizer:null },
+    rebuys:{}, addons:{}, rebuyClosed:false, clock:{ pausedAt:null, pausedMs:0, shiftMs:0 },
+    publishedPlayers: keep.publishedPlayers || [], roundDates: keep.roundDates || {},
+    roundOrganizers: keep.roundOrganizers || {}, seasonLabel: keep.seasonLabel || '', nextRound: keep.nextRound || null
+  };
+}
+function loadState(){
+  let raw = null;
+  raw = ST.get(STORAGE_KEY, null);
+  const s = Object.assign(blankRound({}), raw && typeof raw === 'object' ? raw : {});
+  if(!Array.isArray(s.participants)) s.participants = [];
+  s.participants = s.participants.map(normalizePlayerEntry).filter(Boolean);
+  if(!Array.isArray(s.roundPlayers)) s.roundPlayers = [];
+  s.roundPlayers = s.roundPlayers.map(normalizePlayerEntry).filter(Boolean).map(p=>({name:p.name, guest:p.guest}));
+  if(!Array.isArray(s.eliminatedOrder)) s.eliminatedOrder = [];
+  s.eliminatedOrder = s.eliminatedOrder.filter(n=>typeof n === 'string' && n.trim());
+  if(!Array.isArray(s.publishedPlayers)) s.publishedPlayers = [];
+  s.publishedPlayers = s.publishedPlayers.filter(n=>typeof n === 'string' && n.trim());
+  if(!s.round || typeof s.round !== 'object') s.round = {};
+  if(!s.elimInfo || typeof s.elimInfo !== 'object' || Array.isArray(s.elimInfo)) s.elimInfo = {};
+  if(typeof s.startedAt !== 'string') s.startedAt = null;
+  if(typeof s.endedAt !== 'string') s.endedAt = null;
+  if(!s.roundDates || typeof s.roundDates !== 'object') s.roundDates = {};
+  if(!s.roundOrganizers || typeof s.roundOrganizers !== 'object') s.roundOrganizers = {};
+  if(!Array.isArray(s.tables)) s.tables = null;
+  if(!s.rebuys || typeof s.rebuys !== 'object' || Array.isArray(s.rebuys)) s.rebuys = {};
+  if(!s.addons || typeof s.addons !== 'object' || Array.isArray(s.addons)) s.addons = {};
+  if(!s.clock || typeof s.clock !== 'object') s.clock = { pausedAt:null, pausedMs:0, shiftMs:0 };
+  s.rebuyClosed = !!s.rebuyClosed;
+  if(typeof s.round.buyIn !== 'number' || !(s.round.buyIn > 0)) s.round.buyIn = BUY_IN;
+  if(!Array.isArray(s.round.prizes)) s.round.prizes = s.roundPlayers.length ? [0] : null;
+  // estado salvo pela versão antiga (sem etapas): rodada em andamento vai direto para a partida
+  const legacy = !!raw && typeof raw === 'object' && !('step' in raw);
+  if(legacy || !Number.isInteger(s.step) || s.step < 1 || s.step > 5){
+    if(s.roundPlayers.length > 0){
+      s.step = s.maxStep = 4;
+      if(s.round.prizes) s.round.prizesFor = s.roundPlayers.length;
+    } else { s.step = 1; s.maxStep = 1; }
+  }
+  if(!Number.isInteger(s.maxStep) || s.maxStep < s.step) s.maxStep = s.step;
+  if(s.roundPlayers.length > 0 && s.roundPlayers.length - s.eliminatedOrder.length <= 1 && s.step === 4){ s.step = 5; s.maxStep = 5; }
+  s.search = '';
+  return s;
+}
+let resumeOffer = null;
+let state = null;
+function saveState(){
+  // enquanto a oferta de "continuar" está na tela, guarda a etapa real (recarregar a página não perde a rodada)
+  const toSave = resumeOffer ? Object.assign({}, state, {step: resumeOffer.step}) : state;
+  if(!ST.set(STORAGE_KEY, toSave)) console.error('Erro ao salvar');
+}
+
+/* Ao abrir a página: partida em andamento abre direto nela; etapa 2/3 pergunta se continua */
+function checkResume(){
+  if(state.step >= 2 && state.step <= 3 && !started()){
+    resumeOffer = { step: state.step, roundNumber: state.round.roundNumber, present: presentList().length };
+    state.step = 1;
+  }
+}
+
+/* ---------- Helpers ---------- */
+function isoLocal(d){
+  d = d || new Date();
+  const pad = n => String(Math.abs(n)).padStart(2,'0');
+  const off = -d.getTimezoneOffset();
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
+    + `${off>=0?'+':'-'}${pad(Math.floor(Math.abs(off)/60))}:${pad(Math.abs(off)%60)}`;
+}
+function todayIso(){ return isoLocal().slice(0,10); }
+function hhmm(iso){ const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'}); }
+function elapsedTxt(fromIso, toIso){
+  if(!fromIso) return '0:00';
+  const ms = new Date(toIso || Date.now()) - new Date(fromIso);
+  if(!(ms >= 0)) return '0:00';
+  const m = Math.floor(ms/60000);
+  return `${Math.floor(m/60)}:${String(m%60).padStart(2,'0')}`;
+}
+function fmtDateBR(iso){ const p = String(iso||'').split('-'); return p.length===3 ? `${p[2]}/${p[1]}/${p[0]}` : ''; }
+function brl(v){ return MP.money(v, CFG.premiacao.moeda); }
+function escapeHtml(str){ return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+const cmp = (a,b)=>a.localeCompare(b,'pt-BR');
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(showToast._t); showToast._t = setTimeout(()=>t.classList.remove('show'), 2400);
+}
+function chipBadge(pos){ return `<div class="chip-badge ${pos<=3?'rank-'+pos:''}">${pos}</div>`; }
+function plural(n, s, p){ return n===1 ? s : p; }
+
+/* ---------- Dados da rodada ---------- */
+function started(){ return state.roundPlayers.length > 0; }
+function members(){ return state.participants.filter(p=>!p.guest); }
+function guests(){ return state.participants.filter(p=>p.guest); }
+function presentList(){ return state.participants.filter(p=>p.present); }
+function sortedPresent(){
+  const ps = presentList();
+  return ps.filter(p=>!p.guest).sort((a,b)=>cmp(a.name,b.name)).concat(ps.filter(p=>p.guest).sort((a,b)=>cmp(a.name,b.name)));
+}
+function alivePlayers(){ return state.roundPlayers.filter(p=>!state.eliminatedOrder.includes(p.name)); }
+function getPositionLabels(n){
+  if(n <= 1) return ['Dealer'];
+  if(n === 2) return ['Dealer/SB','BB'];
+  const labels = ['Dealer','SB','BB'];
+  for(let i=1;i<=n-3;i++) labels.push('Pos. '+i);
+  return labels;
+}
+function shuffle(arr){
+  const a = [...arr];
+  for(let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]] = [a[j],a[i]]; }
+  return a;
+}
+function drawTables(){
+  const ps = shuffle(presentList());
+  const numTables = Math.max(1, Math.ceil(ps.length / MAX_PER_TABLE));
+  const tables = Array.from({length:numTables}, ()=>[]);
+  ps.forEach((p,i)=> tables[i % numTables].push(p));
+  // a ordem embaralhada já é a ordem dos assentos: o 1º é o Dealer, depois SB, BB, Pos. 1…
+  state.tables = tables.map(t=>{ const labels = getPositionLabels(t.length); return t.map((p,i)=>({name:p.name, guest:p.guest, label:labels[i]})); });
+}
+function nRebuys(){ return Object.values(state.rebuys).reduce((t,v)=>t+(Number(v)||0),0); }
+function nAddons(){ return Object.values(state.addons).filter(Boolean).length; }
+function playerCount(){ return started() ? state.roundPlayers.length : presentList().length; }
+function currentPool(){ return RULES.poolFor(playerCount(), nRebuys(), nAddons(), state.round.buyIn); }
+function prizeSum(){ return (state.round.prizes||[]).reduce((t,v)=>t+(Number(v)||0),0); }
+function ensurePrizes(){
+  const n = presentList().length;
+  if(state.round.prizesFor === n && Array.isArray(state.round.prizes)) return;
+  state.round.prizes = RULES.prizesFor(n, RULES.poolFor(n, 0, 0, state.round.buyIn));
+  state.round.prizesFor = n; state.round.prizesManual = false;
+}
+/* rebuy/add-on mudaram o pote: recalcula os prêmios (se não foram ajustados à mão) */
+function recalcPrizes(force){
+  if(state.round.prizesManual && !force) return;
+  state.round.prizes = RULES.prizesFor(playerCount(), currentPool());
+  if(force) state.round.prizesManual = false;
+}
+function prizesOk(){ return Array.isArray(state.round.prizes) && state.round.prizes.some(v=>v>0) && state.round.buyIn > 0; }
+
+/* ---------- Relógio de blinds (tempo efetivo = desde o início − pausas + ajustes) ---------- */
+function clockMs(){
+  if(!state.startedAt) return 0;
+  const c = state.clock, now = Date.now();
+  const paused = (Number(c.pausedMs)||0) + (c.pausedAt ? now - c.pausedAt : 0);
+  return Math.max(0, now - new Date(state.startedAt).getTime() - paused + (Number(c.shiftMs)||0));
+}
+function blindNow(){ return BLD().ativo ? RULES.blindAt(clockMs()) : null; }
+function fmtLeft(ms){ if(!isFinite(ms)) return '—'; const t = Math.max(0, Math.ceil(ms/1000)); return `${Math.floor(t/60)}:${String(t%60).padStart(2,'0')}`; }
+function fmtChips(v){ return (Number(v)||0).toLocaleString('pt-BR'); }
+function levelTxt(l){ return !l ? '' : l.pausa ? 'Intervalo' : `${fmtChips(l.sb)} / ${fmtChips(l.bb)}${l.ante?` <small>ante ${fmtChips(l.ante)}</small>`:''}`; }
+function rebuyOpen(){
+  if(!REB().ativo || state.rebuyClosed) return false;
+  const lim = Number(REB().ateNivel)||0;
+  if(lim > 0){ const b = blindNow(); if(b && b.number > lim) return false; }
+  return true;
+}
+function canRebuy(name){
+  if(!rebuyOpen()) return false;
+  const lim = Number(REB().limitePorJogador)||0;
+  return !(lim > 0 && (state.rebuys[name]||0) >= lim);
+}
+let lastBlindIdx = null;
+function beep(){
+  try{
+    const ctx = beep.ctx || (beep.ctx = new (window.AudioContext || window.webkitAudioContext)());
+    [0, .25, .5].forEach(t=>{ const o = ctx.createOscillator(), g = ctx.createGain(); o.frequency.value = 880; g.gain.value = .12;
+      o.connect(g); g.connect(ctx.destination); o.start(ctx.currentTime + t); o.stop(ctx.currentTime + t + .15); });
+  }catch(e){}
+}
+// presença mudou: sorteio e premiação precisam ser refeitos
+function invalidateDraw(){ state.tables = null; state.maxStep = Math.min(state.maxStep, 2); }
+
+function computeStandings(){
+  const alive = alivePlayers();
+  const out = [];
+  if(alive.length === 1) out.push(alive[0]);
+  for(let i=state.eliminatedOrder.length-1;i>=0;i--){
+    const name = state.eliminatedOrder[i];
+    out.push(state.roundPlayers.find(p=>p.name===name) || {name, guest:false});
+  }
+  return out;
+}
+function roundIsComplete(){ return state.roundPlayers.length >= 2 && state.eliminatedOrder.length === state.roundPlayers.length - 1; }
+
+/* ---------- Navegação ---------- */
+function canOpen(n){
+  if(state.closed) return n === 5;
+  if(started()) return n === 4 || (n === 5 && roundIsComplete());
+  if(resumeOffer) return n === 1;
+  return n <= state.maxStep && n <= 3;
+}
+function go(n){ state.step = n; state.maxStep = Math.max(state.maxStep, n); render(); }
+
+function renderHeader(){
+  const el = document.getElementById('stepper');
+  el.innerHTML = STEPS.map((t,i)=>{
+    const n = i+1;
+    const cls = n === state.step ? 'cur' : ((n < state.step || state.closed) ? 'done' : '');
+    const lock = n !== state.step && !canOpen(n);
+    return `<button class="step ${cls} ${lock?'locked':''}" data-n="${n}" type="button" aria-current="${n===state.step?'step':'false'}" ${lock?'aria-disabled="true"':''}>
+      <div class="line"></div><div class="lbl"><span class="n">${lock && n > state.step ? '🔒' : n}</span><span class="t">${t}</span></div></button>`;
+  }).join('');
+  el.querySelectorAll('.step').forEach(b=> b.addEventListener('click', ()=>{
+    const n = +b.dataset.n;
+    if(n === state.step) return;
+    if(canOpen(n)) return go(n);
+    if(state.closed) showToast('Rodada encerrada. Envie o arquivo ou comece uma nova rodada.');
+    else if(started() && n < 4) showToast('A partida já começou: presença e sorteio não podem mais ser alterados.');
+    else if(started() && n === 5) showToast('O fechamento libera quando sobrar 1 jogador.');
+    else if(resumeOffer) showToast('Escolha continuar ou descartar a rodada salva.');
+    else showToast(`Conclua a etapa ${state.step} primeiro.`);
+  }));
+  const rn = state.round.roundNumber;
+  document.getElementById('roundChip').textContent = rn ? `Rodada ${rn}` : '';
+  document.getElementById('roundChip').title = state.seasonLabel || '';
+  const rb = document.getElementById('btnReset');
+  rb.hidden = state.closed || (state.step === 1 && !started());
+}
+function dock(html){ document.getElementById('dock').innerHTML = html; }
+
+/* ---------- Reiniciar ---------- */
+function freshRound(){
+  state = blankRound(state);
+  resumeOffer = null;
+  saveState();
+  loadPublishedData();
+}
+document.getElementById('btnReset').addEventListener('click', ()=>{
+  const ne = state.eliminatedOrder.length;
+  const msg = started()
+    ? `A partida está em andamento com <b>${ne} ${plural(ne,'eliminação registrada','eliminações registradas')}</b>. Reiniciar apaga presença, sorteio, eliminações e horários, e volta para a etapa 1. Não dá para desfazer.`
+    : 'Volta para a etapa 1 e apaga a lista de presença, os convidados e o sorteio.';
+  confirmSheet(started() ? 'Reiniciar a rodada inteira?' : 'Reiniciar a rodada?', msg, started() ? 'Sim, apagar e reiniciar' : 'Reiniciar', ()=>{
+    freshRound(); render(); showToast('Rodada reiniciada.');
+  }, 'solid');
+});
+
+/* ---------- 1. Abertura ---------- */
+function calendarOrg(){ const rn = state.round.roundNumber; return rn ? (state.roundOrganizers[rn] || null) : null; }
+function currentOrg(){ return state.round.organizer || calendarOrg(); }
+function s1(){
+  const rn = state.round.roundNumber;
+  const date = rn ? state.roundDates[rn] : null;
+  const org = currentOrg(), cal = calendarOrg();
+  const changed = !!state.round.organizer && state.round.organizer !== cal;
+  let warn = '';
+  if(!rn) warn = `<div class="banner muted">Buscando a próxima rodada no site… É preciso internet para abrir uma rodada nova.</div>`;
+  else if(date && date !== todayIso()) warn = `<div class="banner">A rodada ${rn} está marcada para <b>${fmtDateBR(date)}</b>, e hoje é ${fmtDateBR(todayIso())}.</div>`;
+  const resume = resumeOffer ? `<div class="card resume">
+      <h2>Rodada em andamento neste aparelho</h2>
+      <p><b>Rodada ${resumeOffer.roundNumber || '—'}</b> · parada na etapa ${resumeOffer.step} (${STEPS[resumeOffer.step-1]}) · ${resumeOffer.present} ${plural(resumeOffer.present,'jogador marcado','jogadores marcados')}.</p>
+      <div class="row"><button class="btn primary" id="btnResume" type="button">Continuar de onde parou</button><button class="btn danger" id="btnDiscard" type="button">Descartar</button></div></div>` : '';
+  return `<div class="screen free">
+    <div class="head"><p class="eyebrow">Etapa 1 de 5</p><h1>Abertura da rodada</h1>
+      <p class="lead">Confira os dados da rodada de hoje. Rodada e data vêm do calendário do site; só a organização pode ser trocada aqui.</p></div>
+    ${resume}
+    <div class="card"><div class="card-head"><h2>Dados da rodada</h2></div>
+      <div class="kv">
+        <span class="k">Rodada</span><span class="v mono">${rn || '—'}</span><span></span>
+        <span class="k">Data</span><span class="v mono ${date?'':'empty'}">${date ? fmtDateBR(date) : 'sem data no calendário'}</span><span></span>
+        <span class="k">Organização</span><span class="v ${org?'':'empty'}">${org ? escapeHtml(org) : 'não definida'}${changed ? `<span class="muted" style="display:block; font-weight:400; font-size:11.5px;">no calendário: ${cal ? escapeHtml(cal) : 'não definida'}</span>` : ''}</span>
+        <button class="link" id="orgEdit" type="button" ${rn && !resumeOffer ? '' : 'hidden'}>trocar</button>
+        <span class="k">Buy-in</span><span class="v mono">${brl(state.round.buyIn)}</span><span></span>
+      </div>
+      ${changed ? '<p class="lead small" style="margin-top:12px;">A troca vai no arquivo da rodada e atualiza a organização no painel de gestão ao importar.</p>' : ''}
+    </div>
+    ${warn}
+  </div>`;
+}
+function bind1(){
+  if(resumeOffer){
+    dock(`<span class="hint">Escolha continuar ou descartar a rodada salva antes de abrir uma nova.</span>`);
+    document.getElementById('btnResume').onclick = ()=>{ const st = resumeOffer.step; resumeOffer = null; go(st); showToast('Rodada retomada.'); };
+    document.getElementById('btnDiscard').onclick = ()=> confirmSheet('Descartar a rodada salva?', 'A lista de presença, os convidados e o sorteio salvos neste aparelho serão apagados.', 'Descartar', ()=>{
+      freshRound(); render(); showToast('Rodada descartada.');
+    }, 'solid');
+  } else {
+    const ok = !!state.round.roundNumber;
+    dock(`<button class="btn primary" id="next" type="button" ${ok?'':'disabled'}>Confirmar e continuar →</button>`);
+    document.getElementById('next').onclick = ()=> go(2);
+  }
+  document.getElementById('orgEdit').onclick = orgSheet;
+}
+function orgSheet(){
+  const cur = currentOrg(), cal = calendarOrg();
+  const names = members().map(p=>p.name).sort(cmp);
+  openSheet(`<h3>Quem organiza a rodada ${state.round.roundNumber}?</h3>
+    <p>${cal ? `No calendário: <b>${escapeHtml(cal)}</b>.` : 'O calendário não tem organização definida para esta rodada.'}</p>
+    <div class="pick">${names.map(n=>`<button class="btn ${n===cur?'primary':''}" type="button" data-org="${escapeHtml(n)}">${escapeHtml(n)}</button>`).join('')}</div>
+    <button class="btn ghost" id="cancelSheet" type="button" style="width:100%;">Cancelar</button>`);
+  document.querySelectorAll('#overlay [data-org]').forEach(b=> b.addEventListener('click', ()=>{
+    const n = b.dataset.org;
+    state.round.organizer = (n === cal) ? null : n;
+    closeSheet(); render(); showToast(`Organização: ${n}.`);
+  }));
+  document.getElementById('cancelSheet').onclick = closeSheet;
+}
+
+/* ---------- 2. Presença ---------- */
+function s2(){
+  const ms = members().sort((a,b)=>cmp(a.name,b.name));
+  const gs = guests().sort((a,b)=>cmp(a.name,b.name));
+  const nM = members().filter(p=>p.present).length, nG = gs.length, total = nM + nG;
+  return `<div class="screen">
+    <div class="head"><p class="eyebrow">Etapa 2 de 5</p><h1>Quem está jogando hoje?</h1>
+      <p class="lead">Toque em cada jogador presente. Quem não está na lista entra como convidado, no fim da tela.</p></div>
+    <div class="card fill">
+      <div class="card-head"><div class="count-line"><span class="big" id="countBig">${total}</span><span class="muted" id="countSub">${nM} ${plural(nM,'membro','membros')}${nG?` + ${nG} conv.`:''}</span></div>
+        <button class="link" id="markAll" type="button">${nM ? 'desmarcar todos' : 'marcar todos'}</button></div>
+      <div class="scroll"><div class="grid-players">
+        ${ms.map(p=>`<button class="pcard ${p.present?'on':''}" type="button" data-n="${escapeHtml(p.name)}" aria-pressed="${p.present}"><span class="box">${p.present?'✓':''}</span><span class="nm">${escapeHtml(p.name)}</span></button>`).join('')}
+        ${gs.map(p=>`<button class="pcard guest" type="button" data-g="${escapeHtml(p.name)}" title="Tocar para remover"><span class="box">✓</span><span class="nm">${escapeHtml(p.name)}</span><span class="guest-tag">Conv.</span></button>`).join('')}
+      </div>
+      ${members().length === 0 ? '<p class="lead small" style="padding:8px 0;">A lista oficial ainda não foi carregada do site. Verifique a internet e use Reiniciar, ou adicione os jogadores como convidados.</p>' : ''}
+      </div>
+      <div class="guest-add"><input type="text" id="guestName" placeholder="+ Convidado (não pontua, recebe prêmio)" autocomplete="off"><button class="btn" id="addGuest" type="button">Adicionar</button></div>
+    </div></div>`;
+}
+function bind2(){
+  const refreshDock = ()=>{
+    const total = presentList().length;
+    dock(`<button class="btn primary" id="next" type="button" ${total<2?'disabled':''}>${total<2 ? 'Marque pelo menos 2 jogadores' : `Confirmar ${total} jogadores →`}</button>`);
+    document.getElementById('next').onclick = ()=>{ ensurePrizes(); go(3); };
+  };
+  refreshDock();
+  // marcar/desmarcar atualiza só o cartão, sem redesenhar a lista (a rolagem fica onde está)
+  document.querySelectorAll('.pcard[data-n]').forEach(b=> b.addEventListener('click', ()=>{
+    const p = state.participants.find(x=>x.name===b.dataset.n && !x.guest);
+    if(!p) return;
+    p.present = !p.present; invalidateDraw(); saveState();
+    b.classList.toggle('on', p.present); b.setAttribute('aria-pressed', p.present);
+    b.querySelector('.box').textContent = p.present ? '✓' : '';
+    const nM = members().filter(x=>x.present).length, nG = guests().length;
+    document.getElementById('countBig').textContent = nM + nG;
+    document.getElementById('countSub').textContent = `${nM} ${plural(nM,'membro','membros')}${nG?` + ${nG} conv.`:''}`;
+    document.getElementById('markAll').textContent = nM ? 'desmarcar todos' : 'marcar todos';
+    renderHeader(); refreshDock();
+  }));
+  document.querySelectorAll('.pcard[data-g]').forEach(b=> b.addEventListener('click', ()=>{
+    const name = b.dataset.g;
+    confirmSheet(`Remover ${escapeHtml(name)}?`, 'O convidado sai da lista de presença.', 'Remover', ()=>{
+      state.participants = state.participants.filter(x=>!(x.guest && x.name===name)); invalidateDraw(); render();
+    });
+  }));
+  document.getElementById('markAll').onclick = ()=>{
+    const anyOn = members().some(p=>p.present);
+    members().forEach(p=>p.present = !anyOn); invalidateDraw(); render();
+  };
+  const add = ()=>{
+    const inp = document.getElementById('guestName');
+    const v = inp.value.trim().replace(/\s+/g,' ');
+    if(!v) return;
+    const off = members().find(m=>m.name.toLowerCase()===v.toLowerCase());
+    if(off){ off.present = true; showToast(`${off.name} está na lista oficial e foi marcado como membro.`); }
+    else if(guests().some(g=>g.name.toLowerCase()===v.toLowerCase())){ showToast('Esse convidado já foi adicionado.'); return; }
+    else state.participants.push({name:v, guest:true, present:true});
+    invalidateDraw(); render();
+    const sc = document.querySelector('#main .scroll'); if(sc) sc.scrollTop = sc.scrollHeight;
+    document.getElementById('guestName').focus();
+  };
+  document.getElementById('addGuest').onclick = add;
+  document.getElementById('guestName').addEventListener('keydown', e=>{ if(e.key === 'Enter'){ e.preventDefault(); add(); } });
+}
+
+/* ---------- 3. Conferência e sorteio ---------- */
+function s3(){
+  ensurePrizes();
+  const ps = sortedPresent(); const nG = ps.filter(p=>p.guest).length; const nT = Math.ceil(ps.length/MAX_PER_TABLE);
+  const pr = state.round.prizes;
+  const inTable = CFG.premiacao.modo !== 'tabela' || RULES.prizeInTable(ps.length);
+  const pool = currentPool(), diff = prizeSum() - pool;
+  const prizeView = state.editPrizes ? `<div class="prize-edit">
+      <div><label for="pBuy">Buy-in</label><input type="number" inputmode="numeric" id="pBuy" value="${state.round.buyIn}"></div>
+      ${pr.map((v,i)=>`<div><label for="p${i}">${i+1}º</label><input type="number" inputmode="numeric" id="p${i}" value="${v||''}" placeholder="0"></div>`).join('')}
+    </div>
+    <div class="row" style="margin-top:8px; justify-content:space-between;"><span><button class="link" id="pAdd" type="button">+ posição</button>${pr.length>1?'<button class="link" id="pDel" type="button">− posição</button>':''}</span>
+      <button class="link" id="pAuto" type="button">recalcular pela regra do clube</button></div>` : '';
+  const prizeLine = pr.map((v,i)=>`<span class="pz${i===0?' first':''}"><span class="p">${i+1}º</span> ${v ? Number(v).toLocaleString('pt-BR') : '—'}</span>`).join('');
+  return `<div class="screen">
+    <div class="head"><p class="eyebrow">Etapa 3 de 5</p><h1>Conferência e sorteio</h1>
+      <p class="lead">${ps.length} jogadores · ${ps.length-nG} ${plural(ps.length-nG,'membro','membros')}${nG?` + ${nG} ${plural(nG,'convidado','convidados')}`:''} · buy-in ${brl(state.round.buyIn)}</p></div>
+    ${inTable || prizesOk() ? '' : `<div class="banner">Com ${ps.length} jogadores a premiação fica fora da tabela do clube. Toque no ✎ e confira os valores.</div>`}
+    ${!state.editPrizes && prizesOk() && Math.abs(diff) >= 1 ? `<div class="banner">Os prêmios somam ${brl(prizeSum())}, e o pote é ${brl(pool)} (${diff>0?'sobra de':'faltam'} ${brl(Math.abs(diff))}).</div>` : ''}
+    <div class="card prize-card"><div class="pool-line" style="margin-bottom:6px;"><span>Pote: <b>${brl(pool)}</b>${CFG.premiacao.taxaPorJogador?` · caixa do clube ${brl(CFG.premiacao.taxaPorJogador*ps.length)}`:''}</span>${REB().ativo||ADD().ativo?`<span>${[REB().ativo?`rebuy ${brl(REB().valor)}`:'', ADD().ativo?`add-on ${brl(ADD().valor)}`:''].filter(Boolean).join(' · ')}</span>`:''}</div>
+      <div class="prize-line"><span class="pl-k">Prêmios</span>${state.editPrizes ? '<span class="pl-sp"></span>' : prizeLine}<button class="link" id="editPrize" type="button" aria-label="Ajustar premiação" style="text-decoration:none; font-size:15px;">${state.editPrizes ? '✓ ok' : '✎'}</button></div>${prizeView ? `<div style="margin-top:10px;">${prizeView}</div>` : ''}</div>
+    <div class="card fill">
+      <div class="card-head"><h2>${state.tables ? 'Mesas sorteadas' : 'Confira a presença'}</h2><button class="link" id="fix" type="button">corrigir presença</button></div>
+      <div class="draw-ctrl"><span class="muted">Até ${MAX_PER_TABLE} por mesa → ${nT} ${plural(nT,'mesa','mesas')}</span>
+        ${state.tables ? '<button class="btn" id="redraw" type="button" style="margin-left:auto; padding:7px 12px; font-size:13px;">↻ Sortear de novo</button>' : ''}</div>
+      <div class="scroll">${state.tables
+        ? `<div class="tables">${state.tables.map((t,i)=>`<div class="table-block"><h3>Mesa ${i+1} <small>· ${t.length} ${plural(t.length,'jogador','jogadores')}</small></h3><ol>${t.map((s,j)=>`<li><span class="s ${j<3?'key':''}">${escapeHtml(s.label)}</span><span>${escapeHtml(s.name)}${s.guest?' <span class="guest-tag">Conv.</span>':''}</span></li>`).join('')}</ol></div>`).join('')}</div>`
+        : `<ol class="numlist">${ps.map((p,i)=>`<li><span class="i">${i+1}</span><span>${escapeHtml(p.name)}${p.guest?' <span class="guest-tag">Conv.</span>':''}</span></li>`).join('')}</ol>`}</div>
+    </div></div>`;
+}
+function bind3(){
+  dock(state.tables
+    ? `<button class="btn primary" id="startBtn" type="button">▶ Iniciar partida</button>`
+    : `<button class="btn primary" id="drawBtn" type="button">Lista conferida · Sortear mesas</button>`);
+  document.getElementById('fix').onclick = ()=>{ state.editPrizes = false; go(2); };
+  document.getElementById('editPrize').onclick = ()=>{ if(state.editPrizes) readPrizeInputs(); state.editPrizes = !state.editPrizes; render(); };
+  const pa = document.getElementById('pAdd'); if(pa) pa.onclick = ()=>{ readPrizeInputs(); state.round.prizes.push(0); render(); };
+  const pd = document.getElementById('pDel'); if(pd) pd.onclick = ()=>{ readPrizeInputs(); if(state.round.prizes.length>1) state.round.prizes.pop(); render(); };
+  const pu = document.getElementById('pAuto'); if(pu) pu.onclick = ()=>{ readPrizeInputs(true); state.round.prizes = RULES.prizesFor(presentList().length, currentPool()); state.round.prizesManual = false; render(); showToast('Prêmios recalculados.'); };
+  const db = document.getElementById('drawBtn'); if(db) db.onclick = ()=>{ if(state.editPrizes){ readPrizeInputs(); state.editPrizes = false; } drawTables(); render(); showToast('Mesas sorteadas.'); };
+  const rd = document.getElementById('redraw'); if(rd) rd.onclick = ()=>{ drawTables(); render(); showToast('Mesas sorteadas de novo.'); };
+  const sb = document.getElementById('startBtn');
+  if(sb) sb.onclick = ()=>{
+    if(state.editPrizes){ readPrizeInputs(); state.editPrizes = false; render(); }
+    if(!prizesOk()){ showToast('Preencha o buy-in e a premiação antes de iniciar.'); return; }
+    const n = presentList().length;
+    confirmSheet('Iniciar a partida?', `O relógio começa agora com ${n} jogadores. Depois disso, <b>presença, premiação e mesas ficam travadas</b> e não dá mais para voltar às etapas anteriores.`, '▶ Iniciar partida', ()=>{
+      state.roundPlayers = presentList().map(p=>({name:p.name, guest:!!p.guest}));
+      state.eliminatedOrder = []; state.elimInfo = {}; state.endedAt = null;
+      state.rebuys = {}; state.addons = {}; state.rebuyClosed = false; state.clock = { pausedAt:null, pausedMs:0, shiftMs:0 };
+      state.startedAt = isoLocal();
+      go(4); showToast(`Partida iniciada às ${hhmm(state.startedAt)}. Boa sorte!`);
+    }, 'primary');
+  };
+}
+function readPrizeInputs(buyOnly){
+  const b = Number((document.getElementById('pBuy')||{}).value);
+  if(b > 0) state.round.buyIn = b;
+  if(!buyOnly){
+    const next = state.round.prizes.map((v,i)=> { const el = document.getElementById('p'+i); return el ? Math.max(0, Number(el.value) || 0) : v; });
+    if(JSON.stringify(next) !== JSON.stringify(state.round.prizes)) state.round.prizesManual = true;
+    state.round.prizes = next;
+  }
+  saveState();
+}
+
+/* ---------- 4. Partida ---------- */
+function blindsHtml(){
+  const b = blindNow();
+  if(!b) return '';
+  const l = b.level, paused = !!state.clock.pausedAt;
+  const pct = isFinite(b.endMs) ? Math.min(100, Math.round((clockMs()-b.startMs)/(b.endMs-b.startMs)*100)) : 100;
+  const nx = b.next ? (b.next.pausa ? 'Próximo: intervalo' : `Próximo: ${fmtChips(b.next.sb)} / ${fmtChips(b.next.bb)}${b.next.ante?` · ante ${fmtChips(b.next.ante)}`:''}`) : 'Último nível';
+  return `<div class="blinds${paused?' paused':''}" id="blinds">
+    <div><div class="lv">${l.pausa ? 'Intervalo' : `Nível ${b.number}`}${paused ? ' · pausado' : ''}</div><div class="bb" id="bbTxt">${levelTxt(l)}</div></div>
+    <div><div class="cd" id="cdTxt">${fmtLeft(b.leftMs)}</div><div class="ctl"><button type="button" id="lvPrev" aria-label="Nível anterior">‹</button><button type="button" id="lvPause" aria-label="${paused?'Retomar':'Pausar'}">${paused?'▶':'❚❚'}</button><button type="button" id="lvNext" aria-label="Próximo nível">›</button></div></div>
+    <div class="nx" id="nxTxt" style="grid-column:1 / -1;">${escapeHtml(nx)}${REB().ativo ? ` · rebuy ${rebuyOpen()?'aberto':'encerrado'}` : ''}</div>
+    <div class="bar"><div id="lvBar" style="width:${pct}%"></div></div>
+  </div>`;
+}
+function s4(){
+  const alive = alivePlayers().sort((a,b)=>cmp(a.name,b.name));
+  const total = state.roundPlayers.length;
+  const lastName = state.eliminatedOrder[state.eliminatedOrder.length-1];
+  const last = lastName ? state.elimInfo[lastName] || {} : null;
+  const lastPos = total - state.eliminatedOrder.length + 1;
+  const nr = nRebuys(), na = nAddons();
+  return `<div class="screen">
+    ${blindsHtml()}
+    <div class="live">
+      <div class="cell"><div class="k">Tempo · ${hhmm(state.startedAt)}</div><div class="v" id="clock">${elapsedTxt(state.startedAt)}</div></div>
+      <div class="cell"><div class="k">Na mesa</div><div class="v gold">${alive.length}<span style="font-size:12px; color:var(--text-muted);">/${total}</span></div></div>
+      <div class="cell"><div class="k">${nr||na ? 'Pote' : 'Prêmio 1º'}</div><div class="v" style="font-size:15px;">${brl(nr||na ? currentPool() : state.round.prizes[0])}</div></div>
+    </div>
+    ${REB().ativo || ADD().ativo ? `<div class="pool-line"><span>${REB().ativo ? `<b>${nr}</b> rebuy${nr===1?'':'s'}` : ''}${REB().ativo && ADD().ativo ? ' · ' : ''}${ADD().ativo ? `<b>${na}</b> add-on${na===1?'':'s'}` : ''} · 1º ${brl(state.round.prizes[0])}</span>
+      ${REB().ativo ? `<button class="link" id="rbToggle" type="button">${state.rebuyClosed ? 'reabrir rebuys' : 'encerrar rebuys'}</button>` : ''}</div>` : ''}
+    <div class="card fill">
+      <div class="card-head"><h2>Ainda jogando</h2></div>
+      <div class="scroll"><div class="alive-list">${alive.map(p=>{ const rb = state.rebuys[p.name]||0, ad = !!state.addons[p.name]; return `
+        <div class="alive"><span class="nm">${escapeHtml(p.name)}${p.guest?' <span class="guest-tag">Conv.</span>':''}${rb||ad?`<span class="tags">${rb?`<span class="rb-tag">${rb} rebuy${rb===1?'':'s'}</span>`:''}${ad?'<span class="rb-tag">add-on</span>':''}</span>`:''}</span>
+          <span class="acts2">${ADD().ativo ? `<button class="btn addon${ad?' on':''}" type="button" data-ad="${escapeHtml(p.name)}" aria-pressed="${ad}">${ad?'✓ ':'+ '}Add-on</button>` : ''}<button class="btn elim" type="button" data-n="${escapeHtml(p.name)}">Eliminado</button></span></div>`; }).join('')}</div></div>
+    </div>
+    <div class="last-out">${lastName
+      ? `<div style="min-width:0;"><span class="lbl">Última eliminação</span><b>${escapeHtml(lastName)}</b> <span class="muted">· ${lastPos}º${last.by?` · por ${escapeHtml(last.by)}`:''}${last.out?` · ${hhmm(last.out)}`:''}</span></div>
+         <div class="acts"><button class="link" id="undo" type="button">↩ desfazer</button><button class="link" id="all" type="button">todas (${state.eliminatedOrder.length})</button></div>`
+      : '<span class="muted">Nenhuma eliminação ainda.</span>'}</div>
+  </div>`;
+}
+function bind4(){
+  dock(`<span class="hint">Toque em <b style="color:var(--red-soft)">Eliminado</b> ao lado de quem saiu. Quando sobrar 1, a rodada segue para o fechamento.</span>`);
+  document.querySelectorAll('.btn.elim').forEach(b=> b.addEventListener('click', ()=> whoSheet(b.dataset.n)));
+  document.querySelectorAll('[data-ad]').forEach(b=> b.addEventListener('click', ()=>{
+    const n = b.dataset.ad;
+    if(state.addons[n]) delete state.addons[n]; else state.addons[n] = true;
+    recalcPrizes(); render(); showToast(state.addons[n] ? `${n} fez add-on.` : `Add-on de ${n} desfeito.`);
+  }));
+  const rt = document.getElementById('rbToggle'); if(rt) rt.onclick = ()=>{ state.rebuyClosed = !state.rebuyClosed; render(); showToast(state.rebuyClosed ? 'Rebuys encerrados.' : 'Rebuys reabertos.'); };
+  const lp = document.getElementById('lvPause');
+  if(lp){
+    lp.onclick = ()=>{ const c = state.clock; if(c.pausedAt){ c.pausedMs = (Number(c.pausedMs)||0) + Date.now() - c.pausedAt; c.pausedAt = null; showToast('Relógio retomado.'); } else { c.pausedAt = Date.now(); showToast('Relógio pausado.'); } render(); };
+    const jump = d => { const b = blindNow(); if(!b) return; const lv = BLD().niveis.length; const to = Math.max(0, Math.min(lv-1, b.index + d));
+      state.clock.shiftMs = (Number(state.clock.shiftMs)||0) + (RULES.levelStartMs(to) - clockMs()); lastBlindIdx = to; render(); };
+    document.getElementById('lvPrev').onclick = ()=> jump(-1);
+    document.getElementById('lvNext').onclick = ()=> jump(1);
+  }
+  const u = document.getElementById('undo'); if(u) u.onclick = undoLast;
+  const al = document.getElementById('all'); if(al) al.onclick = allSheet;
+}
+function recordElimination(name, by){
+  if(!started() || state.eliminatedOrder.includes(name) || alivePlayers().length <= 1) return;
+  const out = isoLocal();
+  state.eliminatedOrder.push(name);
+  state.elimInfo[name] = by ? { out, by } : { out };
+  if(alivePlayers().length === 1){
+    state.endedAt = out;
+    go(5); showToast(`${alivePlayers()[0].name} venceu a rodada!`);
+  } else { render(); showToast(by ? `${name} eliminado por ${by}.` : `${name} eliminado.`); }
+}
+function undoLast(){
+  const name = state.eliminatedOrder.pop();
+  if(!name){ showToast('Nenhuma eliminação para desfazer.'); return; }
+  delete state.elimInfo[name];
+  state.endedAt = null;
+  state.step = 4; state.maxStep = 4;
+  render(); showToast(`${name} voltou para a mesa.`);
+}
+function doRebuy(name){
+  state.rebuys[name] = (state.rebuys[name]||0) + 1;
+  recalcPrizes(); closeSheet(); render();
+  showToast(`${name} fez rebuy (${state.rebuys[name]}º) e segue no jogo.`);
+}
+function whoSheet(name){
+  const others = alivePlayers().filter(p=>p.name!==name).sort((a,b)=>cmp(a.name,b.name));
+  const pos = alivePlayers().length;
+  const rb = canRebuy(name) && alivePlayers().length > 1;
+  const used = state.rebuys[name]||0, lim = Number(REB().limitePorJogador)||0;
+  openSheet(`<h3>${rb ? `${escapeHtml(name)} quebrou` : `Quem eliminou ${escapeHtml(name)}?`}</h3>
+    ${rb ? `<p>Rebuy aberto (${brl(REB().valor)}${lim?` · ${used} de ${lim} usados`:''}). Se ele voltar ao jogo, toque em Rebuy; se saiu de vez, diga quem eliminou.</p>
+      <button class="btn primary" id="doRebuy" type="button" style="width:100%; margin-bottom:12px;">↻ Rebuy · continua no jogo</button>` : ''}
+    <p>Sai em <b>${pos}º lugar</b> agora (${hhmm(isoLocal())}).</p>
+    <div class="pick">${others.map(p=>`<button class="btn" type="button" data-by="${escapeHtml(p.name)}">${escapeHtml(p.name)}${p.guest?' <span class="guest-tag">Conv.</span>':''}</button>`).join('')}</div>
+    <div class="row"><button class="btn ghost" type="button" data-by="" style="flex:1;">Não sei / pular</button><button class="btn ghost" id="cancelSheet" type="button" style="flex:1;">Cancelar</button></div>`);
+  document.querySelectorAll('#overlay [data-by]').forEach(b=> b.addEventListener('click', ()=>{ closeSheet(); recordElimination(name, b.dataset.by || null); }));
+  const dr = document.getElementById('doRebuy'); if(dr) dr.onclick = ()=> doRebuy(name);
+  document.getElementById('cancelSheet').onclick = closeSheet;
+}
+function allSheet(){
+  const total = state.roundPlayers.length; const n = state.eliminatedOrder.length;
+  const rows = [...state.eliminatedOrder].reverse().map((name,k)=>{ const info = state.elimInfo[name] || {};
+    return `<li><span class="pos">${total-n+1+k}º</span><span>${escapeHtml(name)}${info.by?` <span class="muted">· por ${escapeHtml(info.by)}</span>`:''}</span><span class="tm">${info.out?hhmm(info.out):''}</span></li>`; }).join('');
+  openSheet(`<h3>Eliminações (${n})</h3><ol class="out-list" style="margin-bottom:14px;">${rows}</ol><button class="btn ghost" id="cancelSheet" type="button" style="width:100%;">Fechar</button>`);
+  document.getElementById('cancelSheet').onclick = closeSheet;
+}
+
+/* ---------- 5. Fechamento ---------- */
+function finalRows(){
+  const st = computeStandings();
+  const sc = RULES.scoreRound({ standings: st });
+  return st.map((p,i)=>{
+    const pos = i+1;
+    const info = state.elimInfo[p.name] || {};
+    return { ...p, pos, pts: sc[i].pts, prize: Number(state.round.prizes[pos-1])||0, out: info.out || null, by: info.by || null,
+      rebuys: state.rebuys[p.name]||0, addon: !!state.addons[p.name] };
+  });
+}
+function buildExport(){
+  const standings = computeStandings().map(p=>{
+    const e = { name:p.name, guest:!!p.guest };
+    const info = state.elimInfo[p.name];
+    if(info && info.out) e.out = info.out;
+    if(info && info.by) e.by = info.by;
+    if(state.rebuys[p.name]) e.rebuys = state.rebuys[p.name];
+    if(state.addons[p.name]) e.addon = true;
+    return e;
+  });
+  const prizes = state.round.prizes.map(v=>Number(v)||0);
+  while(prizes.length > 1 && !prizes[prizes.length-1]) prizes.pop();
+  const round = { roundNumber: Number(state.round.roundNumber), buyIn: Number(state.round.buyIn), prizes };
+  if(nRebuys()) round.rebuyValue = Number(REB().valor)||0;
+  if(nAddons()) round.addonValue = Number(ADD().valor)||0;
+  round.pool = currentPool();
+  if(currentOrg()) round.organizer = currentOrg();
+  if(state.startedAt) round.startedAt = state.startedAt;
+  if(state.endedAt) round.endedAt = state.endedAt;
+  round.standings = standings;
+  return { type:'multiPokerRoundExport', version:3, club: SLUG, season: state.seasonId || null, exportedAt:new Date().toISOString(), round };
+}
+function exportFileName(){ return `${SLUG}-rodada-${state.round.roundNumber}.json`; }
+function s5(){
+  const f = finalRows();
+  if(state.closed){
+    const canShare = shareSupported();
+    return `<div class="screen"><div class="card done-card"><div class="suit">♠ ♥ ♦ ♣</div><h2>Rodada ${state.round.roundNumber} encerrada</h2>
+      <p class="lead">Campeão: <b style="color:var(--gold-soft);">${escapeHtml(f[0].name)}</b> · ${f.length} jogadores · ${elapsedTxt(state.startedAt, state.endedAt)} de jogo</p>
+      <div class="row">${canShare ? '<button class="btn primary" id="share" type="button">Enviar pelo WhatsApp</button>' : ''}
+        <button class="btn ${canShare?'':'primary'}" id="dl" type="button">Baixar ${escapeHtml(exportFileName())}</button></div>
+      <p class="lead small" style="margin-top:14px;">Mande o arquivo para quem importa a rodada no painel de gestão. Ele fica disponível aqui até você começar uma nova rodada.</p>
+      <p class="lead small"><a class="link" href="${MP.clubUrl('admin.html', SLUG)}">Abrir o painel de gestão</a></p></div></div>`;
+  }
+  return `<div class="screen">
+    <div class="head"><p class="eyebrow">Etapa 5 de 5</p><h1>Conferência final</h1>
+      <p class="lead">Início ${hhmm(state.startedAt)} · fim ${hhmm(state.endedAt)} · ${elapsedTxt(state.startedAt, state.endedAt)} de jogo. Se algo estiver errado, desfaça as últimas eliminações.</p></div>
+    <div class="card fill"><div class="scroll"><table class="final">
+      <thead><tr><th></th><th>Jogador</th><th class="num">Pts</th><th class="num">Prêmio</th><th class="num">Saída</th></tr></thead>
+      <tbody>${f.map(e=>`<tr><td>${chipBadge(e.pos)}</td>
+        <td><b>${escapeHtml(e.name)}</b>${e.guest?' <span class="guest-tag">Conv.</span>':''}${e.rebuys?` <span class="rb-tag">${e.rebuys}R</span>`:''}${e.addon?' <span class="rb-tag">A</span>':''}${e.by?`<div class="muted" style="font-size:11px;">por ${escapeHtml(e.by)}</div>`:''}</td>
+        <td class="num">${e.pts===null?'—':e.pts}</td><td class="num ${e.prize?'prize-v':''}">${e.prize?brl(e.prize):''}</td>
+        <td class="num muted">${e.out?hhmm(e.out):'—'}</td></tr>`).join('')}</tbody></table></div>
+      <p class="lead small" style="flex:none; margin-top:8px;">${CFG.pontuacao.convidadoPontua ? 'Convidados pontuam normalmente neste clube.' : 'Convidados não pontuam; os membros abaixo deles sobem na contagem de pontos.'}${nRebuys()||nAddons() ? ` Pote final ${brl(currentPool())}; prêmios somam ${brl(prizeSum())}.` : ''}</p></div>
+  </div>`;
+}
+function bind5(){
+  if(state.closed){
+    dock(`<button class="btn grow" id="newR" type="button">Começar nova rodada</button>`);
+    const sh = document.getElementById('share'); if(sh) sh.onclick = shareJson;
+    document.getElementById('dl').onclick = downloadJson;
+    document.getElementById('newR').onclick = ()=> confirmSheet('Começar nova rodada?', 'Confirme que o arquivo desta rodada já foi enviado. Os dados dela serão apagados deste aparelho.', 'Começar nova', ()=>{
+      freshRound(); render(); showToast('Pronto para a próxima rodada.');
+    });
+    return;
+  }
+  dock(`<button class="btn ghost" id="undo5" type="button">↩ Desfazer última</button><button class="btn primary" id="close" type="button">Encerrar e gerar arquivo</button>`);
+  document.getElementById('undo5').onclick = undoLast;
+  document.getElementById('close').onclick = ()=>{
+    if(!roundIsComplete()){ showToast('A rodada ainda não está completa.'); return; }
+    if(!(state.round.roundNumber >= 1)){ showToast('Número da rodada não definido.'); return; }
+    confirmSheet('Encerrar a rodada?', 'Depois de encerrar, a colocação não pode mais ser alterada nesta ferramenta.', 'Encerrar', ()=>{
+      state.exportJson = JSON.stringify(buildExport(), null, 2);
+      state.closed = true; render(); showToast('Arquivo da rodada gerado.');
+    }, 'primary');
+  };
+}
+function exportBlob(){ return new Blob([state.exportJson], {type:'application/json'}); }
+function shareSupported(){
+  try{ return !!(navigator.canShare && typeof File === 'function' && navigator.canShare({files:[new File(['{}'], 'x.json', {type:'application/json'})]})); }catch(e){ return false; }
+}
+function downloadJson(){
+  const url = URL.createObjectURL(exportBlob());
+  const a = document.createElement('a'); a.href = url; a.download = exportFileName();
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 1500);
+  showToast('Arquivo baixado.');
+}
+async function shareJson(){
+  try{
+    const file = new File([state.exportJson], exportFileName(), {type:'application/json'});
+    await navigator.share({ files:[file], title:`Rodada ${state.round.roundNumber}`, text:`${CFG.clube.nomeCurto} — Rodada ${state.round.roundNumber}` });
+  }catch(e){
+    if(e && e.name === 'AbortError') return;
+    showToast('Não deu para compartilhar. Use "Baixar" e envie o arquivo.');
+  }
+}
+
+/* ---------- Folhas ---------- */
+function openSheet(html){
+  const o = document.getElementById('overlay');
+  o.innerHTML = `<div class="sheet-bg" id="sbg"><div class="sheet" role="dialog" aria-modal="true">${html}</div></div>`;
+  document.getElementById('sbg').addEventListener('click', e=>{ if(e.target.id === 'sbg') closeSheet(); });
+}
+function closeSheet(){ document.getElementById('overlay').innerHTML = ''; }
+function confirmSheet(title, text, okLabel, onOk, kind){
+  const cls = kind === 'primary' ? 'primary' : kind === 'solid' ? 'danger solid' : 'danger';
+  openSheet(`<h3>${title}</h3><p>${text}</p><div class="row"><button class="btn ${cls}" id="ok" type="button" style="flex:1;">${okLabel}</button><button class="btn ghost" id="no" type="button" style="flex:1;">Cancelar</button></div>`);
+  document.getElementById('ok').onclick = ()=>{ closeSheet(); onOk(); };
+  document.getElementById('no').onclick = closeSheet;
+}
+
+/* ---------- Render ---------- */
+const VIEWS = {1:[s1,bind1], 2:[s2,bind2], 3:[s3,bind3], 4:[s4,bind4], 5:[s5,bind5]};
+let lastStep = null;
+function render(){
+  const sc = document.querySelector('#main .scroll');
+  const keep = (lastStep === state.step && sc) ? sc.scrollTop : 0;
+  renderHeader();
+  const [view, bind] = VIEWS[state.step];
+  document.getElementById('main').innerHTML = view();
+  bind();
+  const sc2 = document.querySelector('#main .scroll'); if(sc2) sc2.scrollTop = keep;
+  if(lastStep !== state.step) document.getElementById('mainArea').scrollTop = 0;
+  lastStep = state.step;
+  saveState();
+}
+setInterval(()=>{
+  if(!state) return;
+  const c = document.getElementById('clock'); if(c && state.startedAt && !state.endedAt) c.textContent = elapsedTxt(state.startedAt);
+  if(state.step !== 4 || !document.getElementById('blinds')) return;
+  const b = blindNow(); if(!b) return;
+  if(lastBlindIdx !== null && b.index !== lastBlindIdx){ lastBlindIdx = b.index; if(!document.hidden) beep(); render(); return; }
+  lastBlindIdx = b.index;
+  const cd = document.getElementById('cdTxt'); if(cd) cd.textContent = fmtLeft(b.leftMs);
+  const bar = document.getElementById('lvBar'); if(bar && isFinite(b.endMs)) bar.style.width = Math.min(100, Math.round((clockMs()-b.startMs)/(b.endMs-b.startMs)*100)) + '%';
+}, 1000);
+
+/* ---------- Dados publicados no site (jogadores, calendário, próxima rodada) ---------- */
+async function loadPublishedData(){
+  try{
+    const parsed = await MP.fetchJson(BASE + 'dados.json');
+    const players = Array.isArray(parsed.players) ? parsed.players.filter(n=>typeof n === 'string' && n.trim()) : [];
+    state.publishedPlayers = players;
+    state.roundDates = parsed.roundDates && typeof parsed.roundDates === 'object' ? parsed.roundDates : {};
+    state.roundOrganizers = parsed.roundOrganizers && typeof parsed.roundOrganizers === 'object' ? parsed.roundOrganizers : {};
+    state.seasonLabel = parsed.season && parsed.season.label ? parsed.season.label : '';
+    state.seasonId = parsed.season && parsed.season.id ? parsed.season.id : null;
+    const rounds = Array.isArray(parsed.rounds) ? parsed.rounds : [];
+    state.nextRound = rounds.reduce((m,r)=>Math.max(m, Number(r.roundNumber)||0), 0) + 1;
+    if(!started()){
+      state.round.roundNumber = state.nextRound;
+      players.forEach(name=>{ if(!state.participants.some(p=>!p.guest && p.name.toLowerCase()===name.toLowerCase())) state.participants.push({name, guest:false, present:false}); });
+    }
+    render();
+  }catch(e){
+    if(!started() && state.step === 1) showToast('Sem acesso ao site agora. Usando a última lista salva neste aparelho.');
+    if(!state.round.roundNumber && state.nextRound) state.round.roundNumber = state.nextRound;
+    render();
+  }
+}
+
+/* ---------- Início ---------- */
+document.getElementById('versionNote').textContent = `Rodada v${PAGE_VERSION} · núcleo ${MP.CORE_VERSION}`;
+function start(){
+  state = loadState();
+  checkResume();
+  render();
+  loadPublishedData();
+}
+function gate(){
+  const h = CFG.acesso.senhaRodada;
+  if(!h || ST.get('rodadaOk', '') === h) return start();
+  document.getElementById('main').innerHTML = `<div class="gate"><p class="eyebrow">${escapeHtml(CFG.clube.nome)}</p><h1>Lançamento da rodada</h1>
+    <p class="lead">Digite a senha do organizador para abrir a rodada neste aparelho.</p>
+    <form id="gateForm" autocomplete="off"><input type="password" id="gatePass" placeholder="Senha" autocomplete="current-password"><button class="btn primary" type="submit">Entrar</button></form>
+    <div class="err" id="gateErr" role="alert"></div></div>`;
+  document.getElementById('gateForm').addEventListener('submit', e=>{
+    e.preventDefault();
+    const v = document.getElementById('gatePass').value;
+    if(MP.hash(v) === h){ ST.set('rodadaOk', h); start(); }
+    else document.getElementById('gateErr').textContent = v.trim() ? 'Senha incorreta.' : 'Digite a senha.';
+  });
+}
+(async function init(){
+  if(!SLUG){ document.querySelector('.app').innerHTML = MP.noClubHtml('Nenhum clube escolhido'); return; }
+  try{ const { config } = await MP.loadConfig(SLUG); CFG = config; RULES = MP.makeRules(CFG); }
+  catch(e){ document.querySelector('.app').innerHTML = MP.noClubHtml('Clube não encontrado'); return; }
+  MP.applyTheme(CFG);
+  MAX_PER_TABLE = CFG.mesa.maxPorMesa; BUY_IN = CFG.premiacao.buyIn;
+  document.getElementById('brandName').textContent = CFG.clube.nomeCurto || CFG.clube.nome;
+  document.title = `Rodada — ${CFG.clube.nome}`;
+  gate();
+})();
+</script>
+</body>
+</html>

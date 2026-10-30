@@ -1,0 +1,2033 @@
+{
+  "season": {
+    "id": "2026-1",
+    "label": "Temporada 2026/1"
+  },
+  "final": true,
+  "rounds": [
+    {
+      "id": "s20261r1",
+      "roundNumber": 1,
+      "buyIn": 100,
+      "prizes": [
+        650,
+        400,
+        250,
+        100
+      ],
+      "standings": [
+        {
+          "name": "ANDRÉ MOURA",
+          "guest": false
+        },
+        {
+          "name": "DANIEL ROCHA",
+          "guest": false,
+          "out": "2026-01-09T01:53:00.000Z",
+          "by": "ANDRÉ MOURA"
+        },
+        {
+          "name": "CARLOS EDUARDO",
+          "guest": false,
+          "out": "2026-01-09T01:42:00.000Z",
+          "by": "DANIEL ROCHA"
+        },
+        {
+          "name": "EDUARDO PIRES",
+          "guest": false,
+          "out": "2026-01-09T01:31:00.000Z",
+          "by": "ANDRÉ MOURA"
+        },
+        {
+          "name": "NATAN SILVEIRA",
+          "guest": false,
+          "out": "2026-01-09T01:20:00.000Z",
+          "by": "CARLOS EDUARDO"
+        },
+        {
+          "name": "MARCELO DIAS",
+          "guest": false,
+          "out": "2026-01-09T01:09:00.000Z",
+          "by": "ANDRÉ MOURA"
+        },
+        {
+          "name": "BRUNO TEIXEIRA",
+          "guest": false,
+          "out": "2026-01-09T00:58:00.000Z",
+          "by": "EDUARDO PIRES"
+        },
+        {
+          "name": "FELIPE NUNES",
+          "guest": false,
+          "out": "2026-01-09T00:47:00.000Z",
+          "by": "EDUARDO PIRES"
+        },
+        {
+          "name": "HENRIQUE COSTA",
+          "guest": false,
+          "out": "2026-01-09T00:36:00.000Z",
+          "by": "MARCELO DIAS"
+        },
+        {
+          "name": "GUSTAVO LIMA",
+          "guest": false,
+          "out": "2026-01-09T00:25:00.000Z",
+          "by": "BRUNO TEIXEIRA"
+        },
+        {
+          "name": "RAFAEL CUNHA",
+          "guest": false,
+          "out": "2026-01-09T00:14:00.000Z",
+          "by": "HENRIQUE COSTA"
+        },
+        {
+          "name": "VIZINHO DO BRUNO",
+          "guest": true,
+          "out": "2026-01-09T00:03:00.000Z",
+          "by": "HENRIQUE COSTA"
+        },
+        {
+          "name": "LUCAS MARTINS",
+          "guest": false,
+          "out": "2026-01-08T23:52:00.000Z",
+          "by": "CARLOS EDUARDO"
+        },
+        {
+          "name": "PEDRO HENRIQUE",
+          "guest": false,
+          "out": "2026-01-08T23:41:00.000Z",
+          "by": "RAFAEL CUNHA"
+        }
+      ],
+      "totalPlayers": 14,
+      "pool": 1400,
+      "startedAt": "2026-01-08T23:30:00.000Z",
+      "endedAt": "2026-01-09T02:04:00.000Z"
+    },
+    {
+      "id": "s20261r2",
+      "roundNumber": 2,
+      "buyIn": 100,
+      "prizes": [
+        600,
+        350,
+        250
+      ],
+      "standings": [
+        {
+          "name": "GUSTAVO LIMA",
+          "guest": false
+        },
+        {
+          "name": "HENRIQUE COSTA",
+          "guest": false,
+          "out": "2026-01-16T01:31:00.000Z",
+          "by": "GUSTAVO LIMA"
+        },
+        {
+          "name": "BRUNO TEIXEIRA",
+          "guest": false,
+          "out": "2026-01-16T01:20:00.000Z",
+          "by": "GUSTAVO LIMA"
+        },
+        {
+          "name": "NATAN SILVEIRA",
+          "guest": false,
+          "out": "2026-01-16T01:09:00.000Z",
+          "by": "HENRIQUE COSTA"
+        },
+        {
+          "name": "ANDRÉ MOURA",
+          "guest": false,
+          "out": "2026-01-16T00:58:00.000Z",
+          "by": "NATAN SILVEIRA"
+        },
+        {
+          "name": "JOÃO PAULO",
+          "guest": false,
+          "out": "2026-01-16T00:47:00.000Z",
+          "by": "BRUNO TEIXEIRA"
+        },
+        {
+          "name": "EDUARDO PIRES",
+          "guest": false,
+          "out": "2026-01-16T00:36:00.000Z",
+          "by": "BRUNO TEIXEIRA"
+        },
+        {
+          "name": "FELIPE NUNES",
+          "guest": false,
+          "out": "2026-01-16T00:25:00.000Z",
+          "by": "BRUNO TEIXEIRA"
+        },
+        {
+          "name": "IGOR BARBOSA",
+          "guest": false,
+          "out": "2026-01-16T00:14:00.000Z",
+          "by": "JOÃO PAULO"
+        },
+        {
+          "name": "LUCAS MARTINS",
+          "guest": false,
+          "out": "2026-01-16T00:03:00.000Z",
+          "by": "NATAN SILVEIRA"
+        },
+        {
+          "name": "OTÁVIO RAMOS",
+          "guest": false,
+          "out": "2026-01-15T23:52:00.000Z",
+          "by": "GUSTAVO LIMA"
+        },
+        {
+          "name": "RAFAEL CUNHA",
+          "guest": false,
+          "out": "2026-01-15T23:41:00.000Z",
+          "by": "IGOR BARBOSA"
+        }
+      ],
+      "totalPlayers": 12,
+      "pool": 1200,
+      "startedAt": "2026-01-15T23:30:00.000Z",
+      "endedAt": "2026-01-16T01:42:00.000Z"
+    },
+    {
+      "id": "s20261r3",
+      "roundNumber": 3,
+      "buyIn": 100,
+      "prizes": [
+        600,
+        350,
+        250
+      ],
+      "standings": [
+        {
+          "name": "ANDRÉ MOURA",
+          "guest": false
+        },
+        {
+          "name": "BRUNO TEIXEIRA",
+          "guest": false,
+          "out": "2026-01-23T01:31:00.000Z",
+          "by": "ANDRÉ MOURA"
+        },
+        {
+          "name": "EDUARDO PIRES",
+          "guest": false,
+          "out": "2026-01-23T01:20:00.000Z",
+          "by": "ANDRÉ MOURA"
+        },
+        {
+          "name": "IGOR BARBOSA",
+          "guest": false,
+          "out": "2026-01-23T01:09:00.000Z",
+          "by": "BRUNO TEIXEIRA"
+        },
+        {
+          "name": "DANIEL ROCHA",
+          "guest": false,
+          "out": "2026-01-23T00:58:00.000Z",
+          "by": "ANDRÉ MOURA"
+        },
+        {
+          "name": "FELIPE NUNES",
+          "guest": false,
+          "out": "2026-01-23T00:47:00.000Z",
+          "by": "DANIEL ROCHA"
+        },
+        {
+          "name": "MARCELO DIAS",
+          "guest": false,
+          "out": "2026-01-23T00:36:00.000Z",
+          "by": "EDUARDO PIRES"
+        },
+        {
+          "name": "RAFAEL CUNHA",
+          "guest": false,
+          "out": "2026-01-23T00:25:00.000Z",
+          "by": "DANIEL ROCHA"
+        },
+        {
+          "name": "NATAN SILVEIRA",
+          "guest": false,
+          "out": "2026-01-23T00:14:00.000Z",
+          "by": "DANIEL ROCHA"
+        },
+        {
+          "name": "HENRIQUE COSTA",
+          "guest": false,
+          "out": "2026-01-23T00:03:00.000Z",
+          "by": "ANDRÉ MOURA"
+        },
+        {
+          "name": "LUCAS MARTINS",
+          "guest": false,
+          "out": "2026-01-22T23:52:00.000Z",
+          "by": "ANDRÉ MOURA"
+        },
+        {
+          "name": "PEDRO HENRIQUE",
+          "guest": false,
+          "out": "2026-01-22T23:41:00.000Z",
+          "by": "FELIPE NUNES"
+        }
+      ],
+      "totalPlayers": 12,
+      "pool": 1200,
+      "startedAt": "2026-01-22T23:30:00.000Z",
+      "endedAt": "2026-01-23T01:42:00.000Z"
+    },
+    {
+      "id": "s20261r4",
+      "roundNumber": 4,
+      "buyIn": 100,
+      "prizes": [
+        650,
+        400,
+        250
+      ],
+      "standings": [
+        {
+          "name": "CARLOS EDUARDO",
+          "guest": false
+        },
+        {
+          "name": "BRUNO TEIXEIRA",
+          "guest": false,
+          "out": "2026-01-30T01:42:00.000Z",
+          "by": "CARLOS EDUARDO"
+        },
+        {
+          "name": "GUSTAVO LIMA",
+          "guest": false,
+          "out": "2026-01-30T01:31:00.000Z",
+          "by": "CARLOS EDUARDO"
+        },
+        {
+          "name": "DANIEL ROCHA",
+          "guest": false,
+          "out": "2026-01-30T01:20:00.000Z",
+          "by": "BRUNO TEIXEIRA"
+        },
+        {
+          "name": "FELIPE NUNES",
+          "guest": false,
+          "out": "2026-01-30T01:09:00.000Z",
+          "by": "CARLOS EDUARDO"
+        },
+        {
+          "name": "IGOR BARBOSA",
+          "guest": false,
+          "out": "2026-01-30T00:58:00.000Z",
+          "by": "DANIEL ROCHA"
+        },
+        {
+          "name": "EDUARDO PIRES",
+          "guest": false,
+          "out": "2026-01-30T00:47:00.000Z",
+          "by": "BRUNO TEIXEIRA"
+        },
+        {
+          "name": "LUCAS MARTINS",
+          "guest": false,
+          "out": "2026-01-30T00:36:00.000Z",
+          "by": "CARLOS EDUARDO"
+        },
+        {
+          "name": "HENRIQUE COSTA",
+          "guest": false,
+          "out": "2026-01-30T00:25:00.000Z",
+          "by": "BRUNO TEIXEIRA"
+        },
+        {
+          "name": "JOÃO PAULO",
+          "guest": false,
+          "out": "2026-01-30T00:14:00.000Z",
+          "by": "DANIEL ROCHA"
+        },
+        {
+          "name": "MARCELO DIAS",
+          "guest": false,
+          "out": "2026-01-30T00:03:00.000Z",
+          "by": "CARLOS EDUARDO"
+        },
+        {
+          "name": "VIZINHO DO BRUNO",
+          "guest": true,
+          "out": "2026-01-29T23:52:00.000Z",
+          "by": "HENRIQUE COSTA"
+        },
+        {
+          "name": "PEDRO HENRIQUE",
+          "guest": false,
+          "out": "2026-01-29T23:41:00.000Z",
+          "by": "CARLOS EDUARDO"
+        }
+      ],
+      "totalPlayers": 13,
+      "pool": 1300,
+      "startedAt": "2026-01-29T23:30:00.000Z",
+      "endedAt": "2026-01-30T01:53:00.000Z"
+    },
+    {
+      "id": "s20261r5",
+      "roundNumber": 5,
+      "buyIn": 100,
+      "prizes": [
+        650,
+        400,
+        250,
+        100
+      ],
+      "standings": [
+        {
+          "name": "FELIPE NUNES",
+          "guest": false
+        },
+        {
+          "name": "HENRIQUE COSTA",
+          "guest": false,
+          "out": "2026-02-06T01:53:00.000Z",
+          "by": "FELIPE NUNES"
+        },
+        {
+          "name": "ANDRÉ MOURA",
+          "guest": false,
+          "out": "2026-02-06T01:42:00.000Z",
+          "by": "HENRIQUE COSTA"
+        },
+        {
+          "name": "JOÃO PAULO",
+          "guest": false,
+          "out": "2026-02-06T01:31:00.000Z",
+          "by": "HENRIQUE COSTA"
+        },
+        {
+          "name": "DANIEL ROCHA",
+          "guest": false,
+          "out": "2026-02-06T01:20:00.000Z",
+          "by": "JOÃO PAULO"
+        },
+        {
+          "name": "MARCELO DIAS",
+          "guest": false,
+          "out": "2026-02-06T01:09:00.000Z",
+          "by": "JOÃO PAULO"
+        },
+        {
+          "name": "CARLOS EDUARDO",
+          "guest": false,
+          "out": "2026-02-06T00:58:00.000Z",
+          "by": "JOÃO PAULO"
+        },
+        {
+          "name": "RAFAEL CUNHA",
+          "guest": false,
+          "out": "2026-02-06T00:47:00.000Z",
+          "by": "FELIPE NUNES"
+        },
+        {
+          "name": "EDUARDO PIRES",
+          "guest": false,
+          "out": "2026-02-06T00:36:00.000Z",
+          "by": "CARLOS EDUARDO"
+        },
+        {
+          "name": "NATAN SILVEIRA",
+          "guest": false,
+          "out": "2026-02-06T00:25:00.000Z",
+          "by": "MARCELO DIAS"
+        },
+        {
+          "name": "OTÁVIO RAMOS",
+          "guest": false,
+          "out": "2026-02-06T00:14:00.000Z",
+          "by": "JOÃO PAULO"
+        },
+        {
+          "name": "GUSTAVO LIMA",
+          "guest": false,
+          "out": "2026-02-06T00:03:00.000Z",
+          "by": "HENRIQUE COSTA"
+        },
+        {
+          "name": "IGOR BARBOSA",
+          "guest": false,
+          "out": "2026-02-05T23:52:00.000Z",
+          "by": "ANDRÉ MOURA"
+        },
+        {
+          "name": "PEDRO HENRIQUE",
+          "guest": false,
+          "out": "2026-02-05T23:41:00.000Z",
+          "by": "FELIPE NUNES"
+        }
+      ],
+      "totalPlayers": 14,
+      "pool": 1400,
+      "startedAt": "2026-02-05T23:30:00.000Z",
+      "endedAt": "2026-02-06T02:04:00.000Z"
+    },
+    {
+      "id": "s20261r6",
+      "roundNumber": 6,
+      "buyIn": 100,
+      "prizes": [
+        500,
+        300,
+        200
+      ],
+      "standings": [
+        {
+          "name": "ANDRÉ MOURA",
+          "guest": false
+        },
+        {
+          "name": "DANIEL ROCHA",
+          "guest": false,
+          "out": "2026-02-13T01:09:00.000Z",
+          "by": "ANDRÉ MOURA"
+        },
+        {
+          "name": "FELIPE NUNES",
+          "guest": false,
+          "out": "2026-02-13T00:58:00.000Z",
+          "by": "ANDRÉ MOURA"
+        },
+        {
+          "name": "LUCAS MARTINS",
+          "guest": false,
+          "out": "2026-02-13T00:47:00.000Z",
+          "by": "ANDRÉ MOURA"
+        },
+        {
+          "name": "JOÃO PAULO",
+          "guest": false,
+          "out": "2026-02-13T00:36:00.000Z",
+          "by": "DANIEL ROCHA"
+        },
+        {
+          "name": "GUSTAVO LIMA",
+          "guest": false,
+          "out": "2026-02-13T00:25:00.000Z",
+          "by": "LUCAS MARTINS"
+        },
+        {
+          "name": "EDUARDO PIRES",
+          "guest": false,
+          "out": "2026-02-13T00:14:00.000Z",
+          "by": "ANDRÉ MOURA"
+        },
+        {
+          "name": "HENRIQUE COSTA",
+          "guest": false,
+          "out": "2026-02-13T00:03:00.000Z",
+          "by": "JOÃO PAULO"
+        },
+        {
+          "name": "OTÁVIO RAMOS",
+          "guest": false,
+          "out": "2026-02-12T23:52:00.000Z",
+          "by": "EDUARDO PIRES"
+        },
+        {
+          "name": "NATAN SILVEIRA",
+          "guest": false,
+          "out": "2026-02-12T23:41:00.000Z",
+          "by": "LUCAS MARTINS"
+        }
+      ],
+      "totalPlayers": 10,
+      "pool": 1000,
+      "startedAt": "2026-02-12T23:30:00.000Z",
+      "endedAt": "2026-02-13T01:20:00.000Z"
+    },
+    {
+      "id": "s20261r7",
+      "roundNumber": 7,
+      "buyIn": 100,
+      "prizes": [
+        700,
+        400,
+        300,
+        100
+      ],
+      "standings": [
+        {
+          "name": "DANIEL ROCHA",
+          "guest": false
+        },
+        {
+          "name": "ANDRÉ MOURA",
+          "guest": false,
+          "out": "2026-02-20T02:04:00.000Z",
+          "by": "DANIEL ROCHA"
+        },
+        {
+          "name": "FELIPE NUNES",
+          "guest": false,
+          "out": "2026-02-20T01:53:00.000Z",
+          "by": "DANIEL ROCHA"
+        },
+        {
+          "name": "EDUARDO PIRES",
+          "guest": false,
+          "out": "2026-02-20T01:42:00.000Z",
+          "by": "DANIEL ROCHA"
+        },
+        {
+          "name": "CARLOS EDUARDO",
+          "guest": false,
+          "out": "2026-02-20T01:31:00.000Z",
+          "by": "EDUARDO PIRES"
+        },
+        {
+          "name": "IGOR BARBOSA",
+          "guest": false,
+          "out": "2026-02-20T01:20:00.000Z",
+          "by": "EDUARDO PIRES"
+        },
+        {
+          "name": "PRIMO DO TIAGO",
+          "guest": true,
+          "out": "2026-02-20T01:09:00.000Z",
+          "by": "IGOR BARBOSA"
+        },
+        {
+          "name": "NATAN SILVEIRA",
+          "guest": false,
+          "out": "2026-02-20T00:58:00.000Z",
+          "by": "ANDRÉ MOURA"
+        },
+        {
+          "name": "RAFAEL CUNHA",
+          "guest": false,
+          "out": "2026-02-20T00:47:00.000Z",
+          "by": "IGOR BARBOSA"
+        },
+        {
+          "name": "HENRIQUE COSTA",
+          "guest": false,
+          "out": "2026-02-20T00:36:00.000Z",
+          "by": "EDUARDO PIRES"
+        },
+        {
+          "name": "MARCELO DIAS",
+          "guest": false,
+          "out": "2026-02-20T00:25:00.000Z",
+          "by": "HENRIQUE COSTA"
+        },
+        {
+          "name": "GUSTAVO LIMA",
+          "guest": false,
+          "out": "2026-02-20T00:14:00.000Z",
+          "by": "HENRIQUE COSTA"
+        },
+        {
+          "name": "JOÃO PAULO",
+          "guest": false,
+          "out": "2026-02-20T00:03:00.000Z",
+          "by": "NATAN SILVEIRA"
+        },
+        {
+          "name": "OTÁVIO RAMOS",
+          "guest": false,
+          "out": "2026-02-19T23:52:00.000Z",
+          "by": "DANIEL ROCHA"
+        },
+        {
+          "name": "PEDRO HENRIQUE",
+          "guest": false,
+          "out": "2026-02-19T23:41:00.000Z",
+          "by": "RAFAEL CUNHA"
+        }
+      ],
+      "totalPlayers": 15,
+      "pool": 1500,
+      "startedAt": "2026-02-19T23:30:00.000Z",
+      "endedAt": "2026-02-20T02:15:00.000Z"
+    },
+    {
+      "id": "s20261r8",
+      "roundNumber": 8,
+      "buyIn": 100,
+      "prizes": [
+        700,
+        400,
+        300,
+        100
+      ],
+      "standings": [
+        {
+          "name": "CARLOS EDUARDO",
+          "guest": false
+        },
+        {
+          "name": "DANIEL ROCHA",
+          "guest": false,
+          "out": "2026-02-27T02:04:00.000Z",
+          "by": "CARLOS EDUARDO"
+        },
+        {
+          "name": "EDUARDO PIRES",
+          "guest": false,
+          "out": "2026-02-27T01:53:00.000Z",
+          "by": "CARLOS EDUARDO"
+        },
+        {
+          "name": "HENRIQUE COSTA",
+          "guest": false,
+          "out": "2026-02-27T01:42:00.000Z",
+          "by": "CARLOS EDUARDO"
+        },
+        {
+          "name": "JOÃO PAULO",
+          "guest": false,
+          "out": "2026-02-27T01:31:00.000Z",
+          "by": "DANIEL ROCHA"
+        },
+        {
+          "name": "BRUNO TEIXEIRA",
+          "guest": false,
+          "out": "2026-02-27T01:20:00.000Z",
+          "by": "DANIEL ROCHA"
+        },
+        {
+          "name": "IGOR BARBOSA",
+          "guest": false,
+          "out": "2026-02-27T01:09:00.000Z",
+          "by": "CARLOS EDUARDO"
+        },
+        {
+          "name": "GUSTAVO LIMA",
+          "guest": false,
+          "out": "2026-02-27T00:58:00.000Z",
+          "by": "EDUARDO PIRES"
+        },
+        {
+          "name": "RAFAEL CUNHA",
+          "guest": false,
+          "out": "2026-02-27T00:47:00.000Z",
+          "by": "EDUARDO PIRES"
+        },
+        {
+          "name": "OTÁVIO RAMOS",
+          "guest": false,
+          "out": "2026-02-27T00:36:00.000Z",
+          "by": "IGOR BARBOSA"
+        },
+        {
+          "name": "FELIPE NUNES",
+          "guest": false,
+          "out": "2026-02-27T00:25:00.000Z",
+          "by": "GUSTAVO LIMA"
+        },
+        {
+          "name": "LUCAS MARTINS",
+          "guest": false,
+          "out": "2026-02-27T00:14:00.000Z",
+          "by": "OTÁVIO RAMOS"
+        },
+        {
+          "name": "NATAN SILVEIRA",
+          "guest": false,
+          "out": "2026-02-27T00:03:00.000Z",
+          "by": "EDUARDO PIRES"
+        },
+        {
+          "name": "PEDRO HENRIQUE",
+          "guest": false,
+          "out": "2026-02-26T23:52:00.000Z",
+          "by": "HENRIQUE COSTA"
+        },
+        {
+          "name": "MARCELO DIAS",
+          "guest": false,
+          "out": "2026-02-26T23:41:00.000Z",
+          "by": "HENRIQUE COSTA"
+        }
+      ],
+      "totalPlayers": 15,
+      "pool": 1500,
+      "startedAt": "2026-02-26T23:30:00.000Z",
+      "endedAt": "2026-02-27T02:15:00.000Z"
+    },
+    {
+      "id": "s20261r9",
+      "roundNumber": 9,
+      "buyIn": 100,
+      "prizes": [
+        500,
+        300,
+        200
+      ],
+      "standings": [
+        {
+          "name": "BRUNO TEIXEIRA",
+          "guest": false
+        },
+        {
+          "name": "GUSTAVO LIMA",
+          "guest": false,
+          "out": "2026-03-06T01:09:00.000Z",
+          "by": "BRUNO TEIXEIRA"
+        },
+        {
+          "name": "JOÃO PAULO",
+          "guest": false,
+          "out": "2026-03-06T00:58:00.000Z",
+          "by": "BRUNO TEIXEIRA"
+        },
+        {
+          "name": "ANDRÉ MOURA",
+          "guest": false,
+          "out": "2026-03-06T00:47:00.000Z",
+          "by": "GUSTAVO LIMA"
+        },
+        {
+          "name": "IGOR BARBOSA",
+          "guest": false,
+          "out": "2026-03-06T00:36:00.000Z",
+          "by": "GUSTAVO LIMA"
+        },
+        {
+          "name": "FELIPE NUNES",
+          "guest": false,
+          "out": "2026-03-06T00:25:00.000Z",
+          "by": "BRUNO TEIXEIRA"
+        },
+        {
+          "name": "PEDRO HENRIQUE",
+          "guest": false,
+          "out": "2026-03-06T00:14:00.000Z",
+          "by": "FELIPE NUNES"
+        },
+        {
+          "name": "HENRIQUE COSTA",
+          "guest": false,
+          "out": "2026-03-06T00:03:00.000Z",
+          "by": "FELIPE NUNES"
+        },
+        {
+          "name": "LUCAS MARTINS",
+          "guest": false,
+          "out": "2026-03-05T23:52:00.000Z",
+          "by": "BRUNO TEIXEIRA"
+        },
+        {
+          "name": "MARCELO DIAS",
+          "guest": false,
+          "out": "2026-03-05T23:41:00.000Z",
+          "by": "FELIPE NUNES"
+        }
+      ],
+      "totalPlayers": 10,
+      "pool": 1000,
+      "startedAt": "2026-03-05T23:30:00.000Z",
+      "endedAt": "2026-03-06T01:20:00.000Z"
+    },
+    {
+      "id": "s20261r10",
+      "roundNumber": 10,
+      "buyIn": 100,
+      "prizes": [
+        550,
+        350,
+        200
+      ],
+      "standings": [
+        {
+          "name": "ANDRÉ MOURA",
+          "guest": false
+        },
+        {
+          "name": "CARLOS EDUARDO",
+          "guest": false,
+          "out": "2026-03-13T01:20:00.000Z",
+          "by": "ANDRÉ MOURA"
+        },
+        {
+          "name": "GUSTAVO LIMA",
+          "guest": false,
+          "out": "2026-03-13T01:09:00.000Z",
+          "by": "CARLOS EDUARDO"
+        },
+        {
+          "name": "FELIPE NUNES",
+          "guest": false,
+          "out": "2026-03-13T00:58:00.000Z",
+          "by": "CARLOS EDUARDO"
+        },
+        {
+          "name": "BRUNO TEIXEIRA",
+          "guest": false,
+          "out": "2026-03-13T00:47:00.000Z",
+          "by": "CARLOS EDUARDO"
+        },
+        {
+          "name": "OTÁVIO RAMOS",
+          "guest": false,
+          "out": "2026-03-13T00:36:00.000Z",
+          "by": "GUSTAVO LIMA"
+        },
+        {
+          "name": "RAFAEL CUNHA",
+          "guest": false,
+          "out": "2026-03-13T00:25:00.000Z",
+          "by": "ANDRÉ MOURA"
+        },
+        {
+          "name": "PEDRO HENRIQUE",
+          "guest": false,
+          "out": "2026-03-13T00:14:00.000Z",
+          "by": "BRUNO TEIXEIRA"
+        },
+        {
+          "name": "LUCAS MARTINS",
+          "guest": false,
+          "out": "2026-03-13T00:03:00.000Z",
+          "by": "OTÁVIO RAMOS"
+        },
+        {
+          "name": "HENRIQUE COSTA",
+          "guest": false,
+          "out": "2026-03-12T23:52:00.000Z",
+          "by": "FELIPE NUNES"
+        },
+        {
+          "name": "NATAN SILVEIRA",
+          "guest": false,
+          "out": "2026-03-12T23:41:00.000Z",
+          "by": "RAFAEL CUNHA"
+        }
+      ],
+      "totalPlayers": 11,
+      "pool": 1100,
+      "startedAt": "2026-03-12T23:30:00.000Z",
+      "endedAt": "2026-03-13T01:31:00.000Z"
+    },
+    {
+      "id": "s20261r11",
+      "roundNumber": 11,
+      "buyIn": 100,
+      "prizes": [
+        650,
+        400,
+        250,
+        100
+      ],
+      "standings": [
+        {
+          "name": "CARLOS EDUARDO",
+          "guest": false
+        },
+        {
+          "name": "IGOR BARBOSA",
+          "guest": false,
+          "out": "2026-03-20T01:53:00.000Z",
+          "by": "CARLOS EDUARDO"
+        },
+        {
+          "name": "ANDRÉ MOURA",
+          "guest": false,
+          "out": "2026-03-20T01:42:00.000Z",
+          "by": "IGOR BARBOSA"
+        },
+        {
+          "name": "HENRIQUE COSTA",
+          "guest": false,
+          "out": "2026-03-20T01:31:00.000Z",
+          "by": "IGOR BARBOSA"
+        },
+        {
+          "name": "LUCAS MARTINS",
+          "guest": false,
+          "out": "2026-03-20T01:20:00.000Z",
+          "by": "IGOR BARBOSA"
+        },
+        {
+          "name": "FELIPE NUNES",
+          "guest": false,
+          "out": "2026-03-20T01:09:00.000Z",
+          "by": "ANDRÉ MOURA"
+        },
+        {
+          "name": "GUSTAVO LIMA",
+          "guest": false,
+          "out": "2026-03-20T00:58:00.000Z",
+          "by": "IGOR BARBOSA"
+        },
+        {
+          "name": "MARCELO DIAS",
+          "guest": false,
+          "out": "2026-03-20T00:47:00.000Z",
+          "by": "IGOR BARBOSA"
+        },
+        {
+          "name": "NATAN SILVEIRA",
+          "guest": false,
+          "out": "2026-03-20T00:36:00.000Z",
+          "by": "MARCELO DIAS"
+        },
+        {
+          "name": "DANIEL ROCHA",
+          "guest": false,
+          "out": "2026-03-20T00:25:00.000Z",
+          "by": "ANDRÉ MOURA"
+        },
+        {
+          "name": "EDUARDO PIRES",
+          "guest": false,
+          "out": "2026-03-20T00:14:00.000Z",
+          "by": "LUCAS MARTINS"
+        },
+        {
+          "name": "JOÃO PAULO",
+          "guest": false,
+          "out": "2026-03-20T00:03:00.000Z",
+          "by": "HENRIQUE COSTA"
+        },
+        {
+          "name": "RAFAEL CUNHA",
+          "guest": false,
+          "out": "2026-03-19T23:52:00.000Z",
+          "by": "JOÃO PAULO"
+        },
+        {
+          "name": "PEDRO HENRIQUE",
+          "guest": false,
+          "out": "2026-03-19T23:41:00.000Z",
+          "by": "RAFAEL CUNHA"
+        }
+      ],
+      "totalPlayers": 14,
+      "pool": 1400,
+      "startedAt": "2026-03-19T23:30:00.000Z",
+      "endedAt": "2026-03-20T02:04:00.000Z"
+    },
+    {
+      "id": "s20261r12",
+      "roundNumber": 12,
+      "buyIn": 100,
+      "prizes": [
+        650,
+        400,
+        250,
+        100
+      ],
+      "standings": [
+        {
+          "name": "BRUNO TEIXEIRA",
+          "guest": false
+        },
+        {
+          "name": "CARLOS EDUARDO",
+          "guest": false,
+          "out": "2026-03-27T01:53:00.000Z",
+          "by": "BRUNO TEIXEIRA"
+        },
+        {
+          "name": "ANDRÉ MOURA",
+          "guest": false,
+          "out": "2026-03-27T01:42:00.000Z",
+          "by": "CARLOS EDUARDO"
+        },
+        {
+          "name": "EDUARDO PIRES",
+          "guest": false,
+          "out": "2026-03-27T01:31:00.000Z",
+          "by": "ANDRÉ MOURA"
+        },
+        {
+          "name": "DANIEL ROCHA",
+          "guest": false,
+          "out": "2026-03-27T01:20:00.000Z",
+          "by": "EDUARDO PIRES"
+        },
+        {
+          "name": "IGOR BARBOSA",
+          "guest": false,
+          "out": "2026-03-27T01:09:00.000Z",
+          "by": "DANIEL ROCHA"
+        },
+        {
+          "name": "FELIPE NUNES",
+          "guest": false,
+          "out": "2026-03-27T00:58:00.000Z",
+          "by": "DANIEL ROCHA"
+        },
+        {
+          "name": "MARCELO DIAS",
+          "guest": false,
+          "out": "2026-03-27T00:47:00.000Z",
+          "by": "CARLOS EDUARDO"
+        },
+        {
+          "name": "PEDRO HENRIQUE",
+          "guest": false,
+          "out": "2026-03-27T00:36:00.000Z",
+          "by": "CARLOS EDUARDO"
+        },
+        {
+          "name": "CONVIDADO DO ANDRÉ",
+          "guest": true,
+          "out": "2026-03-27T00:25:00.000Z",
+          "by": "ANDRÉ MOURA"
+        },
+        {
+          "name": "OTÁVIO RAMOS",
+          "guest": false,
+          "out": "2026-03-27T00:14:00.000Z",
+          "by": "CARLOS EDUARDO"
+        },
+        {
+          "name": "NATAN SILVEIRA",
+          "guest": false,
+          "out": "2026-03-27T00:03:00.000Z",
+          "by": "OTÁVIO RAMOS"
+        },
+        {
+          "name": "LUCAS MARTINS",
+          "guest": false,
+          "out": "2026-03-26T23:52:00.000Z",
+          "by": "NATAN SILVEIRA"
+        },
+        {
+          "name": "RAFAEL CUNHA",
+          "guest": false,
+          "out": "2026-03-26T23:41:00.000Z",
+          "by": "ANDRÉ MOURA"
+        }
+      ],
+      "totalPlayers": 14,
+      "pool": 1400,
+      "startedAt": "2026-03-26T23:30:00.000Z",
+      "endedAt": "2026-03-27T02:04:00.000Z"
+    },
+    {
+      "id": "s20261r13",
+      "roundNumber": 13,
+      "buyIn": 100,
+      "prizes": [
+        600,
+        350,
+        250
+      ],
+      "standings": [
+        {
+          "name": "EDUARDO PIRES",
+          "guest": false
+        },
+        {
+          "name": "DANIEL ROCHA",
+          "guest": false,
+          "out": "2026-04-03T01:31:00.000Z",
+          "by": "EDUARDO PIRES"
+        },
+        {
+          "name": "BRUNO TEIXEIRA",
+          "guest": false,
+          "out": "2026-04-03T01:20:00.000Z",
+          "by": "DANIEL ROCHA"
+        },
+        {
+          "name": "FELIPE NUNES",
+          "guest": false,
+          "out": "2026-04-03T01:09:00.000Z",
+          "by": "BRUNO TEIXEIRA"
+        },
+        {
+          "name": "JOÃO PAULO",
+          "guest": false,
+          "out": "2026-04-03T00:58:00.000Z",
+          "by": "FELIPE NUNES"
+        },
+        {
+          "name": "HENRIQUE COSTA",
+          "guest": false,
+          "out": "2026-04-03T00:47:00.000Z",
+          "by": "JOÃO PAULO"
+        },
+        {
+          "name": "MARCELO DIAS",
+          "guest": false,
+          "out": "2026-04-03T00:36:00.000Z",
+          "by": "HENRIQUE COSTA"
+        },
+        {
+          "name": "LUCAS MARTINS",
+          "guest": false,
+          "out": "2026-04-03T00:25:00.000Z",
+          "by": "DANIEL ROCHA"
+        },
+        {
+          "name": "NATAN SILVEIRA",
+          "guest": false,
+          "out": "2026-04-03T00:14:00.000Z",
+          "by": "HENRIQUE COSTA"
+        },
+        {
+          "name": "RAFAEL CUNHA",
+          "guest": false,
+          "out": "2026-04-03T00:03:00.000Z",
+          "by": "FELIPE NUNES"
+        },
+        {
+          "name": "PEDRO HENRIQUE",
+          "guest": false,
+          "out": "2026-04-02T23:52:00.000Z",
+          "by": "RAFAEL CUNHA"
+        },
+        {
+          "name": "OTÁVIO RAMOS",
+          "guest": false,
+          "out": "2026-04-02T23:41:00.000Z",
+          "by": "MARCELO DIAS"
+        }
+      ],
+      "totalPlayers": 12,
+      "pool": 1200,
+      "startedAt": "2026-04-02T23:30:00.000Z",
+      "endedAt": "2026-04-03T01:42:00.000Z"
+    },
+    {
+      "id": "s20261r14",
+      "roundNumber": 14,
+      "buyIn": 100,
+      "prizes": [
+        700,
+        400,
+        300,
+        100
+      ],
+      "standings": [
+        {
+          "name": "CARLOS EDUARDO",
+          "guest": false
+        },
+        {
+          "name": "DANIEL ROCHA",
+          "guest": false,
+          "out": "2026-04-10T02:04:00.000Z",
+          "by": "CARLOS EDUARDO"
+        },
+        {
+          "name": "FELIPE NUNES",
+          "guest": false,
+          "out": "2026-04-10T01:53:00.000Z",
+          "by": "DANIEL ROCHA"
+        },
+        {
+          "name": "EDUARDO PIRES",
+          "guest": false,
+          "out": "2026-04-10T01:42:00.000Z",
+          "by": "DANIEL ROCHA"
+        },
+        {
+          "name": "GUSTAVO LIMA",
+          "guest": false,
+          "out": "2026-04-10T01:31:00.000Z",
+          "by": "FELIPE NUNES"
+        },
+        {
+          "name": "ANDRÉ MOURA",
+          "guest": false,
+          "out": "2026-04-10T01:20:00.000Z",
+          "by": "EDUARDO PIRES"
+        },
+        {
+          "name": "IGOR BARBOSA",
+          "guest": false,
+          "out": "2026-04-10T01:09:00.000Z",
+          "by": "FELIPE NUNES"
+        },
+        {
+          "name": "OTÁVIO RAMOS",
+          "guest": false,
+          "out": "2026-04-10T00:58:00.000Z",
+          "by": "GUSTAVO LIMA"
+        },
+        {
+          "name": "JOÃO PAULO",
+          "guest": false,
+          "out": "2026-04-10T00:47:00.000Z",
+          "by": "ANDRÉ MOURA"
+        },
+        {
+          "name": "MARCELO DIAS",
+          "guest": false,
+          "out": "2026-04-10T00:36:00.000Z",
+          "by": "EDUARDO PIRES"
+        },
+        {
+          "name": "RAFAEL CUNHA",
+          "guest": false,
+          "out": "2026-04-10T00:25:00.000Z",
+          "by": "EDUARDO PIRES"
+        },
+        {
+          "name": "HENRIQUE COSTA",
+          "guest": false,
+          "out": "2026-04-10T00:14:00.000Z",
+          "by": "EDUARDO PIRES"
+        },
+        {
+          "name": "LUCAS MARTINS",
+          "guest": false,
+          "out": "2026-04-10T00:03:00.000Z",
+          "by": "JOÃO PAULO"
+        },
+        {
+          "name": "NATAN SILVEIRA",
+          "guest": false,
+          "out": "2026-04-09T23:52:00.000Z",
+          "by": "IGOR BARBOSA"
+        },
+        {
+          "name": "PEDRO HENRIQUE",
+          "guest": false,
+          "out": "2026-04-09T23:41:00.000Z",
+          "by": "EDUARDO PIRES"
+        }
+      ],
+      "totalPlayers": 15,
+      "pool": 1500,
+      "startedAt": "2026-04-09T23:30:00.000Z",
+      "endedAt": "2026-04-10T02:15:00.000Z"
+    },
+    {
+      "id": "s20261r15",
+      "roundNumber": 15,
+      "buyIn": 100,
+      "prizes": [
+        500,
+        300,
+        200
+      ],
+      "standings": [
+        {
+          "name": "ANDRÉ MOURA",
+          "guest": false
+        },
+        {
+          "name": "FELIPE NUNES",
+          "guest": false,
+          "out": "2026-04-17T01:09:00.000Z",
+          "by": "ANDRÉ MOURA"
+        },
+        {
+          "name": "DANIEL ROCHA",
+          "guest": false,
+          "out": "2026-04-17T00:58:00.000Z",
+          "by": "ANDRÉ MOURA"
+        },
+        {
+          "name": "IGOR BARBOSA",
+          "guest": false,
+          "out": "2026-04-17T00:47:00.000Z",
+          "by": "DANIEL ROCHA"
+        },
+        {
+          "name": "MARCELO DIAS",
+          "guest": false,
+          "out": "2026-04-17T00:36:00.000Z",
+          "by": "FELIPE NUNES"
+        },
+        {
+          "name": "EDUARDO PIRES",
+          "guest": false,
+          "out": "2026-04-17T00:25:00.000Z",
+          "by": "MARCELO DIAS"
+        },
+        {
+          "name": "LUCAS MARTINS",
+          "guest": false,
+          "out": "2026-04-17T00:14:00.000Z",
+          "by": "MARCELO DIAS"
+        },
+        {
+          "name": "NATAN SILVEIRA",
+          "guest": false,
+          "out": "2026-04-17T00:03:00.000Z",
+          "by": "ANDRÉ MOURA"
+        },
+        {
+          "name": "OTÁVIO RAMOS",
+          "guest": false,
+          "out": "2026-04-16T23:52:00.000Z",
+          "by": "DANIEL ROCHA"
+        },
+        {
+          "name": "JOÃO PAULO",
+          "guest": false,
+          "out": "2026-04-16T23:41:00.000Z",
+          "by": "FELIPE NUNES"
+        }
+      ],
+      "totalPlayers": 10,
+      "pool": 1000,
+      "startedAt": "2026-04-16T23:30:00.000Z",
+      "endedAt": "2026-04-17T01:20:00.000Z"
+    },
+    {
+      "id": "s20261r16",
+      "roundNumber": 16,
+      "buyIn": 100,
+      "prizes": [
+        600,
+        350,
+        250
+      ],
+      "standings": [
+        {
+          "name": "ANDRÉ MOURA",
+          "guest": false
+        },
+        {
+          "name": "JOÃO PAULO",
+          "guest": false,
+          "out": "2026-04-24T01:31:00.000Z",
+          "by": "ANDRÉ MOURA"
+        },
+        {
+          "name": "FELIPE NUNES",
+          "guest": false,
+          "out": "2026-04-24T01:20:00.000Z",
+          "by": "JOÃO PAULO"
+        },
+        {
+          "name": "BRUNO TEIXEIRA",
+          "guest": false,
+          "out": "2026-04-24T01:09:00.000Z",
+          "by": "FELIPE NUNES"
+        },
+        {
+          "name": "CARLOS EDUARDO",
+          "guest": false,
+          "out": "2026-04-24T00:58:00.000Z",
+          "by": "JOÃO PAULO"
+        },
+        {
+          "name": "NATAN SILVEIRA",
+          "guest": false,
+          "out": "2026-04-24T00:47:00.000Z",
+          "by": "CARLOS EDUARDO"
+        },
+        {
+          "name": "MARCELO DIAS",
+          "guest": false,
+          "out": "2026-04-24T00:36:00.000Z",
+          "by": "CARLOS EDUARDO"
+        },
+        {
+          "name": "EDUARDO PIRES",
+          "guest": false,
+          "out": "2026-04-24T00:25:00.000Z",
+          "by": "BRUNO TEIXEIRA"
+        },
+        {
+          "name": "HENRIQUE COSTA",
+          "guest": false,
+          "out": "2026-04-24T00:14:00.000Z",
+          "by": "FELIPE NUNES"
+        },
+        {
+          "name": "LUCAS MARTINS",
+          "guest": false,
+          "out": "2026-04-24T00:03:00.000Z",
+          "by": "MARCELO DIAS"
+        },
+        {
+          "name": "PEDRO HENRIQUE",
+          "guest": false,
+          "out": "2026-04-23T23:52:00.000Z",
+          "by": "CARLOS EDUARDO"
+        },
+        {
+          "name": "RAFAEL CUNHA",
+          "guest": false,
+          "out": "2026-04-23T23:41:00.000Z",
+          "by": "JOÃO PAULO"
+        }
+      ],
+      "totalPlayers": 12,
+      "pool": 1200,
+      "startedAt": "2026-04-23T23:30:00.000Z",
+      "endedAt": "2026-04-24T01:42:00.000Z"
+    },
+    {
+      "id": "s20261r17",
+      "roundNumber": 17,
+      "buyIn": 100,
+      "prizes": [
+        700,
+        400,
+        300,
+        100
+      ],
+      "standings": [
+        {
+          "name": "ANDRÉ MOURA",
+          "guest": false
+        },
+        {
+          "name": "BRUNO TEIXEIRA",
+          "guest": false,
+          "out": "2026-05-01T02:04:00.000Z",
+          "by": "ANDRÉ MOURA"
+        },
+        {
+          "name": "DANIEL ROCHA",
+          "guest": false,
+          "out": "2026-05-01T01:53:00.000Z",
+          "by": "BRUNO TEIXEIRA"
+        },
+        {
+          "name": "LUCAS MARTINS",
+          "guest": false,
+          "out": "2026-05-01T01:42:00.000Z",
+          "by": "BRUNO TEIXEIRA"
+        },
+        {
+          "name": "GUSTAVO LIMA",
+          "guest": false,
+          "out": "2026-05-01T01:31:00.000Z",
+          "by": "LUCAS MARTINS"
+        },
+        {
+          "name": "EDUARDO PIRES",
+          "guest": false,
+          "out": "2026-05-01T01:20:00.000Z",
+          "by": "ANDRÉ MOURA"
+        },
+        {
+          "name": "FELIPE NUNES",
+          "guest": false,
+          "out": "2026-05-01T01:09:00.000Z",
+          "by": "DANIEL ROCHA"
+        },
+        {
+          "name": "PEDRO HENRIQUE",
+          "guest": false,
+          "out": "2026-05-01T00:58:00.000Z",
+          "by": "FELIPE NUNES"
+        },
+        {
+          "name": "NATAN SILVEIRA",
+          "guest": false,
+          "out": "2026-05-01T00:47:00.000Z",
+          "by": "BRUNO TEIXEIRA"
+        },
+        {
+          "name": "IGOR BARBOSA",
+          "guest": false,
+          "out": "2026-05-01T00:36:00.000Z",
+          "by": "LUCAS MARTINS"
+        },
+        {
+          "name": "JOÃO PAULO",
+          "guest": false,
+          "out": "2026-05-01T00:25:00.000Z",
+          "by": "BRUNO TEIXEIRA"
+        },
+        {
+          "name": "HENRIQUE COSTA",
+          "guest": false,
+          "out": "2026-05-01T00:14:00.000Z",
+          "by": "NATAN SILVEIRA"
+        },
+        {
+          "name": "MARCELO DIAS",
+          "guest": false,
+          "out": "2026-05-01T00:03:00.000Z",
+          "by": "EDUARDO PIRES"
+        },
+        {
+          "name": "OTÁVIO RAMOS",
+          "guest": false,
+          "out": "2026-04-30T23:52:00.000Z",
+          "by": "PEDRO HENRIQUE"
+        },
+        {
+          "name": "RAFAEL CUNHA",
+          "guest": false,
+          "out": "2026-04-30T23:41:00.000Z",
+          "by": "JOÃO PAULO"
+        }
+      ],
+      "totalPlayers": 15,
+      "pool": 1500,
+      "startedAt": "2026-04-30T23:30:00.000Z",
+      "endedAt": "2026-05-01T02:15:00.000Z"
+    },
+    {
+      "id": "s20261r18",
+      "roundNumber": 18,
+      "buyIn": 100,
+      "prizes": [
+        500,
+        300,
+        200
+      ],
+      "standings": [
+        {
+          "name": "DANIEL ROCHA",
+          "guest": false
+        },
+        {
+          "name": "JOÃO PAULO",
+          "guest": false,
+          "out": "2026-05-08T01:09:00.000Z",
+          "by": "DANIEL ROCHA"
+        },
+        {
+          "name": "FELIPE NUNES",
+          "guest": false,
+          "out": "2026-05-08T00:58:00.000Z",
+          "by": "DANIEL ROCHA"
+        },
+        {
+          "name": "HENRIQUE COSTA",
+          "guest": false,
+          "out": "2026-05-08T00:47:00.000Z",
+          "by": "DANIEL ROCHA"
+        },
+        {
+          "name": "GUSTAVO LIMA",
+          "guest": false,
+          "out": "2026-05-08T00:36:00.000Z",
+          "by": "HENRIQUE COSTA"
+        },
+        {
+          "name": "IGOR BARBOSA",
+          "guest": false,
+          "out": "2026-05-08T00:25:00.000Z",
+          "by": "JOÃO PAULO"
+        },
+        {
+          "name": "PEDRO HENRIQUE",
+          "guest": false,
+          "out": "2026-05-08T00:14:00.000Z",
+          "by": "FELIPE NUNES"
+        },
+        {
+          "name": "LUCAS MARTINS",
+          "guest": false,
+          "out": "2026-05-08T00:03:00.000Z",
+          "by": "FELIPE NUNES"
+        },
+        {
+          "name": "RAFAEL CUNHA",
+          "guest": false,
+          "out": "2026-05-07T23:52:00.000Z",
+          "by": "DANIEL ROCHA"
+        },
+        {
+          "name": "MARCELO DIAS",
+          "guest": false,
+          "out": "2026-05-07T23:41:00.000Z",
+          "by": "DANIEL ROCHA"
+        }
+      ],
+      "totalPlayers": 10,
+      "pool": 1000,
+      "startedAt": "2026-05-07T23:30:00.000Z",
+      "endedAt": "2026-05-08T01:20:00.000Z"
+    },
+    {
+      "id": "s20261r19",
+      "roundNumber": 19,
+      "buyIn": 100,
+      "prizes": [
+        650,
+        400,
+        250
+      ],
+      "standings": [
+        {
+          "name": "CARLOS EDUARDO",
+          "guest": false
+        },
+        {
+          "name": "FELIPE NUNES",
+          "guest": false,
+          "out": "2026-05-15T01:42:00.000Z",
+          "by": "CARLOS EDUARDO"
+        },
+        {
+          "name": "EDUARDO PIRES",
+          "guest": false,
+          "out": "2026-05-15T01:31:00.000Z",
+          "by": "FELIPE NUNES"
+        },
+        {
+          "name": "DANIEL ROCHA",
+          "guest": false,
+          "out": "2026-05-15T01:20:00.000Z",
+          "by": "CARLOS EDUARDO"
+        },
+        {
+          "name": "ANDRÉ MOURA",
+          "guest": false,
+          "out": "2026-05-15T01:09:00.000Z",
+          "by": "CARLOS EDUARDO"
+        },
+        {
+          "name": "JOÃO PAULO",
+          "guest": false,
+          "out": "2026-05-15T00:58:00.000Z",
+          "by": "ANDRÉ MOURA"
+        },
+        {
+          "name": "NATAN SILVEIRA",
+          "guest": false,
+          "out": "2026-05-15T00:47:00.000Z",
+          "by": "FELIPE NUNES"
+        },
+        {
+          "name": "IGOR BARBOSA",
+          "guest": false,
+          "out": "2026-05-15T00:36:00.000Z",
+          "by": "FELIPE NUNES"
+        },
+        {
+          "name": "HENRIQUE COSTA",
+          "guest": false,
+          "out": "2026-05-15T00:25:00.000Z",
+          "by": "FELIPE NUNES"
+        },
+        {
+          "name": "MARCELO DIAS",
+          "guest": false,
+          "out": "2026-05-15T00:14:00.000Z",
+          "by": "ANDRÉ MOURA"
+        },
+        {
+          "name": "VIZINHO DO BRUNO",
+          "guest": true,
+          "out": "2026-05-15T00:03:00.000Z",
+          "by": "HENRIQUE COSTA"
+        },
+        {
+          "name": "GUSTAVO LIMA",
+          "guest": false,
+          "out": "2026-05-14T23:52:00.000Z",
+          "by": "IGOR BARBOSA"
+        },
+        {
+          "name": "LUCAS MARTINS",
+          "guest": false,
+          "out": "2026-05-14T23:41:00.000Z",
+          "by": "NATAN SILVEIRA"
+        }
+      ],
+      "totalPlayers": 13,
+      "pool": 1300,
+      "startedAt": "2026-05-14T23:30:00.000Z",
+      "endedAt": "2026-05-15T01:53:00.000Z"
+    },
+    {
+      "id": "s20261r20",
+      "roundNumber": 20,
+      "buyIn": 100,
+      "prizes": [
+        500,
+        300,
+        200
+      ],
+      "standings": [
+        {
+          "name": "CARLOS EDUARDO",
+          "guest": false
+        },
+        {
+          "name": "DANIEL ROCHA",
+          "guest": false,
+          "out": "2026-05-22T01:09:00.000Z",
+          "by": "CARLOS EDUARDO"
+        },
+        {
+          "name": "FELIPE NUNES",
+          "guest": false,
+          "out": "2026-05-22T00:58:00.000Z",
+          "by": "DANIEL ROCHA"
+        },
+        {
+          "name": "HENRIQUE COSTA",
+          "guest": false,
+          "out": "2026-05-22T00:47:00.000Z",
+          "by": "FELIPE NUNES"
+        },
+        {
+          "name": "LUCAS MARTINS",
+          "guest": false,
+          "out": "2026-05-22T00:36:00.000Z",
+          "by": "CARLOS EDUARDO"
+        },
+        {
+          "name": "EDUARDO PIRES",
+          "guest": false,
+          "out": "2026-05-22T00:25:00.000Z",
+          "by": "HENRIQUE COSTA"
+        },
+        {
+          "name": "IGOR BARBOSA",
+          "guest": false,
+          "out": "2026-05-22T00:14:00.000Z",
+          "by": "DANIEL ROCHA"
+        },
+        {
+          "name": "PEDRO HENRIQUE",
+          "guest": false,
+          "out": "2026-05-22T00:03:00.000Z",
+          "by": "IGOR BARBOSA"
+        },
+        {
+          "name": "RAFAEL CUNHA",
+          "guest": false,
+          "out": "2026-05-21T23:52:00.000Z",
+          "by": "PEDRO HENRIQUE"
+        },
+        {
+          "name": "JOÃO PAULO",
+          "guest": false,
+          "out": "2026-05-21T23:41:00.000Z",
+          "by": "HENRIQUE COSTA"
+        }
+      ],
+      "totalPlayers": 10,
+      "pool": 1000,
+      "startedAt": "2026-05-21T23:30:00.000Z",
+      "endedAt": "2026-05-22T01:20:00.000Z"
+    },
+    {
+      "id": "s20261r21",
+      "roundNumber": 21,
+      "buyIn": 100,
+      "prizes": [
+        550,
+        350,
+        200
+      ],
+      "standings": [
+        {
+          "name": "CARLOS EDUARDO",
+          "guest": false
+        },
+        {
+          "name": "BRUNO TEIXEIRA",
+          "guest": false,
+          "out": "2026-05-29T01:20:00.000Z",
+          "by": "CARLOS EDUARDO"
+        },
+        {
+          "name": "DANIEL ROCHA",
+          "guest": false,
+          "out": "2026-05-29T01:09:00.000Z",
+          "by": "CARLOS EDUARDO"
+        },
+        {
+          "name": "GUSTAVO LIMA",
+          "guest": false,
+          "out": "2026-05-29T00:58:00.000Z",
+          "by": "DANIEL ROCHA"
+        },
+        {
+          "name": "FELIPE NUNES",
+          "guest": false,
+          "out": "2026-05-29T00:47:00.000Z",
+          "by": "DANIEL ROCHA"
+        },
+        {
+          "name": "HENRIQUE COSTA",
+          "guest": false,
+          "out": "2026-05-29T00:36:00.000Z",
+          "by": "GUSTAVO LIMA"
+        },
+        {
+          "name": "EDUARDO PIRES",
+          "guest": false,
+          "out": "2026-05-29T00:25:00.000Z",
+          "by": "DANIEL ROCHA"
+        },
+        {
+          "name": "JOÃO PAULO",
+          "guest": false,
+          "out": "2026-05-29T00:14:00.000Z",
+          "by": "BRUNO TEIXEIRA"
+        },
+        {
+          "name": "PEDRO HENRIQUE",
+          "guest": false,
+          "out": "2026-05-29T00:03:00.000Z",
+          "by": "DANIEL ROCHA"
+        },
+        {
+          "name": "OTÁVIO RAMOS",
+          "guest": false,
+          "out": "2026-05-28T23:52:00.000Z",
+          "by": "PEDRO HENRIQUE"
+        },
+        {
+          "name": "LUCAS MARTINS",
+          "guest": false,
+          "out": "2026-05-28T23:41:00.000Z",
+          "by": "EDUARDO PIRES"
+        }
+      ],
+      "totalPlayers": 11,
+      "pool": 1100,
+      "startedAt": "2026-05-28T23:30:00.000Z",
+      "endedAt": "2026-05-29T01:31:00.000Z"
+    },
+    {
+      "id": "s20261r22",
+      "roundNumber": 22,
+      "buyIn": 100,
+      "prizes": [
+        550,
+        350,
+        200
+      ],
+      "standings": [
+        {
+          "name": "EDUARDO PIRES",
+          "guest": false
+        },
+        {
+          "name": "BRUNO TEIXEIRA",
+          "guest": false,
+          "out": "2026-06-05T01:20:00.000Z",
+          "by": "EDUARDO PIRES"
+        },
+        {
+          "name": "FELIPE NUNES",
+          "guest": false,
+          "out": "2026-06-05T01:09:00.000Z",
+          "by": "EDUARDO PIRES"
+        },
+        {
+          "name": "JOÃO PAULO",
+          "guest": false,
+          "out": "2026-06-05T00:58:00.000Z",
+          "by": "EDUARDO PIRES"
+        },
+        {
+          "name": "GUSTAVO LIMA",
+          "guest": false,
+          "out": "2026-06-05T00:47:00.000Z",
+          "by": "JOÃO PAULO"
+        },
+        {
+          "name": "IGOR BARBOSA",
+          "guest": false,
+          "out": "2026-06-05T00:36:00.000Z",
+          "by": "EDUARDO PIRES"
+        },
+        {
+          "name": "HENRIQUE COSTA",
+          "guest": false,
+          "out": "2026-06-05T00:25:00.000Z",
+          "by": "JOÃO PAULO"
+        },
+        {
+          "name": "LUCAS MARTINS",
+          "guest": false,
+          "out": "2026-06-05T00:14:00.000Z",
+          "by": "EDUARDO PIRES"
+        },
+        {
+          "name": "PRIMO DO TIAGO",
+          "guest": true,
+          "out": "2026-06-05T00:03:00.000Z",
+          "by": "FELIPE NUNES"
+        },
+        {
+          "name": "OTÁVIO RAMOS",
+          "guest": false,
+          "out": "2026-06-04T23:52:00.000Z",
+          "by": "FELIPE NUNES"
+        },
+        {
+          "name": "RAFAEL CUNHA",
+          "guest": false,
+          "out": "2026-06-04T23:41:00.000Z",
+          "by": "JOÃO PAULO"
+        }
+      ],
+      "totalPlayers": 11,
+      "pool": 1100,
+      "startedAt": "2026-06-04T23:30:00.000Z",
+      "endedAt": "2026-06-05T01:31:00.000Z"
+    }
+  ],
+  "roundDates": {
+    "1": "2026-01-08",
+    "2": "2026-01-15",
+    "3": "2026-01-22",
+    "4": "2026-01-29",
+    "5": "2026-02-05",
+    "6": "2026-02-12",
+    "7": "2026-02-19",
+    "8": "2026-02-26",
+    "9": "2026-03-05",
+    "10": "2026-03-12",
+    "11": "2026-03-19",
+    "12": "2026-03-26",
+    "13": "2026-04-02",
+    "14": "2026-04-09",
+    "15": "2026-04-16",
+    "16": "2026-04-23",
+    "17": "2026-04-30",
+    "18": "2026-05-07",
+    "19": "2026-05-14",
+    "20": "2026-05-21",
+    "21": "2026-05-28",
+    "22": "2026-06-04"
+  },
+  "roundOrganizers": {
+    "1": "ANDRÉ MOURA",
+    "2": "BRUNO TEIXEIRA",
+    "3": "CARLOS EDUARDO",
+    "4": "DANIEL ROCHA",
+    "5": "EDUARDO PIRES",
+    "6": "FELIPE NUNES",
+    "7": "GUSTAVO LIMA",
+    "8": "HENRIQUE COSTA",
+    "9": "IGOR BARBOSA",
+    "10": "JOÃO PAULO",
+    "11": "LUCAS MARTINS",
+    "12": "MARCELO DIAS",
+    "13": "NATAN SILVEIRA",
+    "14": "OTÁVIO RAMOS",
+    "15": "PEDRO HENRIQUE",
+    "16": "RAFAEL CUNHA",
+    "17": "ANDRÉ MOURA",
+    "18": "BRUNO TEIXEIRA",
+    "19": "CARLOS EDUARDO",
+    "20": "DANIEL ROCHA",
+    "21": "EDUARDO PIRES",
+    "22": "FELIPE NUNES"
+  },
+  "players": [
+    "ANDRÉ MOURA",
+    "BRUNO TEIXEIRA",
+    "CARLOS EDUARDO",
+    "DANIEL ROCHA",
+    "EDUARDO PIRES",
+    "FELIPE NUNES",
+    "GUSTAVO LIMA",
+    "HENRIQUE COSTA",
+    "IGOR BARBOSA",
+    "JOÃO PAULO",
+    "LUCAS MARTINS",
+    "MARCELO DIAS",
+    "NATAN SILVEIRA",
+    "OTÁVIO RAMOS",
+    "PEDRO HENRIQUE",
+    "RAFAEL CUNHA"
+  ],
+  "totalRounds": 22,
+  "topPositions": 4,
+  "publishedAt": "2026-06-26T12:00:00.000Z",
+  "closedAt": "2026-06-26T12:00:00.000Z"
+}

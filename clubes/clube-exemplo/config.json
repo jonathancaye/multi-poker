@@ -1,0 +1,295 @@
+{
+  "schemaVersion": 1,
+  "clube": {
+    "nome": "Clube Exemplo",
+    "nomeCurto": "Clube Exemplo",
+    "cidade": "Rio do Sul, SC",
+    "simbolo": "♠",
+    "slogan": "Quintas, 20h30"
+  },
+  "tema": {
+    "preset": "feltro",
+    "cores": {}
+  },
+  "pontuacao": {
+    "porPosicao": [
+      26,
+      19,
+      16,
+      13,
+      11,
+      9,
+      7,
+      5,
+      3,
+      2
+    ],
+    "demais": 1,
+    "presenca": 0,
+    "convidadoPontua": false
+  },
+  "premiacao": {
+    "moeda": "BRL",
+    "buyIn": 100,
+    "taxaPorJogador": 0,
+    "modo": "tabela",
+    "arredondar": 50,
+    "tabela": {
+      "6": [
+        300,
+        200,
+        100,
+        0
+      ],
+      "7": [
+        350,
+        200,
+        150,
+        0
+      ],
+      "8": [
+        400,
+        250,
+        150,
+        0
+      ],
+      "9": [
+        450,
+        250,
+        200,
+        0
+      ],
+      "10": [
+        500,
+        300,
+        200,
+        0
+      ],
+      "11": [
+        550,
+        350,
+        200,
+        0
+      ],
+      "12": [
+        600,
+        350,
+        250,
+        0
+      ],
+      "13": [
+        650,
+        400,
+        250,
+        0
+      ],
+      "14": [
+        650,
+        400,
+        250,
+        100
+      ],
+      "15": [
+        700,
+        400,
+        300,
+        100
+      ],
+      "16": [
+        750,
+        450,
+        300,
+        100
+      ],
+      "17": [
+        800,
+        450,
+        350,
+        100
+      ],
+      "18": [
+        850,
+        500,
+        350,
+        100
+      ],
+      "19": [
+        900,
+        500,
+        400,
+        100
+      ],
+      "20": [
+        950,
+        550,
+        400,
+        100
+      ],
+      "21": [
+        1000,
+        550,
+        450,
+        100
+      ],
+      "22": [
+        1050,
+        600,
+        450,
+        100
+      ],
+      "23": [
+        1100,
+        600,
+        500,
+        100
+      ],
+      "24": [
+        1150,
+        650,
+        500,
+        100
+      ],
+      "25": [
+        1200,
+        650,
+        550,
+        100
+      ]
+    },
+    "faixas": [
+      {
+        "ate": 5,
+        "pct": [
+          70,
+          30
+        ]
+      },
+      {
+        "ate": 13,
+        "pct": [
+          50,
+          30,
+          20
+        ]
+      },
+      {
+        "ate": 999,
+        "pct": [
+          45,
+          27,
+          18,
+          10
+        ]
+      }
+    ]
+  },
+  "temporada": {
+    "rodadas": 22,
+    "classificados": 4,
+    "descartes": 0,
+    "diaSemana": 4,
+    "horario": "20:00",
+    "rodizioOrganizacao": true
+  },
+  "mesa": {
+    "maxPorMesa": 9,
+    "fichasIniciais": 10000,
+    "rebuy": {
+      "ativo": false,
+      "valor": 100,
+      "fichas": 10000,
+      "limitePorJogador": 0,
+      "ateNivel": 0
+    },
+    "addon": {
+      "ativo": false,
+      "valor": 100,
+      "fichas": 10000
+    },
+    "blinds": {
+      "ativo": false,
+      "niveis": [
+        {
+          "sb": 25,
+          "bb": 50,
+          "ante": 0,
+          "min": 20
+        },
+        {
+          "sb": 50,
+          "bb": 100,
+          "ante": 0,
+          "min": 20
+        },
+        {
+          "sb": 75,
+          "bb": 150,
+          "ante": 0,
+          "min": 20
+        },
+        {
+          "sb": 100,
+          "bb": 200,
+          "ante": 0,
+          "min": 20
+        },
+        {
+          "pausa": true,
+          "min": 10
+        },
+        {
+          "sb": 150,
+          "bb": 300,
+          "ante": 300,
+          "min": 20
+        },
+        {
+          "sb": 200,
+          "bb": 400,
+          "ante": 400,
+          "min": 20
+        },
+        {
+          "sb": 300,
+          "bb": 600,
+          "ante": 600,
+          "min": 20
+        },
+        {
+          "sb": 400,
+          "bb": 800,
+          "ante": 800,
+          "min": 20
+        },
+        {
+          "sb": 600,
+          "bb": 1200,
+          "ante": 1200,
+          "min": 20
+        },
+        {
+          "sb": 800,
+          "bb": 1600,
+          "ante": 1600,
+          "min": 20
+        },
+        {
+          "sb": 1000,
+          "bb": 2000,
+          "ante": 2000,
+          "min": 20
+        }
+      ]
+    }
+  },
+  "estatisticas": {
+    "minRodadasConsistencia": 15,
+    "minRodadasForma": 15,
+    "minRodadasConfronto": 8
+  },
+  "acesso": {
+    "senhaAdmin": "cdf059179f570591",
+    "senhaRodada": "",
+    "senhaEstatisticas": "cdf059179f570591"
+  }
+}

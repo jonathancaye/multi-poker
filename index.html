@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multi Poker — Clubes</title>
+<meta name="theme-color" content="#0F2E23">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0F2E23; --bg-deep:#0A2018; --surface:#163B2C; --surface-2:#1D4837; --border:#2C5744;
+    --text:#F5EFE0; --text-muted:#9FB8AC; --gold:#D4A62A; --gold-soft:#E8C766;
+    --f-display:'Fraunces',Georgia,serif; --f-body:'Inter',system-ui,sans-serif; --f-mono:'Space Mono',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; min-height:100vh; color:var(--text); font-family:var(--f-body);
+    background:radial-gradient(1200px 600px at 15% -10%, rgba(212,166,42,.08), transparent 60%), radial-gradient(900px 500px at 100% 0%, rgba(92,181,135,.06), transparent 55%), var(--bg);}
+  .wrap{max-width:880px; margin:0 auto; padding:40px 20px 80px;}
+  @media (max-width:640px){ .wrap{padding:22px 14px 60px;} }
+  .hero{position:relative; overflow:hidden; padding:28px 26px; border:1px solid var(--border); border-radius:14px; background:linear-gradient(160deg, var(--surface) 0%, var(--surface-2) 130%); margin-bottom:22px;}
+  .hero .suits{position:absolute; right:-6px; top:-26px; font-family:var(--f-display); font-size:120px; opacity:.06; letter-spacing:-10px; pointer-events:none;}
+  .eyebrow{font-family:var(--f-mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold-soft); margin:0 0 6px;}
+  h1{font-family:var(--f-display); font-size:34px; margin:0 0 6px; letter-spacing:-.01em;}
+  .hero p{color:var(--text-muted); margin:0; font-size:14.5px; line-height:1.5; max-width:560px;}
+  @media (max-width:640px){ h1{font-size:26px;} .hero{padding:20px 18px;} }
+  .clubs{display:grid; grid-template-columns:repeat(auto-fill, minmax(260px,1fr)); gap:14px;}
+  .club{background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:18px; display:flex; flex-direction:column; gap:14px; position:relative; overflow:hidden;}
+  .club::before{content:''; position:absolute; inset:0 0 auto 0; height:3px; background:var(--c, var(--gold));}
+  .club .head{display:flex; gap:12px; align-items:center;}
+  .club .sym{flex:none; width:44px; height:44px; border-radius:12px; display:grid; place-items:center; font-size:22px; background:var(--bg-deep); border:1px solid var(--border); color:var(--c, var(--gold-soft));}
+  .club h2{font-family:var(--f-display); font-size:18px; margin:0; line-height:1.2;}
+  .club .city{color:var(--text-muted); font-size:12.5px; margin-top:2px;}
+  .club .acts{display:flex; gap:6px; flex-wrap:wrap; margin-top:auto;}
+  .btn{flex:1; text-align:center; text-decoration:none; font-weight:600; font-size:13px; border-radius:8px; padding:9px 10px; border:1px solid var(--border); color:var(--text); background:var(--surface-2); white-space:nowrap;}
+  .btn:hover{border-color:var(--gold-soft);}
+  .btn.primary{background:linear-gradient(160deg, var(--gold-soft), var(--gold)); color:#211502; border:0; font-weight:700; flex-basis:100%;}
+  .new{border-style:dashed; background:transparent; justify-content:center; align-items:flex-start; text-decoration:none; color:var(--text);}
+  .new:hover{border-color:var(--gold-soft);}
+  .new .plus{font-family:var(--f-mono); font-size:26px; color:var(--gold-soft);}
+  .new p{color:var(--text-muted); font-size:13px; margin:0; line-height:1.45;}
+  .flow{margin-top:28px; display:grid; grid-template-columns:repeat(auto-fit, minmax(190px,1fr)); gap:10px;}
+  .flow div{border:1px solid var(--border); border-radius:12px; padding:14px; background:rgba(10,32,24,.5);}
+  .flow b{display:block; font-family:var(--f-display); font-size:15px; margin-bottom:4px;}
+  .flow span{color:var(--text-muted); font-size:12.5px; line-height:1.45;}
+  .flow i{font-style:normal; font-family:var(--f-mono); color:var(--gold-soft); font-size:11px;}
+  .empty{color:var(--text-muted); padding:20px; text-align:center;}
+  .ver{font-family:var(--f-mono); font-size:10px; color:var(--text-muted); opacity:.6; text-align:center; margin-top:30px;}
+</style>
+<script src="assets/core.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <div class="suits">♠♥♦♣</div>
+    <p class="eyebrow">Multi Poker</p>
+    <h1>Clubes de pôker</h1>
+    <p>Ranking, lançamento de rodada e gestão de temporada para home games. Cada clube tem as próprias regras de pontuação, premiação, mesa e visual.</p>
+  </section>
+  <div class="clubs" id="clubs"><div class="empty">Carregando clubes…</div></div>
+  <div class="flow">
+    <div><i>1 · GESTÃO</i><b>Prepara a temporada</b><span>Jogadores, calendário, regras e visual do clube.</span></div>
+    <div><i>2 · RODADA</i><b>Conduz a noite</b><span>Presença, sorteio de mesas, blinds, rebuys e eliminações; gera o arquivo da rodada.</span></div>
+    <div><i>3 · GESTÃO</i><b>Importa e publica</b><span>A rodada entra na temporada e o ranking é atualizado.</span></div>
+    <div><i>4 · RANKING</i><b>Todo mundo acompanha</b><span>Classificação, evolução, histórico e estatísticas.</span></div>
+  </div>
+  <div class="ver" id="ver"></div>
+</div>
+<script>
+(async function(){
+  const esc = MP.escapeHtml;
+  const list = await MP.loadRegistry();
+  const el = document.getElementById('clubs');
+  const cards = list.map(c=>`<article class="club" style="--c:${/^#[0-9a-f]{6}$/i.test(c.cor||'') ? c.cor : 'var(--gold)'}">
+      <div class="head"><div class="sym">${esc(c.simbolo || '♠')}</div><div><h2>${esc(c.nome || c.slug)}</h2>${c.cidade ? `<div class="city">${esc(c.cidade)}</div>` : ''}</div></div>
+      <div class="acts">
+        <a class="btn primary" href="${MP.clubUrl('ranking.html', c.slug)}">Ranking</a>
+        <a class="btn" href="${MP.clubUrl('rodada.html', c.slug)}">Lançar rodada</a>
+        <a class="btn" href="${MP.clubUrl('admin.html', c.slug)}">Gestão</a>
+      </div></article>`).join('');
+  el.innerHTML = cards + `<a class="club new" href="admin.html?novo=1"><span class="plus">+</span><h2>Criar clube</h2><p>Monta a pasta de um clube novo com regras, visual e senha de gestão.</p></a>`;
+  document.getElementById('ver').textContent = `núcleo ${MP.CORE_VERSION}`;
+})();
+</script>
+</body>
+</html>

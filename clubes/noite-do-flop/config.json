@@ -1,0 +1,174 @@
+{
+  "schemaVersion": 1,
+  "clube": {
+    "nome": "Noite do Flop",
+    "nomeCurto": "Noite do Flop",
+    "cidade": "Ituporanga, SC",
+    "simbolo": "♦",
+    "slogan": "Terças, com rebuy até o nível 4"
+  },
+  "tema": {
+    "preset": "noite",
+    "cores": {}
+  },
+  "pontuacao": {
+    "porPosicao": [
+      15,
+      12,
+      10,
+      8,
+      6,
+      5,
+      4,
+      3,
+      2,
+      1
+    ],
+    "demais": 0,
+    "presenca": 2,
+    "convidadoPontua": true
+  },
+  "premiacao": {
+    "moeda": "BRL",
+    "buyIn": 50,
+    "taxaPorJogador": 10,
+    "modo": "percentual",
+    "arredondar": 10,
+    "tabela": {},
+    "faixas": [
+      {
+        "ate": 7,
+        "pct": [
+          65,
+          35
+        ]
+      },
+      {
+        "ate": 12,
+        "pct": [
+          50,
+          30,
+          20
+        ]
+      },
+      {
+        "ate": 99,
+        "pct": [
+          42,
+          26,
+          18,
+          14
+        ]
+      }
+    ]
+  },
+  "temporada": {
+    "rodadas": 20,
+    "classificados": 3,
+    "descartes": 2,
+    "diaSemana": 2,
+    "horario": "20:00",
+    "rodizioOrganizacao": false
+  },
+  "mesa": {
+    "maxPorMesa": 8,
+    "fichasIniciais": 15000,
+    "rebuy": {
+      "ativo": true,
+      "valor": 50,
+      "fichas": 15000,
+      "limitePorJogador": 2,
+      "ateNivel": 4
+    },
+    "addon": {
+      "ativo": true,
+      "valor": 50,
+      "fichas": 20000
+    },
+    "blinds": {
+      "ativo": true,
+      "niveis": [
+        {
+          "sb": 50,
+          "bb": 100,
+          "ante": 0,
+          "min": 15
+        },
+        {
+          "sb": 75,
+          "bb": 150,
+          "ante": 0,
+          "min": 15
+        },
+        {
+          "sb": 100,
+          "bb": 200,
+          "ante": 0,
+          "min": 15
+        },
+        {
+          "sb": 150,
+          "bb": 300,
+          "ante": 0,
+          "min": 15
+        },
+        {
+          "pausa": true,
+          "min": 10
+        },
+        {
+          "sb": 200,
+          "bb": 400,
+          "ante": 400,
+          "min": 15
+        },
+        {
+          "sb": 300,
+          "bb": 600,
+          "ante": 600,
+          "min": 15
+        },
+        {
+          "sb": 400,
+          "bb": 800,
+          "ante": 800,
+          "min": 15
+        },
+        {
+          "sb": 600,
+          "bb": 1200,
+          "ante": 1200,
+          "min": 15
+        },
+        {
+          "sb": 800,
+          "bb": 1600,
+          "ante": 1600,
+          "min": 15
+        },
+        {
+          "sb": 1000,
+          "bb": 2000,
+          "ante": 2000,
+          "min": 15
+        },
+        {
+          "sb": 1500,
+          "bb": 3000,
+          "ante": 3000,
+          "min": 15
+        }
+      ]
+    }
+  },
+  "estatisticas": {
+    "minRodadasConsistencia": 6,
+    "minRodadasForma": 8,
+    "minRodadasConfronto": 5
+  },
+  "acesso": {
+    "senhaAdmin": "cdf059179f570591",
+    "senhaRodada": "",
+    "senhaEstatisticas": ""
+  }
+}

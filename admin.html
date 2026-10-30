@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestão do clube</title>
+<meta name="theme-color" content="#0F2E23">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0F2E23; --bg-deep:#0A2018; --surface:#163B2C; --surface-2:#1D4837; --border:#2C5744;
+    --text:#F5EFE0; --text-muted:#9FB8AC; --gold:#D4A62A; --gold-soft:#E8C766;
+    --red:#C1443A; --red-soft:#E8857C; --green-pos:#5CB587; --bronze:#C97C4D;
+    --gold-rgb:212,166,42; --border-rgb:44,87,68; --text-rgb:245,239,224; --muted-rgb:159,184,172;
+    --f-display:'Fraunces',Georgia,serif; --f-body:'Inter',system-ui,sans-serif; --f-mono:'Space Mono',ui-monospace,monospace;
+    --radius:12px; --radius-sm:8px; color-scheme:dark;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:radial-gradient(1100px 520px at 12% -12%, rgba(var(--gold-rgb),.07), transparent 60%), var(--bg); color:var(--text); font-family:var(--f-body); font-size:14.5px; min-height:100vh;}
+  ::selection{background:var(--gold); color:#1B1203;}
+  .wrap{max-width:1000px; margin:0 auto; padding:22px 18px 90px;}
+  @media (max-width:640px){ .wrap{padding:12px 12px 80px;} }
+  a{color:var(--gold-soft);}
+
+  header.top{display:flex; justify-content:space-between; align-items:flex-start; gap:14px; flex-wrap:wrap; padding:18px 20px; border:1px solid var(--border); border-radius:var(--radius); background:linear-gradient(160deg, var(--surface) 0%, var(--surface-2) 130%); margin-bottom:14px;}
+  .eyebrow{font-family:var(--f-mono); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold-soft); margin:0 0 4px;}
+  h1{font-family:var(--f-display); font-size:26px; margin:0; letter-spacing:-.01em;}
+  .sub{color:var(--text-muted); font-size:13px; margin:4px 0 0;}
+  .top-links{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+  .chip{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--border); border-radius:999px; padding:6px 12px; font-size:12.5px; font-weight:600; color:var(--text-muted); background:var(--bg-deep); text-decoration:none; cursor:pointer; font-family:var(--f-body);}
+  .chip:hover{border-color:var(--gold-soft); color:var(--text);}
+  .chip.warn{border-color:var(--gold); color:var(--gold-soft); background:rgba(var(--gold-rgb),.1);}
+  .chip.ok{color:var(--green-pos);}
+
+  nav.tabs{display:flex; gap:4px; overflow-x:auto; padding:4px; background:var(--bg-deep); border:1px solid var(--border); border-radius:999px; margin-bottom:16px; scrollbar-width:none;}
+  nav.tabs::-webkit-scrollbar{display:none;}
+  nav.tabs button{flex:none; background:none; border:0; color:var(--text-muted); font-family:var(--f-body); font-weight:600; font-size:13px; padding:8px 14px; border-radius:999px; cursor:pointer; white-space:nowrap;}
+  nav.tabs button.on{background:linear-gradient(160deg, var(--gold-soft), var(--gold)); color:#211502;}
+  nav.tabs button .dot{display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--gold-soft); margin-left:6px; vertical-align:middle;}
+  nav.tabs button.on .dot{background:#211502;}
+
+  .card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px; margin-bottom:14px;}
+  .card h2{font-family:var(--f-display); font-size:18px; font-weight:600; margin:0 0 4px;}
+  .card h3{font-family:var(--f-display); font-size:15px; font-weight:600; margin:18px 0 8px;}
+  .hint{color:var(--text-muted); font-size:13px; margin:0 0 14px; line-height:1.5;}
+  .grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(200px,1fr)); gap:12px 14px;}
+  .grid.two{grid-template-columns:repeat(auto-fill, minmax(280px,1fr));}
+  .fld{display:flex; flex-direction:column; gap:5px; min-width:0;}
+  .fld > span{font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-muted);}
+  .fld small{color:var(--text-muted); font-size:11.5px; line-height:1.4;}
+  .inp{display:flex; align-items:center; gap:6px;}
+  .inp em{font-style:normal; color:var(--text-muted); font-size:12px; white-space:nowrap;}
+  input[type=text], input[type=number], input[type=date], input[type=password], select, textarea{
+    width:100%; background:var(--bg-deep); border:1px solid var(--border); color:var(--text); border-radius:var(--radius-sm);
+    padding:9px 11px; font-family:var(--f-body); font-size:15px; outline:none; min-width:0;}
+  input[type=number]{font-family:var(--f-mono);}
+  textarea{font-family:var(--f-mono); font-size:13px; min-height:90px; resize:vertical;}
+  input:focus, select:focus, textarea:focus{border-color:var(--gold);}
+  input[type=color]{width:44px; height:34px; border:1px solid var(--border); border-radius:8px; background:var(--bg-deep); padding:2px; cursor:pointer;}
+
+  .btn{font-family:var(--f-body); font-weight:600; font-size:13.5px; border-radius:var(--radius-sm); padding:9px 14px; cursor:pointer; border:1px solid var(--border); background:var(--surface-2); color:var(--text); white-space:nowrap;}
+  .btn:hover{border-color:var(--gold-soft);}
+  .btn.primary{background:linear-gradient(160deg, var(--gold-soft), var(--gold)); color:#211502; border:0; font-weight:700;}
+  .btn.danger{border-color:rgba(193,68,58,.6); color:var(--red-soft); background:transparent;}
+  .btn.ghost{background:transparent;}
+  .btn.sm{padding:5px 10px; font-size:12px;}
+  .btn:disabled{opacity:.4; cursor:not-allowed;}
+  .row{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+  .row.end{justify-content:flex-end;}
+  .link{background:none; border:0; color:var(--gold-soft); font:600 13px var(--f-body); cursor:pointer; padding:2px 4px; text-decoration:underline; text-underline-offset:3px;}
+
+  /* pill toggle e switch (padrão das ferramentas) */
+  .pill{display:inline-flex; background:var(--bg-deep); border:1px solid var(--border); border-radius:999px; padding:3px; gap:2px;}
+  .pill button{background:none; border:0; color:var(--text-muted); font:600 12.5px var(--f-body); padding:6px 13px; border-radius:999px; cursor:pointer;}
+  .pill button.on{background:var(--gold); color:#211502;}
+  .switch{display:inline-flex; align-items:center; gap:10px; background:none; border:0; color:var(--text); font:600 13.5px var(--f-body); cursor:pointer; padding:4px 0; text-align:left;}
+  .switch .t{flex:none; width:38px; height:22px; border-radius:999px; background:var(--bg-deep); border:1px solid var(--border); position:relative; transition:background .15s;}
+  .switch .t::after{content:''; position:absolute; top:2px; left:2px; width:16px; height:16px; border-radius:50%; background:var(--text-muted); transition:transform .15s, background .15s;}
+  .switch.on .t{background:rgba(var(--gold-rgb),.25); border-color:var(--gold);}
+  .switch.on .t::after{transform:translateX(16px); background:var(--gold-soft);}
+  input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:4px; border-radius:2px; background:var(--border); outline:none;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:16px; height:16px; border-radius:50%; background:var(--gold-soft); border:0; cursor:pointer;}
+  input[type=range]::-moz-range-thumb{width:16px; height:16px; border-radius:50%; background:var(--gold-soft); border:0; cursor:pointer;}
+
+  .banner{background:rgba(var(--gold-rgb),.1); border:1px solid var(--gold); color:var(--gold-soft); border-radius:var(--radius-sm); padding:10px 13px; font-size:13px; line-height:1.5; margin-bottom:14px;}
+  .banner.muted{background:rgba(var(--muted-rgb),.08); border-color:var(--border); color:var(--text-muted);}
+  .banner.ok{background:rgba(92,181,135,.1); border-color:var(--green-pos); color:var(--green-pos);}
+  .banner.err{background:rgba(193,68,58,.1); border-color:var(--red); color:var(--red-soft);}
+
+  table.t{width:100%; border-collapse:collapse; font-size:13.5px;}
+  .t th{text-align:left; font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); font-weight:600; padding:0 6px 8px; border-bottom:1px solid var(--border);}
+  .t td{padding:7px 6px; border-bottom:1px solid rgba(var(--border-rgb),.5); vertical-align:middle;}
+  .t .num{text-align:right; font-family:var(--f-mono); font-variant-numeric:tabular-nums;}
+  .t input, .t select{padding:6px 8px; font-size:13.5px;}
+  .t input[type=number]{width:84px; text-align:right;}
+  .scroll-x{overflow-x:auto;}
+  .muted{color:var(--text-muted);}
+  .mono{font-family:var(--f-mono);}
+  .ok-txt{color:var(--green-pos);} .bad-txt{color:var(--red-soft);}
+  .gold-txt{color:var(--gold-soft);}
+
+  .round-item{border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--bg-deep); margin-bottom:8px;}
+  .round-item summary{display:flex; gap:10px; align-items:center; padding:10px 12px; cursor:pointer; list-style:none;}
+  .round-item summary::-webkit-details-marker{display:none;}
+  .round-item .rn{font-family:var(--f-mono); font-weight:700; color:var(--gold-soft); min-width:34px;}
+  .round-item .rm{flex:1; min-width:0; font-size:13px; color:var(--text-muted);}
+  .round-item .rm b{color:var(--text);}
+  .round-item .body{padding:0 12px 12px;}
+  .drop{border:1.5px dashed var(--border); border-radius:var(--radius); padding:22px; text-align:center; color:var(--text-muted); background:var(--bg-deep); transition:border-color .15s;}
+  .drop.over{border-color:var(--gold-soft); color:var(--text);}
+  .drop b{color:var(--text);}
+  .tag{display:inline-block; font-family:var(--f-mono); font-size:10px; font-weight:700; padding:1px 6px; border-radius:6px; border:1px solid rgba(var(--gold-rgb),.45); color:var(--gold-soft); margin-left:4px;}
+  .tag.guest{border-color:rgba(201,124,77,.5); color:var(--bronze);}
+  .tag.new{border-color:var(--green-pos); color:var(--green-pos);}
+
+  .theme-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:10px;}
+  .theme-card{border:1.5px solid var(--border); border-radius:var(--radius-sm); padding:10px; cursor:pointer; text-align:left; font:600 13px var(--f-body); color:#fff;}
+  .theme-card.on{outline:2px solid var(--gold-soft); outline-offset:2px;}
+  .theme-card .sw{display:flex; gap:4px; margin-top:8px;}
+  .theme-card .sw i{width:18px; height:18px; border-radius:50%; border:1px solid rgba(255,255,255,.2);}
+  .sym{display:flex; gap:6px;}
+  .sym button{width:40px; height:40px; border-radius:8px; border:1px solid var(--border); background:var(--bg-deep); color:var(--text); font-size:20px; cursor:pointer;}
+  .sym button.on{border-color:var(--gold); color:var(--gold-soft); background:rgba(var(--gold-rgb),.12);}
+
+  .sim{background:var(--bg-deep); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px; margin-top:6px;}
+  .sim .lbl{display:flex; justify-content:space-between; font-size:12.5px; color:var(--text-muted); margin-bottom:6px;}
+  .sim .lbl b{color:var(--text); font-family:var(--f-mono);}
+  .prizes{display:flex; gap:6px 14px; flex-wrap:wrap; font-family:var(--f-mono); font-size:13.5px; margin-top:10px;}
+  .prizes span{white-space:nowrap;} .prizes .p{color:var(--text-muted);} .prizes .first{color:var(--gold-soft); font-weight:700;}
+
+  .file-row{display:grid; grid-template-columns:1fr auto; gap:10px; align-items:center; padding:10px 0; border-bottom:1px solid rgba(var(--border-rgb),.5);}
+  .file-row .fp{font-family:var(--f-mono); font-size:13px; word-break:break-all;}
+  .file-row .fs{font-size:12px; color:var(--text-muted);}
+  pre.json{background:var(--bg-deep); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px; font-size:12px; max-height:340px; overflow:auto; white-space:pre-wrap; word-break:break-all;}
+
+  .gate{max-width:380px; margin:12vh auto 0; text-align:center;}
+  .gate form{display:flex; gap:8px; margin-top:16px;}
+  .gate .err{color:var(--red-soft); font-size:13px; min-height:18px; margin-top:8px;}
+  .toast{position:fixed; left:50%; bottom:24px; transform:translateX(-50%); background:var(--surface-2); border:1px solid var(--gold); color:var(--text); padding:10px 16px; border-radius:10px; font-size:13.5px; font-weight:600; z-index:30; opacity:0; pointer-events:none; transition:opacity .2s; max-width:calc(100% - 32px); text-align:center;}
+  .toast.show{opacity:1;}
+  .ver{font-family:var(--f-mono); font-size:10px; color:var(--text-muted); opacity:.6; text-align:center; margin-top:24px;}
+</style>
+<script src="assets/core.js"></script>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* ==========================================================================
+   Painel de gestão — um clube por vez (?c=slug) ou criação de clube (?novo=1)
+   Tudo é editado em memória (com rascunho salvo neste aparelho) e publicado como
+   arquivos JSON: por download/ZIP ou direto no GitHub com um token pessoal.
+   ========================================================================== */
+const PAGE_VERSION = '0.1.0';
+const params = new URLSearchParams(location.search);
+const SLUG = MP.slugFromUrl();
+const NOVO = !SLUG || params.has('novo');
+const ST = MP.store(SLUG || '_novo');
+const GH = MP.store('_github');      // dados do GitHub ficam no aparelho, valem para todos os clubes
+const app = document.getElementById('app');
+const esc = MP.escapeHtml;
+
+let ORIG = null;     // última versão publicada {config, dados, temporadas}
+let W = null;        // versão em edição {config, dados, temporadas, extra:{arquivo:obj}}
+let REG = [], REG_ORIG = [];
+let CFGN = MP.normalizeConfig({}), RULES = MP.makeRules(CFGN);
+let tab = ST.get('adminTab', 'rodadas');
+let pending = [];    // importações aguardando confirmação
+let sim = { n: 12, rb: 0, ad: 0 };
+let lastPublish = null;
+
+/* ---------- utilidades ---------- */
+function toast(msg){ const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(()=>t.classList.remove('show'), 2600); }
+function clone(o){ return JSON.parse(JSON.stringify(o)); }
+function getPath(o, p){ return p.split('.').reduce((x,k)=> x == null ? undefined : x[k], o); }
+function setPath(o, p, v){ const ks = p.split('.'); let x = o; ks.slice(0,-1).forEach(k=>{ if(!x[k] || typeof x[k] !== 'object') x[k] = {}; x = x[k]; }); x[ks[ks.length-1]] = v; }
+const cmp = (a,b)=> a.localeCompare(b, 'pt-BR');
+const brl = v => MP.money(v, CFGN.premiacao.moeda);
+function plural(n, s, p){ return n === 1 ? s : p; }
+function stable(o){ return JSON.stringify(o, (k,v)=> k === 'publishedAt' ? undefined : v); }
+function nextSeasonId(id){ const m = String(id||'').match(/^(\d{4})-(\d+)$/); if(!m) { const d = new Date(); return `${d.getFullYear()}-${d.getMonth()<6?1:2}`; } return m[2] === '1' ? `${m[1]}-2` : `${Number(m[1])+1}-1`; }
+function seasonLabel(id){ return `Temporada ${String(id).replace('-', '/')}`; }
+function emptyDados(season){
+  return { season, rounds: [], players: [], totalRounds: CFGN.temporada.rodadas, topPositions: CFGN.temporada.classificados,
+    roundDates: {}, roundOrganizers: {}, archive: [] };
+}
+function confirmBox(msg){ return window.confirm(msg); }
+
+/* ---------- carregamento ---------- */
+async function loadClub(){
+  const base = MP.clubBase(SLUG);
+  let raw;
+  try{ raw = await MP.fetchJson(base + 'config.json'); }
+  catch(e){ app.innerHTML = MP.noClubHtml('Clube não encontrado'); return false; }
+  let dados, temporadas;
+  try{ dados = await MP.fetchJson(base + 'dados.json'); }catch(e){ dados = null; }
+  try{ temporadas = await MP.fetchJson(base + 'temporadas.json'); }catch(e){ temporadas = { seasons: [] }; }
+  const config = MP.normalizeConfig(raw);
+  CFGN = config; RULES = MP.makeRules(CFGN);
+  if(!dados){ const id = nextSeasonId(''); dados = emptyDados({ id, label: seasonLabel(id) }); }
+  ['rounds','players','archive'].forEach(k=>{ if(!Array.isArray(dados[k])) dados[k] = []; });
+  ['roundDates','roundOrganizers'].forEach(k=>{ if(!dados[k] || typeof dados[k] !== 'object') dados[k] = {}; });
+  if(!Array.isArray(temporadas.seasons)) temporadas.seasons = [];
+  ORIG = clone({ config, dados, temporadas });
+  REG = await MP.loadRegistry(); REG_ORIG = clone(REG);
+  // rascunho deste aparelho (só se foi feito sobre a mesma versão publicada)
+  const d = ST.get('draft', null);
+  const stamp = String(dados.publishedAt || '') + '|' + stable(config).length;
+  if(d && d.stamp === stamp && d.W){ W = d.W; if(d.REG) REG = d.REG; W._restored = true; }
+  else { if(d) ST.del('draft'); W = clone({ ...ORIG, extra: {} }); }
+  W._stamp = stamp;
+  if(!W.extra) W.extra = {};
+  refresh();
+  return true;
+}
+function refresh(){
+  W.config = MP.normalizeConfig(W.config);
+  CFGN = W.config; RULES = MP.makeRules(CFGN);
+  W.dados.totalRounds = CFGN.temporada.rodadas;
+  W.dados.topPositions = CFGN.temporada.classificados;
+  // portal: mantém nome, cidade e símbolo do clube atualizados em clubes.json
+  if(SLUG && !NOVO){
+    const entry = { slug: SLUG, nome: CFGN.clube.nome, cidade: CFGN.clube.cidade, simbolo: CFGN.clube.simbolo, cor: MP.themeColors(CFGN).accent };
+    const i = REG.findIndex(c=>c.slug === SLUG);
+    if(i >= 0) REG[i] = Object.assign({}, REG[i], entry); else REG.push(entry);
+  }
+  MP.applyTheme(CFGN);
+}
+function touch(rerender){
+  refresh();
+  const { _restored, ...rest } = W;
+  ST.set('draft', { stamp: W._stamp, W: rest, REG });
+  if(rerender !== false) render();
+}
+
+/* ---------- arquivos a publicar ---------- */
+function fileList(){
+  if(NOVO) return novoFiles();
+  const base = MP.clubBase(SLUG);
+  const out = [
+    { path: base + 'config.json', obj: W.config, orig: ORIG.config, label: 'Regras, visual e senhas' },
+    { path: base + 'dados.json', obj: W.dados, orig: ORIG.dados, label: 'Temporada em andamento' },
+    { path: base + 'temporadas.json', obj: W.temporadas, orig: ORIG.temporadas, label: 'Lista de temporadas encerradas' },
+    ...Object.entries(W.extra).map(([f, o])=>({ path: base + f, obj: o, orig: null, label: 'Temporada encerrada' })),
+    { path: 'clubes.json', obj: { clubes: REG }, orig: { clubes: REG_ORIG }, label: 'Lista de clubes do portal' }
+  ];
+  out.forEach(f=>{ f.changed = stable(f.obj) !== stable(f.orig); f.isNew = !f.orig; });
+  return out;
+}
+function changedFiles(){ return fileList().filter(f=>f.changed); }
+function stampPublished(files){
+  const now = new Date().toISOString();
+  files.forEach(f=>{ if(f.obj && typeof f.obj === 'object' && 'rounds' in f.obj) f.obj.publishedAt = now; });
+}
+function markPublished(){
+  ORIG = clone({ config: W.config, dados: W.dados, temporadas: W.temporadas });
+  REG_ORIG = clone(REG);
+  W.extra = {};
+  ST.del('draft');
+  W._stamp = String(W.dados.publishedAt || '') + '|' + stable(W.config).length;
+}
+
+/* ---------- login simples (teste) ---------- */
+function gate(){
+  const h = CFGN.acesso.senhaAdmin;
+  if(!h || ST.get('adminOk', '') === h) return render();
+  app.innerHTML = `<div class="gate"><p class="eyebrow">${esc(CFGN.clube.nome)}</p><h1>Gestão do clube</h1>
+    <p class="hint" style="margin-top:6px;">Digite a senha de gestão. <br><span style="font-size:12px;">Login simples, só para testes: os arquivos do clube ficam públicos no GitHub.</span></p>
+    <form id="gateForm" autocomplete="off"><input type="password" id="gatePass" placeholder="Senha" autocomplete="current-password"><button class="btn primary" type="submit">Entrar</button></form>
+    <div class="err" id="gateErr" role="alert"></div><p style="margin-top:24px;"><a href="index.html">← Portal</a></p></div>`;
+  document.getElementById('gateForm').addEventListener('submit', e=>{
+    e.preventDefault();
+    const v = document.getElementById('gatePass').value;
+    if(MP.hash(v) === h){ ST.set('adminOk', h); render(); }
+    else document.getElementById('gateErr').textContent = v.trim() ? 'Senha incorreta.' : 'Digite a senha.';
+  });
+}
+
+/* ---------- moldura ---------- */
+const TABS = [['rodadas','Rodadas'],['calendario','Calendário'],['jogadores','Jogadores'],['regras','Regras'],['mesa','Mesa e blinds'],['visual','Visual e acesso'],['temporada','Temporada'],['publicar','Publicar']];
+function render(){
+  if(NOVO) return renderNovo();
+  const ch = changedFiles();
+  const viewFns = { rodadas: vRodadas, calendario: vCalendario, jogadores: vJogadores, regras: vRegras, mesa: vMesa, visual: vVisual, temporada: vTemporada, publicar: vPublicar };
+  if(!viewFns[tab]) tab = 'rodadas';
+  const y = window.scrollY;
+  app.innerHTML = `
+    <header class="top">
+      <div><p class="eyebrow">Gestão · ${esc(W.dados.season.label)}</p><h1>${esc(CFGN.clube.nome)}</h1>
+        <p class="sub">${W.dados.rounds.length} de ${CFGN.temporada.rodadas} rodadas · ${W.dados.players.length} jogadores${CFGN.clube.cidade ? ' · ' + esc(CFGN.clube.cidade) : ''}</p></div>
+      <div class="top-links">
+        <button class="chip ${ch.length ? 'warn' : 'ok'}" data-act="go-publicar" type="button">${ch.length ? `● ${ch.length} ${plural(ch.length,'arquivo alterado','arquivos alterados')}` : '✓ tudo publicado'}</button>
+        <a class="chip" href="${MP.clubUrl('ranking.html', SLUG)}" target="_blank" rel="noopener">Ranking ↗</a>
+        <a class="chip" href="${MP.clubUrl('rodada.html', SLUG)}" target="_blank" rel="noopener">Rodada ↗</a>
+        <a class="chip" href="index.html">Portal</a>
+      </div>
+    </header>
+    ${W._restored ? `<div class="banner muted">Rascunho deste aparelho restaurado (alterações ainda não publicadas). <button class="link" data-act="discard" type="button">Descartar rascunho</button></div>` : ''}
+    ${!CFGN.acesso.senhaAdmin ? `<div class="banner">Este clube ainda não tem senha de gestão. Defina em <button class="link" data-tab="visual" type="button">Visual e acesso</button>.</div>` : ''}
+    <nav class="tabs" id="tabs">${TABS.map(([k,t])=>`<button type="button" data-tab="${k}" class="${k===tab?'on':''}">${t}${k==='publicar' && ch.length ? '<span class="dot"></span>' : ''}</button>`).join('')}</nav>
+    <div id="view">${viewFns[tab]()}</div>
+    <div class="ver">Gestão v${PAGE_VERSION} · núcleo ${MP.CORE_VERSION}</div>`;
+  window.scrollTo(0, y);
+  bindAfterRender();
+}
+
+/* ==========================================================================
+   RODADAS — importar arquivo da rodada, listar, excluir
+   ========================================================================== */
+function vRodadas(){
+  const rounds = [...W.dados.rounds].sort((a,b)=> b.roundNumber - a.roundNumber);
+  const nextN = W.dados.rounds.reduce((m,r)=>Math.max(m, r.roundNumber), 0) + 1;
+  const pend = pending.length ? `<div class="card" style="border-color:var(--gold);"><h2>Conferir importação</h2>
+      <p class="hint">Confira antes de incluir na temporada.</p>
+      ${pending.map((p,i)=>`<div class="round-item"><div style="padding:10px 12px;">
+        <div class="row" style="justify-content:space-between;"><b>Rodada ${p.round.roundNumber}</b><span class="muted">${p.round.standings.length} jogadores · campeão ${esc(p.round.standings[0].name)} · prêmios ${p.round.prizes.filter(v=>v>0).map(brl).join(' / ')}</span></div>
+        ${p.notes.map(n=>`<div class="${n.kind==='warn'?'gold-txt':'muted'}" style="font-size:12.5px; margin-top:6px;">${n.kind==='warn'?'⚠':'•'} ${n.html}</div>`).join('')}
+        <div class="row end" style="margin-top:10px;"><button class="btn sm ghost" data-act="pend-drop" data-i="${i}" type="button">Descartar</button><button class="btn sm primary" data-act="pend-ok" data-i="${i}" type="button">${p.replace ? 'Substituir rodada' : 'Incluir rodada'}</button></div>
+      </div></div>`).join('')}</div>` : '';
+  return `${pend}
+    <div class="card"><h2>Importar rodada</h2>
+      <p class="hint">Arquivo gerado no fim da rodada pela tela de lançamento (<span class="mono">${esc(SLUG)}-rodada-N.json</span>). A próxima rodada esperada é a <b>${nextN}</b>.</p>
+      <label class="drop" id="drop"><b>Arraste o arquivo aqui</b> ou toque para escolher<input type="file" id="fileIn" accept=".json,application/json" multiple hidden></label>
+      <details style="margin-top:10px;"><summary class="muted" style="cursor:pointer; font-size:13px;">ou colar o conteúdo do arquivo</summary>
+        <textarea id="pasteIn" placeholder='{"type":"multiPokerRoundExport", ...}' style="margin-top:8px;"></textarea>
+        <div class="row end" style="margin-top:8px;"><button class="btn sm" data-act="paste" type="button">Ler conteúdo colado</button></div></details>
+    </div>
+    <div class="card"><h2>Rodadas da ${esc(W.dados.season.label)}</h2>
+      <p class="hint">${rounds.length ? 'Toque numa rodada para ver a classificação.' : 'Nenhuma rodada ainda.'}</p>
+      ${rounds.map(r=>{
+        const sc = RULES.scoreRound(r);
+        const nR = r.standings.reduce((t,e)=>t+(Number(e.rebuys)||0),0), nA = r.standings.filter(e=>e.addon).length;
+        const date = W.dados.roundDates[r.roundNumber];
+        return `<details class="round-item"><summary><span class="rn">R${r.roundNumber}</span>
+          <span class="rm"><b>${esc(r.standings[0] ? r.standings[0].name : '—')}</b> · ${r.standings.length} jogadores${date ? ' · ' + MP.dateBR(date) : ''}${nR ? ` · ${nR}R` : ''}${nA ? ` · ${nA}A` : ''}</span>
+          <span class="mono muted" style="font-size:12px;">${brl(r.prizes.reduce((t,v)=>t+(Number(v)||0),0))}</span></summary>
+          <div class="body"><div class="scroll-x"><table class="t"><thead><tr><th>#</th><th>Jogador</th><th class="num">Pts</th><th class="num">Prêmio</th><th>Eliminado por</th></tr></thead><tbody>
+          ${r.standings.map((e,i)=>`<tr><td class="mono">${i+1}</td><td>${esc(e.name)}${e.guest?'<span class="tag guest">conv.</span>':''}${e.rebuys?`<span class="tag">${e.rebuys}R</span>`:''}${e.addon?'<span class="tag">A</span>':''}</td>
+            <td class="num">${sc[i].pts === null ? '—' : sc[i].pts}</td><td class="num">${RULES.prizeAt(r,i) ? brl(RULES.prizeAt(r,i)) : ''}</td><td class="muted">${esc(e.by||'')}</td></tr>`).join('')}
+          </tbody></table></div>
+          <div class="row end" style="margin-top:10px;">${W.dados.roundOrganizers[r.roundNumber] ? `<span class="muted" style="margin-right:auto; font-size:12.5px;">Organização: ${esc(W.dados.roundOrganizers[r.roundNumber])}</span>` : ''}
+            <button class="btn sm danger" data-act="round-del" data-n="${r.roundNumber}" type="button">Excluir rodada</button></div></div></details>`;
+      }).join('')}
+    </div>`;
+}
+function parseExport(obj){
+  const r = obj && obj.round ? obj.round : obj;
+  if(!r || typeof r !== 'object') throw new Error('Arquivo sem rodada.');
+  const rn = Number(r.roundNumber);
+  if(!(rn >= 1) || Math.floor(rn) !== rn) throw new Error('Número da rodada inválido.');
+  if(!Array.isArray(r.standings) || r.standings.length < 2) throw new Error('Classificação vazia.');
+  const standings = r.standings.map(e=>{
+    const name = String(typeof e === 'string' ? e : (e && e.name) || '').trim().replace(/\s+/g,' ');
+    if(!name) throw new Error('Jogador sem nome na classificação.');
+    const o = { name, guest: !!(e && e.guest) };
+    ['out','by'].forEach(k=>{ if(e && e[k]) o[k] = e[k]; });
+    if(e && Number(e.rebuys) > 0) o.rebuys = Number(e.rebuys);
+    if(e && e.addon) o.addon = true;
+    return o;
+  });
+  const round = { id: `r${rn}-${Date.now().toString(36)}`, roundNumber: rn, buyIn: Number(r.buyIn)||CFGN.premiacao.buyIn,
+    prizes: (Array.isArray(r.prizes) ? r.prizes : []).map(v=>Number(v)||0), standings, totalPlayers: standings.length };
+  ['rebuyValue','addonValue','pool'].forEach(k=>{ if(Number(r[k]) > 0) round[k] = Number(r[k]); });
+  ['startedAt','endedAt'].forEach(k=>{ if(r[k]) round[k] = r[k]; });
+  return { round, organizer: r.organizer || null, club: obj.club || null, season: obj.season || null };
+}
+function queueImport(obj, fname){
+  let p;
+  try{ p = parseExport(obj); }catch(e){ toast(`${fname ? fname + ': ' : ''}${e.message}`); return; }
+  const notes = [];
+  const rn = p.round.roundNumber;
+  if(p.club && p.club !== SLUG) notes.push({ kind:'warn', html:`O arquivo é do clube <b>${esc(p.club)}</b>, e este painel é do <b>${esc(SLUG)}</b>.` });
+  if(p.season && p.season !== W.dados.season.id) notes.push({ kind:'warn', html:`Gerado na temporada ${esc(p.season)}; a atual é ${esc(W.dados.season.id)}.` });
+  const exists = W.dados.rounds.some(r=>r.roundNumber === rn);
+  if(exists) notes.push({ kind:'warn', html:`A rodada ${rn} já existe e será <b>substituída</b>.` });
+  const lower = new Map(W.dados.players.map(n=>[n.toLowerCase(), n]));
+  const novos = [];
+  p.round.standings.forEach(e=>{
+    if(e.guest) return;
+    const k = e.name.toLowerCase();
+    if(lower.has(k)) e.name = lower.get(k); else novos.push(e.name);
+  });
+  if(novos.length) notes.push({ kind:'info', html:`${plural(novos.length,'Novo jogador','Novos jogadores')} na lista do clube: ${novos.map(esc).join(', ')}.` });
+  const g = p.round.standings.filter(e=>e.guest).length;
+  if(g) notes.push({ kind:'info', html:`${g} ${plural(g,'convidado','convidados')}${CFGN.pontuacao.convidadoPontua ? ' (pontuam neste clube)' : ' (não pontuam)'}.` });
+  const pool = Number(p.round.pool) || 0, sum = p.round.prizes.reduce((t,v)=>t+v,0);
+  if(pool && Math.abs(pool - sum) >= 1) notes.push({ kind:'warn', html:`Prêmios somam ${brl(sum)} e o pote informado é ${brl(pool)}.` });
+  if(p.organizer) notes.push({ kind:'info', html:`Organização: ${esc(p.organizer)}.` });
+  pending = pending.filter(x=>x.round.roundNumber !== rn);
+  pending.push({ ...p, notes, novos, replace: exists });
+  render();
+}
+function acceptImport(i){
+  const p = pending[i]; if(!p) return;
+  W.dados.rounds = W.dados.rounds.filter(r=>r.roundNumber !== p.round.roundNumber);
+  W.dados.rounds.push(p.round);
+  W.dados.rounds.sort((a,b)=>a.roundNumber-b.roundNumber);
+  p.novos.forEach(n=>{ if(!W.dados.players.includes(n)) W.dados.players.push(n); });
+  if(p.organizer) W.dados.roundOrganizers[p.round.roundNumber] = p.organizer;
+  if(!W.dados.roundDates[p.round.roundNumber] && p.round.startedAt) W.dados.roundDates[p.round.roundNumber] = String(p.round.startedAt).slice(0,10);
+  pending.splice(i, 1);
+  toast(`Rodada ${p.round.roundNumber} incluída. Publique para atualizar o ranking.`);
+  touch();
+}
+async function readFiles(files){
+  for(const f of files){
+    try{ queueImport(JSON.parse(await f.text()), f.name); }
+    catch(e){ toast(`${f.name}: não é um JSON válido.`); }
+  }
+}
+
+/* ==========================================================================
+   CALENDÁRIO — datas e organização por rodada
+   ========================================================================== */
+let calStart = '';
+function vCalendario(){
+  const T = CFGN.temporada, d = W.dados;
+  const played = new Set(d.rounds.map(r=>r.roundNumber));
+  const names = [...d.players].sort(cmp);
+  if(!calStart) calStart = d.roundDates[1] || MP.isoDate(new Date());
+  const rows = [];
+  for(let n=1;n<=T.rodadas;n++){
+    const org = d.roundOrganizers[n] || '';
+    rows.push(`<tr><td class="mono">${n}</td>
+      <td><input type="date" data-date="${n}" value="${esc(d.roundDates[n]||'')}"></td>
+      <td><select data-org="${n}"><option value="">—</option>${names.map(x=>`<option${x===org?' selected':''}>${esc(x)}</option>`).join('')}${org && !names.includes(org) ? `<option selected>${esc(org)}</option>` : ''}</select></td>
+      <td>${played.has(n) ? '<span class="ok-txt">✓ realizada</span>' : (d.roundDates[n] && d.roundDates[n] < MP.isoDate(new Date()) ? '<span class="gold-txt">sem resultado</span>' : '<span class="muted">prevista</span>')}</td></tr>`);
+  }
+  return `<div class="card"><h2>Gerar datas</h2>
+      <p class="hint">Gera uma data por semana a partir da primeira rodada, no dia do clube, pulando as datas informadas. Depois dá para ajustar uma a uma.</p>
+      <div class="grid">
+        <label class="fld"><span>1ª rodada a partir de</span><input type="date" id="calStart" value="${esc(calStart)}"></label>
+        <label class="fld"><span>Dia da semana</span><select data-numsel="temporada.diaSemana">${MP.WEEKDAYS.map((w,i)=>`<option value="${i}"${i===T.diaSemana?' selected':''}>${w}</option>`).join('')}</select></label>
+        <label class="fld"><span>Rodadas na temporada</span><input type="number" min="1" max="99" data-num="temporada.rodadas" value="${T.rodadas}"></label>
+        <label class="fld"><span>Horário</span><input type="text" data-txt="temporada.horario" value="${esc(T.horario)}" placeholder="20:00"></label>
+      </div>
+      <label class="fld" style="margin-top:12px;"><span>Datas para pular (feriados etc.)</span><textarea id="calSkip" placeholder="2026-12-24&#10;2026-12-31" style="min-height:60px;">${esc((W.calSkip||[]).join('\n'))}</textarea></label>
+      <div class="row end" style="margin-top:12px;"><button class="btn primary" data-act="cal-gen" type="button">Gerar datas</button></div>
+    </div>
+    <div class="card"><div class="row" style="justify-content:space-between; margin-bottom:6px;"><h2 style="margin:0;">Calendário da ${esc(d.season.label)}</h2>
+      <button class="btn sm" data-act="cal-rotate" type="button" ${names.length ? '' : 'disabled'}>Preencher rodízio de organização</button></div>
+      <p class="hint">A organização aparece no ranking e já vem marcada na abertura da rodada. ${T.rodizioOrganizacao ? 'O rodízio preenche só as rodadas futuras sem organizador, em ordem alfabética.' : ''}</p>
+      <div class="scroll-x"><table class="t"><thead><tr><th>Rodada</th><th>Data</th><th>Organização</th><th>Situação</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>
+    </div>`;
+}
+function rotateOrganizers(){
+  const d = W.dados, T = CFGN.temporada;
+  const names = [...d.players].sort(cmp);
+  if(!names.length) return;
+  const played = new Set(d.rounds.map(r=>r.roundNumber));
+  let last = null;
+  for(let n=T.rodadas;n>=1;n--){ if(d.roundOrganizers[n]){ last = d.roundOrganizers[n]; break; } }
+  let idx = last ? (names.indexOf(last) + 1) % names.length : 0;
+  let filled = 0;
+  for(let n=1;n<=T.rodadas;n++){
+    if(played.has(n) || d.roundOrganizers[n]) continue;
+    d.roundOrganizers[n] = names[idx % names.length]; idx++; filled++;
+  }
+  toast(filled ? `${filled} ${plural(filled,'rodada recebeu','rodadas receberam')} organizador.` : 'Todas as rodadas futuras já têm organizador.');
+  touch();
+}
+
+/* ==========================================================================
+   JOGADORES
+   ========================================================================== */
+function vJogadores(){
+  const d = W.dados;
+  const count = {}, wins = {};
+  d.rounds.forEach(r=> r.standings.forEach((e,i)=>{ if(e.guest) return; count[e.name] = (count[e.name]||0) + 1; }));
+  const st = RULES.seasonStats(d.rounds).sort(RULES.compare);
+  st.forEach((s,i)=> wins[s.name] = i+1);
+  const names = [...d.players].sort(cmp);
+  return `<div class="card"><h2>Adicionar jogadores</h2>
+      <p class="hint">Um nome por linha. Membros aparecem na lista de presença da rodada; quem não estiver aqui entra como convidado.</p>
+      <textarea id="newPlayers" placeholder="ANA SOUZA&#10;BRUNO LIMA"></textarea>
+      <div class="row end" style="margin-top:10px;"><span class="muted" style="margin-right:auto; font-size:12.5px;"><button class="link" data-act="upper" type="button">padronizar em MAIÚSCULAS</button></span><button class="btn primary" data-act="add-players" type="button">Adicionar</button></div>
+    </div>
+    <div class="card"><h2>${names.length} ${plural(names.length,'jogador','jogadores')}</h2>
+      <p class="hint">Renomear corrige o nome em todas as rodadas e no calendário da temporada atual (temporadas encerradas não mudam). Remover tira da lista de presença, sem apagar resultados.</p>
+      <div class="scroll-x"><table class="t"><thead><tr><th>Jogador</th><th class="num">Rodadas</th><th class="num">Ranking</th><th></th></tr></thead><tbody>
+      ${names.map(n=>`<tr><td><input type="text" value="${esc(n)}" data-rename="${esc(n)}"></td><td class="num">${count[n]||0}</td><td class="num">${wins[n] ? wins[n] + 'º' : '—'}</td>
+        <td style="text-align:right;"><button class="btn sm danger" data-act="del-player" data-n="${esc(n)}" type="button">Remover</button></td></tr>`).join('')}
+      </tbody></table></div></div>`;
+}
+function renamePlayer(from, to){
+  to = to.trim().replace(/\s+/g,' ');
+  if(!to || to === from) return render();
+  const d = W.dados;
+  if(d.players.some(n=>n.toLowerCase() === to.toLowerCase() && n !== from) && !confirmBox(`${to} já existe. Juntar os dois jogadores?`)) return render();
+  d.players = [...new Set(d.players.map(n=> n === from ? to : n))];
+  d.rounds.forEach(r=> r.standings.forEach(e=>{ if(e.name === from) e.name = to; if(e.by === from) e.by = to; }));
+  Object.keys(d.roundOrganizers).forEach(k=>{ if(d.roundOrganizers[k] === from) d.roundOrganizers[k] = to; });
+  toast(`${from} → ${to}`);
+  touch();
+}
+
+/* ==========================================================================
+   REGRAS — pontuação, premiação, temporada, estatísticas
+   ========================================================================== */
+function numF(path, label, o){ o = o || {}; const v = getPath(W.config, path);
+  return `<label class="fld"><span>${label}</span><span class="inp"><input type="number" data-num="${path}" value="${v}" ${o.min!=null?`min="${o.min}"`:''} ${o.max!=null?`max="${o.max}"`:''} step="${o.step||1}">${o.suf?`<em>${o.suf}</em>`:''}</span>${o.hint?`<small>${o.hint}</small>`:''}</label>`; }
+function boolF(path, label, hint){ const v = !!getPath(W.config, path);
+  return `<div class="fld"><button type="button" class="switch${v?' on':''}" data-bool="${path}" aria-pressed="${v}"><span class="t"></span>${label}</button>${hint?`<small>${hint}</small>`:''}</div>`; }
+function pillF(path, opts){ const v = getPath(W.config, path);
+  return `<div class="pill" data-pill="${path}">${opts.map(([k,t])=>`<button type="button" data-v="${k}" class="${String(v)===String(k)?'on':''}">${t}</button>`).join('')}</div>`; }
+function prizesHtml(arr){ return `<div class="prizes">${arr.map((v,i)=>v>0?`<span class="${i===0?'first':''}"><span class="p">${i+1}º</span> ${brl(v)}</span>`:'').join('')}</div>`; }
+
+function simOut(){
+  sim.n = Math.max(2, Math.min(60, sim.n)); if(sim.ad > sim.n) sim.ad = sim.n;
+  const pool = RULES.poolFor(sim.n, CFGN.mesa.rebuy.ativo ? sim.rb : 0, CFGN.mesa.addon.ativo ? sim.ad : 0);
+  return `<div class="lbl"><span>Simular: <b>${sim.n}</b> jogadores${CFGN.mesa.rebuy.ativo?` · <b>${sim.rb}</b> rebuys`:''}${CFGN.mesa.addon.ativo?` · <b>${sim.ad}</b> add-ons`:''}</span><span>pote <b>${brl(pool)}</b></span></div>${prizesHtml(RULES.prizesFor(sim.n, pool))}`;
+}
+function vRegras(){
+  const P = CFGN.pontuacao, PR = CFGN.premiacao, T = CFGN.temporada, E = CFGN.estatisticas;
+  const pts = P.porPosicao;
+  const ex = pts.slice(0, 5).map((v,i)=>`${i+1}º ${v + P.presenca}`).join(' · ') + ` · … · demais ${P.demais + P.presenca}`;
+  // tabela
+  const keys = Object.keys(PR.tabela).map(Number).filter(n=>n>0).sort((a,b)=>a-b);
+  const cols = Math.max(1, ...keys.map(k=>(PR.tabela[k]||[]).length));
+  const net = PR.buyIn - PR.taxaPorJogador;
+  const tabRows = keys.map(k=>{
+    const row = PR.tabela[k] || []; const sum = row.reduce((t,v)=>t+(Number(v)||0),0); const exp = k*net;
+    return `<tr><td class="mono">${k}</td>${Array.from({length:cols},(_,i)=>`<td><input type="number" min="0" step="10" data-tb-n="${k}" data-tb-i="${i}" value="${row[i]!=null?row[i]:''}"></td>`).join('')}
+      <td class="num ${sum===exp?'ok-txt':'gold-txt'}" title="esperado ${exp}">${sum===exp?'✓':(sum>exp?'+':'−')+Math.abs(sum-exp)}</td>
+      <td><button class="btn sm ghost" data-act="tb-del-row" data-n="${k}" type="button" aria-label="Remover linha">×</button></td></tr>`;
+  }).join('');
+  return `<div class="card"><h2>Pontuação</h2>
+      <p class="hint">Pontos por colocação na rodada. Exemplo: ${esc(ex)}.</p>
+      <label class="fld"><span>Pontos do 1º, 2º, 3º… (separados por vírgula)</span><input type="text" data-list="pontuacao.porPosicao" value="${esc(pts.join(', '))}"></label>
+      <div class="grid" style="margin-top:12px;">
+        ${numF('pontuacao.demais', 'Abaixo da tabela', {min:0, suf:'pts', hint:'Quem termina depois da última posição listada.'})}
+        ${numF('pontuacao.presenca', 'Bônus de presença', {min:0, suf:'pts', hint:'Somado a todos que jogaram a rodada.'})}
+        ${boolF('pontuacao.convidadoPontua', 'Convidado pontua', P.convidadoPontua ? 'Convidado entra no ranking como qualquer jogador.' : 'Convidado recebe prêmio mas não pontua; os membros abaixo dele sobem.')}
+      </div></div>
+
+    <div class="card"><h2>Premiação</h2>
+      <div class="grid">
+        ${numF('premiacao.buyIn', 'Buy-in', {min:0, step:5, suf: PR.moeda})}
+        ${numF('premiacao.taxaPorJogador', 'Taxa do clube por jogador', {min:0, step:5, suf: PR.moeda, hint:'Sai do buy-in e não vai para o prêmio (jantar, caixa…).'})}
+        ${numF('premiacao.arredondar', 'Arredondar prêmios em', {min:1, step:5, suf: PR.moeda, hint:'A sobra do arredondamento vai para o 1º.'})}
+        <div class="fld"><span>Como definir os prêmios</span>${pillF('premiacao.modo', [['tabela','Tabela fixa'],['percentual','Percentual']])}
+          <small>${PR.modo === 'tabela' ? 'Valores por nº de jogadores; fora da tabela, usa as faixas %. Com rebuy/add-on, mantém as proporções da linha.' : 'O pote é dividido pelas faixas %.'}</small></div>
+      </div>
+      <div class="sim"><div id="simOut">${simOut()}</div>
+        <input type="range" min="2" max="40" value="${sim.n}" data-sim="n" aria-label="Jogadores" style="margin-top:10px;">
+        ${CFGN.mesa.rebuy.ativo ? `<input type="range" min="0" max="30" value="${sim.rb}" data-sim="rb" aria-label="Rebuys" style="margin-top:12px;">` : ''}
+        ${CFGN.mesa.addon.ativo ? `<input type="range" min="0" max="40" value="${sim.ad}" data-sim="ad" aria-label="Add-ons" style="margin-top:12px;">` : ''}</div>
+
+      <h3>Faixas percentuais</h3>
+      <p class="hint" style="margin-bottom:8px;">Usadas no modo percentual e quando o nº de jogadores não está na tabela. Cada faixa vale até o nº de jogadores indicado.</p>
+      <table class="t"><thead><tr><th>Até jogadores</th><th>% por posição (1º, 2º…)</th><th class="num">Soma</th><th></th></tr></thead><tbody>
+      ${PR.faixas.map((f,i)=>{ const s = f.pct.reduce((t,v)=>t+v,0); return `<tr><td><input type="number" min="2" data-fx-ate="${i}" value="${f.ate}"></td>
+        <td><input type="text" data-fx-pct="${i}" value="${esc(f.pct.join(', '))}"></td><td class="num ${s===100?'ok-txt':'bad-txt'}">${s}%</td>
+        <td><button class="btn sm ghost" data-act="fx-del" data-i="${i}" type="button" ${PR.faixas.length<2?'disabled':''} aria-label="Remover faixa">×</button></td></tr>`; }).join('')}
+      </tbody></table>
+      <div class="row" style="margin-top:8px;"><button class="btn sm" data-act="fx-add" type="button">+ faixa</button></div>
+
+      <h3>Tabela fixa por nº de jogadores</h3>
+      <p class="hint" style="margin-bottom:8px;">Valores de cada posição. A última coluna confere a soma com jogadores × ${brl(net)}.</p>
+      <div class="scroll-x"><table class="t"><thead><tr><th>Jog.</th>${Array.from({length:cols},(_,i)=>`<th>${i+1}º</th>`).join('')}<th class="num">Soma</th><th></th></tr></thead><tbody>${tabRows || `<tr><td colspan="${cols+3}" class="muted">Tabela vazia.</td></tr>`}</tbody></table></div>
+      <div class="row" style="margin-top:10px;">
+        <button class="btn sm" data-act="tb-add-row" type="button">+ linha</button>
+        <button class="btn sm" data-act="tb-add-col" type="button">+ posição</button>
+        <button class="btn sm" data-act="tb-del-col" type="button" ${cols<2?'disabled':''}>− posição</button>
+        <span style="flex:1"></span>
+        <span class="muted" style="font-size:12.5px;">de</span><input type="number" id="tbFrom" value="${keys[0]||6}" min="2" style="width:70px;">
+        <span class="muted" style="font-size:12.5px;">a</span><input type="number" id="tbTo" value="${keys[keys.length-1]||25}" min="2" style="width:70px;">
+        <button class="btn sm" data-act="tb-fill" type="button">Gerar pelas faixas %</button>
+      </div></div>
+
+    <div class="card"><h2>Temporada</h2>
+      <div class="grid">
+        ${numF('temporada.rodadas', 'Rodadas', {min:1, max:99})}
+        ${numF('temporada.classificados', 'Destaque "Top N"', {min:1, max:20, hint:'Mostra quem ainda tem chance matemática.'})}
+        ${numF('temporada.descartes', 'Descartes', {min:0, max:20, hint:'Piores resultados ignorados no ranking (faltas = 0).'})}
+        ${boolF('temporada.rodizioOrganizacao', 'Rodízio de organização', 'Cada rodada tem um responsável no calendário.')}
+      </div></div>
+
+    <div class="card"><h2>Estatísticas</h2>
+      <p class="hint">Mínimo de rodadas para alguns recordes. Clubes novos devem usar números baixos.</p>
+      <div class="grid">
+        ${numF('estatisticas.minRodadasConsistencia', 'Recorde de consistência', {min:1, suf:'rodadas'})}
+        ${numF('estatisticas.minRodadasForma', 'Forma recente', {min:1, suf:'rodadas'})}
+        ${numF('estatisticas.minRodadasConfronto', 'Fregueses e carrascos', {min:1, suf:'rodadas'})}
+      </div></div>`;
+}
+
+/* ==========================================================================
+   MESA — mesas, fichas, rebuy, add-on, blinds
+   ========================================================================== */
+function vMesa(){
+  const M = CFGN.mesa, R = M.rebuy, A = M.addon, B = M.blinds;
+  let acc = 0, lvl = 0;
+  const rows = B.niveis.map((l,i)=>{
+    const start = acc; acc += Number(l.min)||0; if(!l.pausa) lvl++;
+    const t = `${Math.floor(start/60)}h${String(start%60).padStart(2,'0')}`;
+    return `<tr><td class="mono muted">${l.pausa ? '—' : lvl}</td>
+      ${l.pausa ? `<td colspan="3" class="gold-txt">Intervalo</td>` : ['sb','bb','ante'].map(k=>`<td><input type="number" min="0" step="25" data-bl-i="${i}" data-bl-k="${k}" value="${l[k]||0}"></td>`).join('')}
+      <td><input type="number" min="1" data-bl-i="${i}" data-bl-k="min" value="${l.min}"></td><td class="mono muted">${t}</td>
+      <td style="white-space:nowrap;"><button class="btn sm ghost" data-act="bl-up" data-i="${i}" type="button" aria-label="Subir">↑</button><button class="btn sm ghost" data-act="bl-del" data-i="${i}" type="button" aria-label="Remover">×</button></td></tr>`;
+  }).join('');
+  return `<div class="card"><h2>Mesas e fichas</h2>
+      <div class="grid">
+        ${numF('mesa.maxPorMesa', 'Máximo por mesa', {min:2, max:12, suf:'jogadores', hint:'O sorteio divide os presentes em mesas equilibradas.'})}
+        ${numF('mesa.fichasIniciais', 'Fichas iniciais', {min:0, step:500})}
+      </div></div>
+    <div class="card"><h2>Rebuy</h2>
+      <div class="grid">
+        ${boolF('mesa.rebuy.ativo', 'Permitir rebuy', R.ativo ? 'Na partida, quem quebra pode voltar pagando o rebuy.' : 'Desligado: quem quebra está eliminado.')}
+        ${R.ativo ? numF('mesa.rebuy.valor', 'Valor', {min:0, step:5, suf: CFGN.premiacao.moeda}) + numF('mesa.rebuy.fichas', 'Fichas', {min:0, step:500})
+          + numF('mesa.rebuy.limitePorJogador', 'Limite por jogador', {min:0, hint:'0 = sem limite.'})
+          + numF('mesa.rebuy.ateNivel', 'Aberto até o nível', {min:0, hint:'0 = até o organizador encerrar. Exige blinds ligados.'}) : ''}
+      </div></div>
+    <div class="card"><h2>Add-on</h2>
+      <div class="grid">
+        ${boolF('mesa.addon.ativo', 'Permitir add-on', 'Compra única de fichas extras, normalmente no intervalo.')}
+        ${A.ativo ? numF('mesa.addon.valor', 'Valor', {min:0, step:5, suf: CFGN.premiacao.moeda}) + numF('mesa.addon.fichas', 'Fichas', {min:0, step:500}) : ''}
+      </div></div>
+    <div class="card"><h2>Estrutura de blinds</h2>
+      <div class="grid">${boolF('mesa.blinds.ativo', 'Mostrar relógio de blinds na partida', 'Nível atual, contagem regressiva, pausa e aviso sonoro.')}</div>
+      ${B.ativo ? `<div class="scroll-x" style="margin-top:12px;"><table class="t"><thead><tr><th>Nível</th><th>SB</th><th>BB</th><th>Ante</th><th>Min</th><th>Início</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
+      <div class="row" style="margin-top:10px;"><button class="btn sm" data-act="bl-add" type="button">+ nível</button><button class="btn sm" data-act="bl-pause" type="button">+ intervalo</button>
+        <span style="flex:1"></span><span class="muted" style="font-size:12.5px;">Duração total ${Math.floor(acc/60)}h${String(acc%60).padStart(2,'0')}</span></div>` : ''}
+    </div>`;
+}
+function niceBlind(v){ const steps = [25,50,75,100,150,200,250,300,400,500,600,800,1000,1200,1500,2000,2500,3000,4000,5000,6000,8000,10000,12000,15000,20000,25000,30000,40000,50000]; return steps.find(s=>s>=v) || Math.round(v/1000)*1000; }
+
+/* ==========================================================================
+   VISUAL E ACESSO
+   ========================================================================== */
+function vVisual(){
+  const C = CFGN.clube, T = CFGN.tema, A = CFGN.acesso;
+  const cur = MP.themeColors(CFGN);
+  return `<div class="card"><h2>Identidade do clube</h2>
+      <div class="grid two">
+        <label class="fld"><span>Nome do clube</span><input type="text" data-txt="clube.nome" value="${esc(C.nome)}"></label>
+        <label class="fld"><span>Nome curto (cabeçalho da rodada)</span><input type="text" data-txt="clube.nomeCurto" value="${esc(C.nomeCurto)}" maxlength="24"></label>
+        <label class="fld"><span>Cidade</span><input type="text" data-txt="clube.cidade" value="${esc(C.cidade)}"></label>
+        <label class="fld"><span>Frase de destaque</span><input type="text" data-txt="clube.slogan" value="${esc(C.slogan)}" maxlength="80"></label>
+      </div>
+      <div class="fld" style="margin-top:12px;"><span>Símbolo</span><div class="sym">${['♠','♥','♦','♣','★','♛'].map(s=>`<button type="button" data-sym="${s}" class="${s===C.simbolo?'on':''}">${s}</button>`).join('')}</div></div>
+    </div>
+    <div class="card"><h2>Cores</h2>
+      <p class="hint">O tema vale para o ranking, a rodada e este painel.</p>
+      <div class="theme-grid">${Object.entries(MP.THEMES).map(([k,t])=>`<button type="button" class="theme-card${T.preset===k?' on':''}" data-theme="${k}" style="background:${t.surface}; border-color:${t.border}; color:${t.text};">${esc(t.nome)}
+        <div class="sw"><i style="background:${t.bg}"></i><i style="background:${t.surface2}"></i><i style="background:${t.accent}"></i><i style="background:${t.accentSoft}"></i></div></button>`).join('')}</div>
+      <h3>Ajuste fino</h3>
+      <div class="row">${[['accent','Destaque'],['accentSoft','Destaque claro'],['bg','Fundo'],['surface','Cartões'],['border','Bordas']].map(([k,t])=>`<label class="row" style="gap:6px; margin-right:10px;"><input type="color" data-color="${k}" value="${cur[k]}"><span class="muted" style="font-size:12.5px;">${t}</span></label>`).join('')}
+        ${Object.keys(T.cores||{}).length ? '<button class="link" data-act="colors-reset" type="button">voltar às cores do tema</button>' : ''}</div>
+    </div>
+    <div class="card"><h2>Senhas</h2>
+      <p class="hint">Proteção simples, só para testes: os arquivos do clube ficam públicos no GitHub e a senha fica como um código no config.json. Deixe em branco e confirme para remover.</p>
+      ${[['senhaAdmin','Gestão (este painel)'],['senhaRodada','Lançamento da rodada'],['senhaEstatisticas','Estatísticas do ranking']].map(([k,t])=>`<div class="row" style="margin-bottom:10px;">
+        <span style="min-width:190px; font-weight:600; font-size:13.5px;">${t}<br><span class="${A[k]?'ok-txt':'muted'}" style="font-size:12px; font-weight:500;">${A[k]?'● com senha':'○ aberto'}</span></span>
+        <input type="password" id="pw_${k}" placeholder="nova senha" style="flex:1; min-width:160px;" autocomplete="new-password"><button class="btn sm" data-act="pw" data-k="${k}" type="button">Definir</button></div>`).join('')}
+    </div>`;
+}
+
+/* ==========================================================================
+   TEMPORADA — encerrar e abrir a próxima
+   ========================================================================== */
+function vTemporada(){
+  const d = W.dados;
+  const st = RULES.seasonStats(d.rounds).sort(RULES.compare);
+  const nid = nextSeasonId(d.season.id);
+  return `<div class="card"><h2>${esc(d.season.label)}</h2>
+      <p class="hint">${d.rounds.length} de ${CFGN.temporada.rodadas} rodadas · ${st.length ? `líder: <b>${esc(st[0].name)}</b> com ${st[0].points} pts` : 'sem rodadas'}.</p>
+      <h3>Temporadas encerradas</h3>
+      ${W.temporadas.seasons.length ? `<table class="t"><tbody>${W.temporadas.seasons.map(s=>`<tr><td>${esc(s.label)}</td><td class="mono muted">${esc(s.file)}</td></tr>`).join('')}</tbody></table>` : '<p class="hint">Nenhuma ainda.</p>'}
+    </div>
+    <div class="card"><h2>Encerrar e abrir a próxima</h2>
+      <p class="hint">Gera o arquivo da temporada encerrada (fica no histórico do ranking), e o dados.json passa a ser a nova temporada, vazia, com a mesma lista de jogadores. Só vale depois de publicar.</p>
+      <div class="grid">
+        <label class="fld"><span>Código da nova temporada</span><input type="text" id="newSid" value="${esc(nid)}" placeholder="2027-1"></label>
+        <label class="fld"><span>Nome</span><input type="text" id="newSlabel" value="${esc(seasonLabel(nid))}"></label>
+        <label class="fld"><span>1ª rodada (opcional)</span><input type="date" id="newSstart"><small>Gera o calendário no dia do clube.</small></label>
+      </div>
+      ${d.rounds.length < CFGN.temporada.rodadas ? `<div class="banner" style="margin-top:12px;">Faltam ${CFGN.temporada.rodadas - d.rounds.length} rodadas para o fim previsto.</div>` : ''}
+      <div class="row end" style="margin-top:12px;"><button class="btn primary" data-act="close-season" type="button">Encerrar ${esc(d.season.label)}</button></div>
+    </div>`;
+}
+function closeSeason(){
+  const d = W.dados;
+  const id = document.getElementById('newSid').value.trim(), label = document.getElementById('newSlabel').value.trim();
+  const start = document.getElementById('newSstart').value;
+  if(!/^[\w-]{3,20}$/.test(id)){ toast('Código inválido. Use algo como 2027-1.'); return; }
+  if(id === d.season.id || W.temporadas.seasons.some(s=>s.id === id)){ toast('Esse código já foi usado.'); return; }
+  if(!confirmBox(`Encerrar a ${d.season.label} e abrir a ${label || seasonLabel(id)}?`)) return;
+  const now = new Date().toISOString();
+  const file = `temporada-${d.season.id}.json`;
+  W.extra[file] = { ...clone(d), final: true, closedAt: now, publishedAt: now, archive: undefined };
+  delete W.extra[file].archive;
+  W.temporadas.seasons = [{ id: d.season.id, label: d.season.label, file }, ...W.temporadas.seasons.filter(s=>s.id !== d.season.id)]
+    .sort((a,b)=> String(b.id).localeCompare(String(a.id)));
+  const nd = emptyDados({ id, label: label || seasonLabel(id) });
+  nd.players = [...d.players];
+  if(start) MP.generateDates(start, CFGN.temporada.diaSemana, CFGN.temporada.rodadas, []).forEach((iso,i)=> nd.roundDates[i+1] = iso);
+  W.dados = nd;
+  toast('Temporada encerrada. Publique para valer no site.');
+  tab = 'publicar'; touch();
+}
+
+/* ==========================================================================
+   PUBLICAR — download, ZIP ou GitHub
+   ========================================================================== */
+function ghDefaults(){
+  const host = location.hostname;
+  const s = GH.get('cfg', {});
+  if(!s.owner && host.endsWith('.github.io')){ s.owner = host.split('.')[0]; s.repo = location.pathname.split('/')[1] || `${s.owner}.github.io`; }
+  if(!s.branch) s.branch = 'main';
+  return s;
+}
+function vPublicar(){
+  const files = fileList(), ch = files.filter(f=>f.changed);
+  const g = ghDefaults();
+  return `<div class="card"><h2>${ch.length ? `${ch.length} ${plural(ch.length,'arquivo para publicar','arquivos para publicar')}` : 'Nada para publicar'}</h2>
+      <p class="hint">O site lê estes arquivos do repositório. Publique pelo GitHub (abaixo) ou baixe e envie em <i>Add file → Upload files</i>, mantendo as pastas.</p>
+      ${lastPublish ? `<div class="banner ${lastPublish.ok?'ok':'err'}">${lastPublish.html}</div>` : ''}
+      ${files.filter(f=>f.changed || f.path.endsWith('dados.json')).map(f=>`<div class="file-row"><div><div class="fp">${esc(f.path)} ${f.changed ? (f.isNew ? '<span class="tag new">novo</span>' : '<span class="tag">alterado</span>') : '<span class="muted" style="font-size:12px;">sem mudanças</span>'}</div>
+        <div class="fs">${esc(f.label)}</div></div><div class="row"><button class="btn sm ghost" data-act="f-view" data-p="${esc(f.path)}" type="button">Ver</button><button class="btn sm" data-act="f-dl" data-p="${esc(f.path)}" type="button">Baixar</button></div></div>`).join('')}
+      <div id="fview"></div>
+      ${ch.length ? `<div class="row end" style="margin-top:14px;"><button class="btn" data-act="zip" type="button">Baixar alterados (.zip)</button><button class="btn ghost" data-act="mark" type="button">Já enviei, marcar como publicado</button></div>` : ''}
+    </div>
+    <div class="card"><h2>Publicar direto no GitHub</h2>
+      <p class="hint">Use um <b>token fine-grained</b> com acesso só a este repositório e permissão <i>Contents: read and write</i>. O token fica salvo apenas neste aparelho. É o modo de teste: numa versão final isso passa para um servidor com login de verdade.</p>
+      <div class="grid">
+        <label class="fld"><span>Dono (usuário)</span><input type="text" id="ghOwner" value="${esc(g.owner||'')}" placeholder="jonathancaye"></label>
+        <label class="fld"><span>Repositório</span><input type="text" id="ghRepo" value="${esc(g.repo||'')}" placeholder="multi-poker"></label>
+        <label class="fld"><span>Branch</span><input type="text" id="ghBranch" value="${esc(g.branch||'main')}"></label>
+        <label class="fld"><span>Token</span><input type="password" id="ghToken" value="${esc(GH.get('token',''))}" placeholder="github_pat_…" autocomplete="off"></label>
+      </div>
+      <div class="row end" style="margin-top:12px;">${GH.get('token','') ? '<button class="btn sm ghost" data-act="gh-forget" type="button">Esquecer token</button>' : ''}
+        <button class="btn primary" data-act="gh-publish" type="button" ${ch.length ? '' : 'disabled'}>Publicar ${ch.length || ''} no GitHub</button></div>
+      <p class="hint" style="margin:10px 0 0; font-size:12px;">O GitHub Pages leva cerca de 1 minuto para mostrar a versão nova.</p>
+    </div>
+    ${ch.length ? `<div class="card"><h2>Descartar alterações</h2><p class="hint">Volta tudo para a última versão publicada no site.</p><button class="btn danger" data-act="discard" type="button">Descartar rascunho</button></div>` : ''}`;
+}
+function fileText(f){ return JSON.stringify(f.obj, null, 2) + '\n'; }
+function download(name, text, type){
+  const blob = text instanceof Blob ? text : new Blob([text], {type: type || 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 1500);
+}
+/* ZIP sem compressão (método "store"), sem bibliotecas externas */
+const CRC_T = (()=>{ const t = new Uint32Array(256); for(let n=0;n<256;n++){ let c = n; for(let k=0;k<8;k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(u8){ let c = 0xFFFFFFFF; for(let i=0;i<u8.length;i++) c = CRC_T[(c ^ u8[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+function makeZip(entries){
+  const enc = new TextEncoder(), parts = [], central = [];
+  let offset = 0;
+  const d = new Date(), dosTime = (d.getHours()<<11)|(d.getMinutes()<<5)|(d.getSeconds()>>1), dosDate = ((d.getFullYear()-1980)<<9)|((d.getMonth()+1)<<5)|d.getDate();
+  entries.forEach(({name, text})=>{
+    const nm = enc.encode(name), data = enc.encode(text), crc = crc32(data);
+    const lh = new DataView(new ArrayBuffer(30));
+    lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true); lh.setUint16(8, 0, true);
+    lh.setUint16(10, dosTime, true); lh.setUint16(12, dosDate, true); lh.setUint32(14, crc, true);
+    lh.setUint32(18, data.length, true); lh.setUint32(22, data.length, true); lh.setUint16(26, nm.length, true); lh.setUint16(28, 0, true);
+    parts.push(new Uint8Array(lh.buffer), nm, data);
+    const ch = new DataView(new ArrayBuffer(46));
+    ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true); ch.setUint16(10, 0, true);
+    ch.setUint16(12, dosTime, true); ch.setUint16(14, dosDate, true); ch.setUint32(16, crc, true);
+    ch.setUint32(20, data.length, true); ch.setUint32(24, data.length, true); ch.setUint16(28, nm.length, true);
+    ch.setUint32(42, offset, true);
+    central.push(new Uint8Array(ch.buffer), nm);
+    offset += 30 + nm.length + data.length;
+  });
+  const cSize = central.reduce((t,u)=>t+u.length, 0);
+  const end = new DataView(new ArrayBuffer(22));
+  end.setUint32(0, 0x06054b50, true); end.setUint16(8, entries.length, true); end.setUint16(10, entries.length, true);
+  end.setUint32(12, cSize, true); end.setUint32(16, offset, true);
+  return new Blob([...parts, ...central, new Uint8Array(end.buffer)], {type:'application/zip'});
+}
+async function downloadZip(files, name){
+  download(name, makeZip(files.map(f=>({ name: f.path, text: fileText(f) }))));
+}
+function b64(str){ const bytes = new TextEncoder().encode(str); let bin = ''; bytes.forEach(b=> bin += String.fromCharCode(b)); return btoa(bin); }
+async function ghPublish(files, message){
+  const owner = document.getElementById('ghOwner').value.trim(), repo = document.getElementById('ghRepo').value.trim();
+  const branch = document.getElementById('ghBranch').value.trim() || 'main', token = document.getElementById('ghToken').value.trim();
+  if(!owner || !repo || !token){ toast('Preencha dono, repositório e token.'); return false; }
+  GH.set('cfg', { owner, repo, branch }); GH.set('token', token);
+  const api = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents/`;
+  const headers = { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
+  const done = [];
+  try{
+    for(const f of files){
+      toast(`Enviando ${f.path}…`);
+      const path = f.path.split('/').map(encodeURIComponent).join('/');
+      let sha;
+      const g = await fetch(`${api}${path}?ref=${encodeURIComponent(branch)}&t=${Date.now()}`, { headers, cache:'no-store' });
+      if(g.ok) sha = (await g.json()).sha;
+      else if(g.status !== 404) throw new Error(`${f.path}: ${g.status} ${g.status===401?'token inválido':g.status===403?'sem permissão':''}`);
+      const p = await fetch(api + path, { method:'PUT', headers, body: JSON.stringify({ message: `${message}: ${f.path}`, content: b64(fileText(f)), branch, ...(sha ? {sha} : {}) }) });
+      if(!p.ok){ const j = await p.json().catch(()=>({})); throw new Error(`${f.path}: ${p.status} ${j.message||''}`); }
+      done.push(f.path);
+    }
+    lastPublish = { ok:true, html:`Publicado no GitHub: ${done.map(esc).join(', ')}.` };
+    return true;
+  }catch(e){
+    lastPublish = { ok:false, html:`Falhou${done.length ? ` depois de enviar ${done.map(esc).join(', ')}` : ''}: ${esc(e.message)}` };
+    return false;
+  }
+}
+
+/* ==========================================================================
+   NOVO CLUBE
+   ========================================================================== */
+let NC = null;   // { slug, config, dados, temporadas }
+function novoFiles(){
+  if(!NC) return [];
+  const base = MP.clubBase(NC.slug);
+  const reg = [...REG.filter(c=>c.slug !== NC.slug), { slug: NC.slug, nome: NC.config.clube.nome, cidade: NC.config.clube.cidade, simbolo: NC.config.clube.simbolo, cor: MP.themeColors(NC.config).accent }];
+  return [
+    { path: base + 'config.json', obj: NC.config, label: 'Regras, visual e senhas', changed:true, isNew:true },
+    { path: base + 'dados.json', obj: NC.dados, label: 'Temporada em andamento', changed:true, isNew:true },
+    { path: base + 'temporadas.json', obj: NC.temporadas, label: 'Lista de temporadas encerradas', changed:true, isNew:true },
+    { path: 'clubes.json', obj: { clubes: reg }, label: 'Lista de clubes do portal', changed:true, isNew:false }
+  ];
+}
+function slugify(s){ return String(s).normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40); }
+function renderNovo(){
+  const files = novoFiles();
+  const g = ghDefaults();
+  app.innerHTML = `<header class="top"><div><p class="eyebrow">Multi Poker</p><h1>Novo clube</h1><p class="sub">Cria a pasta do clube com regras, visual e senha de gestão.</p></div>
+      <div class="top-links"><a class="chip" href="index.html">Portal</a></div></header>
+    ${!NC ? `<div class="card"><h2>Dados do clube</h2>
+      <div class="grid two">
+        <label class="fld"><span>Nome do clube</span><input type="text" id="ncNome" placeholder="Clube do Flop"></label>
+        <label class="fld"><span>Endereço (slug)</span><input type="text" id="ncSlug" placeholder="clube-do-flop"><small>Usado na URL: ranking.html?c=<b id="ncSlugPrev">…</b></small></label>
+        <label class="fld"><span>Cidade</span><input type="text" id="ncCidade"></label>
+        <label class="fld"><span>Copiar regras de</span><select id="ncBase"><option value="">Padrão do sistema</option>${REG.map(c=>`<option value="${esc(c.slug)}">${esc(c.nome)}</option>`).join('')}</select><small>Pontuação, premiação, mesa e blinds. Nome, cores e senhas não são copiados.</small></label>
+        <label class="fld"><span>Senha de gestão</span><input type="password" id="ncPass" autocomplete="new-password"><small>Login simples, só para testes.</small></label>
+        <label class="fld"><span>Tema</span><select id="ncTema">${Object.entries(MP.THEMES).map(([k,t])=>`<option value="${k}">${esc(t.nome)}</option>`).join('')}</select></label>
+      </div>
+      <div class="row end" style="margin-top:14px;"><button class="btn primary" data-act="nc-create" type="button">Gerar arquivos do clube</button></div></div>`
+    : `<div class="card"><h2>${esc(NC.config.clube.nome)}</h2>
+      <p class="hint">Arquivos prontos. Publique no repositório e o clube aparece no portal. Depois, abra a gestão para cadastrar jogadores e calendário.</p>
+      ${lastPublish ? `<div class="banner ${lastPublish.ok?'ok':'err'}">${lastPublish.html}${lastPublish.ok ? ` <a href="${MP.clubUrl('admin.html', NC.slug)}">Abrir a gestão →</a>` : ''}</div>` : ''}
+      ${files.map(f=>`<div class="file-row"><div><div class="fp">${esc(f.path)} ${f.isNew ? '<span class="tag new">novo</span>' : '<span class="tag">alterado</span>'}</div><div class="fs">${esc(f.label)}</div></div>
+        <div class="row"><button class="btn sm" data-act="f-dl" data-p="${esc(f.path)}" type="button">Baixar</button></div></div>`).join('')}
+      <div class="row end" style="margin-top:14px;"><button class="btn ghost" data-act="nc-back" type="button">← Voltar</button><button class="btn" data-act="zip" type="button">Baixar tudo (.zip)</button></div></div>
+    <div class="card"><h2>Publicar direto no GitHub</h2>
+      <p class="hint">Token fine-grained com acesso só a este repositório (<i>Contents: read and write</i>). Fica salvo apenas neste aparelho.</p>
+      <div class="grid">
+        <label class="fld"><span>Dono</span><input type="text" id="ghOwner" value="${esc(g.owner||'')}"></label>
+        <label class="fld"><span>Repositório</span><input type="text" id="ghRepo" value="${esc(g.repo||'')}"></label>
+        <label class="fld"><span>Branch</span><input type="text" id="ghBranch" value="${esc(g.branch||'main')}"></label>
+        <label class="fld"><span>Token</span><input type="password" id="ghToken" value="${esc(GH.get('token',''))}" autocomplete="off"></label>
+      </div>
+      <div class="row end" style="margin-top:12px;"><button class="btn primary" data-act="gh-publish" type="button">Publicar no GitHub</button></div></div>`}
+    <div class="ver">Gestão v${PAGE_VERSION} · núcleo ${MP.CORE_VERSION}</div>`;
+  const nome = document.getElementById('ncNome'), sl = document.getElementById('ncSlug');
+  if(nome){
+    let manual = false;
+    const prev = ()=> document.getElementById('ncSlugPrev').textContent = sl.value || '…';
+    nome.addEventListener('input', ()=>{ if(!manual) sl.value = slugify(nome.value); prev(); });
+    sl.addEventListener('input', ()=>{ manual = true; sl.value = slugify(sl.value); prev(); });
+  }
+  bindAfterRender();
+}
+async function createClub(){
+  const nome = document.getElementById('ncNome').value.trim();
+  const slug = slugify(document.getElementById('ncSlug').value || nome);
+  const pass = document.getElementById('ncPass').value;
+  if(!nome || !slug){ toast('Preencha o nome do clube.'); return; }
+  if(REG.some(c=>c.slug === slug)){ toast('Já existe um clube com esse endereço.'); return; }
+  let base = MP.clone(MP.DEFAULT_CONFIG);
+  const from = document.getElementById('ncBase').value;
+  if(from){
+    try{ const { config } = await MP.loadConfig(from); ['pontuacao','premiacao','temporada','mesa','estatisticas'].forEach(k=> base[k] = MP.clone(config[k])); }
+    catch(e){ toast('Não deu para ler as regras do clube escolhido; usando o padrão.'); }
+  }
+  base.clube = { ...base.clube, nome, nomeCurto: nome.length <= 24 ? nome : nome.slice(0, 24), cidade: document.getElementById('ncCidade').value.trim() };
+  base.tema = { preset: document.getElementById('ncTema').value, cores: {} };
+  base.acesso = { senhaAdmin: pass ? MP.hash(pass) : '', senhaRodada: '', senhaEstatisticas: '' };
+  const config = MP.normalizeConfig(base);
+  CFGN = config; RULES = MP.makeRules(CFGN);
+  const id = nextSeasonId('');
+  NC = { slug, config, dados: emptyDados({ id, label: seasonLabel(id) }), temporadas: { seasons: [] } };
+  MP.applyTheme(config);
+  lastPublish = null;
+  renderNovo();
+}
+
+/* ==========================================================================
+   EVENTOS (delegados)
+   ========================================================================== */
+function findFile(p){ return fileList().find(f=>f.path === p); }
+function bindAfterRender(){
+  const drop = document.getElementById('drop'), fin = document.getElementById('fileIn');
+  if(drop && fin){
+    fin.addEventListener('change', ()=>{ readFiles([...fin.files]); fin.value = ''; });
+    ['dragenter','dragover'].forEach(ev=> drop.addEventListener(ev, e=>{ e.preventDefault(); drop.classList.add('over'); }));
+    ['dragleave','drop'].forEach(ev=> drop.addEventListener(ev, e=>{ e.preventDefault(); drop.classList.remove('over'); }));
+    drop.addEventListener('drop', e=> readFiles([...e.dataTransfer.files]));
+  }
+}
+app.addEventListener('click', async e=>{
+  const t = e.target.closest('[data-tab],[data-act],[data-bool],[data-pill] button,[data-sym],[data-theme]');
+  if(!t) return;
+  if(t.dataset.tab){ tab = t.dataset.tab; ST.set('adminTab', tab); lastPublish = null; render(); return; }
+  if(t.dataset.bool){ setPath(W.config, t.dataset.bool, !getPath(W.config, t.dataset.bool)); touch(); return; }
+  if(t.parentElement && t.parentElement.dataset.pill){ setPath(W.config, t.parentElement.dataset.pill, t.dataset.v); touch(); return; }
+  if(t.dataset.sym){ W.config.clube.simbolo = t.dataset.sym; touch(); return; }
+  if(t.dataset.theme){ W.config.tema = { preset: t.dataset.theme, cores: {} }; touch(); return; }
+  const a = t.dataset.act, PR = () => W.config.premiacao;
+  switch(a){
+    case 'go-publicar': tab = 'publicar'; ST.set('adminTab', tab); render(); break;
+    case 'discard':
+      if(!confirmBox('Descartar todas as alterações não publicadas?')) return;
+      ST.del('draft'); W = clone({ ...ORIG, extra: {} }); W._stamp = String(ORIG.dados.publishedAt||'') + '|' + stable(ORIG.config).length; REG = clone(REG_ORIG); pending = []; refresh(); render(); toast('Rascunho descartado.'); break;
+    case 'paste': {
+      const v = document.getElementById('pasteIn').value.trim();
+      try{ queueImport(JSON.parse(v)); }catch(err){ toast('Conteúdo colado não é um JSON válido.'); }
+      break; }
+    case 'pend-ok': acceptImport(Number(t.dataset.i)); break;
+    case 'pend-drop': pending.splice(Number(t.dataset.i), 1); render(); break;
+    case 'round-del': {
+      const n = Number(t.dataset.n);
+      if(!confirmBox(`Excluir a rodada ${n}? O ranking será recalculado.`)) return;
+      W.dados.rounds = W.dados.rounds.filter(r=>r.roundNumber !== n); toast(`Rodada ${n} excluída.`); touch(); break; }
+    case 'cal-gen': {
+      calStart = document.getElementById('calStart').value;
+      const skip = document.getElementById('calSkip').value.split(/\s+/).filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x));
+      W.calSkip = skip;
+      if(!calStart){ toast('Escolha a data da 1ª rodada.'); return; }
+      const played = new Set(W.dados.rounds.map(r=>r.roundNumber));
+      const dates = MP.generateDates(calStart, CFGN.temporada.diaSemana, CFGN.temporada.rodadas, skip);
+      const nd = {}; dates.forEach((iso,i)=>{ const n = i+1; nd[n] = played.has(n) && W.dados.roundDates[n] ? W.dados.roundDates[n] : iso; });
+      W.dados.roundDates = nd; toast(`${dates.length} datas geradas.`); touch(); break; }
+    case 'cal-rotate': rotateOrganizers(); break;
+    case 'upper': { const ta = document.getElementById('newPlayers'); ta.value = ta.value.toLocaleUpperCase('pt-BR'); break; }
+    case 'add-players': {
+      const names = document.getElementById('newPlayers').value.split('\n').map(x=>x.trim().replace(/\s+/g,' ')).filter(Boolean);
+      const lower = new Set(W.dados.players.map(n=>n.toLowerCase()));
+      let added = 0; names.forEach(n=>{ if(!lower.has(n.toLowerCase())){ W.dados.players.push(n); lower.add(n.toLowerCase()); added++; } });
+      toast(added ? `${added} ${plural(added,'jogador adicionado','jogadores adicionados')}.` : 'Nenhum nome novo.'); touch(); break; }
+    case 'del-player': {
+      const n = t.dataset.n;
+      if(!confirmBox(`Remover ${n} da lista do clube? Os resultados dele continuam no ranking.`)) return;
+      W.dados.players = W.dados.players.filter(x=>x !== n); touch(); break; }
+    case 'fx-add': { const f = PR().faixas; f.push({ ate: (f[f.length-1] ? f[f.length-1].ate : 10) + 10, pct: [50,30,20] }); touch(); break; }
+    case 'fx-del': PR().faixas.splice(Number(t.dataset.i), 1); touch(); break;
+    case 'tb-add-row': {
+      const keys = Object.keys(PR().tabela).map(Number); const n = keys.length ? Math.max(...keys) + 1 : 6;
+      PR().tabela[String(n)] = RULES.prizesFor(n, RULES.poolFor(n, 0, 0)).slice(); touch(); break; }
+    case 'tb-del-row': delete PR().tabela[t.dataset.n]; touch(); break;
+    case 'tb-add-col': Object.values(PR().tabela).forEach(r=> r.push(0)); touch(); break;
+    case 'tb-del-col': Object.values(PR().tabela).forEach(r=>{ if(r.length > 1) r.pop(); }); touch(); break;
+    case 'tb-fill': {
+      const a1 = Math.max(2, Number(document.getElementById('tbFrom').value)||6), b1 = Math.min(99, Number(document.getElementById('tbTo').value)||25);
+      if(b1 < a1){ toast('Intervalo inválido.'); return; }
+      if(!confirmBox(`Recalcular a tabela de ${a1} a ${b1} jogadores pelas faixas %? Os valores atuais dessas linhas serão trocados.`)) return;
+      const tmp = MP.makeRules(MP.normalizeConfig({ ...W.config, premiacao: { ...W.config.premiacao, modo: 'percentual' } }));
+      const tb = {}; for(let n=a1;n<=b1;n++) tb[String(n)] = tmp.prizesFor(n);
+      const width = Math.max(...Object.values(tb).map(r=>r.length));
+      Object.values(tb).forEach(r=>{ while(r.length < width) r.push(0); });
+      PR().tabela = tb; toast('Tabela gerada.'); touch(); break; }
+    case 'bl-add': {
+      const lv = W.config.mesa.blinds.niveis; const last = [...lv].reverse().find(l=>!l.pausa) || { sb:25, bb:50, ante:0, min:20 };
+      const bb = niceBlind(last.bb * 1.5 + 1); lv.push({ sb: niceBlind(bb/2), bb, ante: last.ante ? bb : 0, min: last.min }); touch(); break; }
+    case 'bl-pause': W.config.mesa.blinds.niveis.push({ pausa:true, min:10 }); touch(); break;
+    case 'bl-del': W.config.mesa.blinds.niveis.splice(Number(t.dataset.i), 1); touch(); break;
+    case 'bl-up': { const i = Number(t.dataset.i), lv = W.config.mesa.blinds.niveis; if(i > 0){ [lv[i-1], lv[i]] = [lv[i], lv[i-1]]; touch(); } break; }
+    case 'colors-reset': W.config.tema.cores = {}; touch(); break;
+    case 'pw': {
+      const k = t.dataset.k, v = document.getElementById('pw_' + k).value;
+      if(!v && !confirmBox('Remover esta senha? A área fica aberta.')) return;
+      W.config.acesso[k] = v ? MP.hash(v) : '';
+      if(k === 'senhaAdmin' && v) ST.set('adminOk', W.config.acesso[k]);
+      toast(v ? 'Senha definida. Publique para valer.' : 'Senha removida. Publique para valer.'); touch(); break; }
+    case 'close-season': closeSeason(); break;
+    case 'f-view': {
+      const f = findFile(t.dataset.p); const box = document.getElementById('fview');
+      box.innerHTML = box.dataset.p === f.path ? '' : `<pre class="json">${esc(fileText(f))}</pre>`; box.dataset.p = box.innerHTML ? f.path : ''; break; }
+    case 'f-dl': { const f = findFile(t.dataset.p); download(f.path.split('/').pop(), fileText(f)); break; }
+    case 'zip': {
+      const files = NOVO ? novoFiles() : changedFiles();
+      if(!NOVO) stampPublished(files);
+      await downloadZip(files, `${NOVO ? NC.slug : SLUG}-publicar.zip`); break; }
+    case 'mark': if(confirmBox('Confirma que os arquivos já estão no GitHub?')){ markPublished(); toast('Marcado como publicado.'); render(); } break;
+    case 'gh-forget': GH.del('token'); render(); toast('Token apagado deste aparelho.'); break;
+    case 'gh-publish': {
+      t.disabled = true;
+      if(NOVO){ const ok = await ghPublish(novoFiles(), `Novo clube ${NC.slug}`); if(ok) REG = novoFiles().find(f=>f.path==='clubes.json').obj.clubes; renderNovo(); break; }
+      const files = changedFiles(); stampPublished(files);
+      const ok = await ghPublish(files, `Atualiza ${SLUG}`);
+      if(ok){ markPublished(); refresh(); }
+      render(); break; }
+    case 'nc-create': createClub(); break;
+    case 'nc-back': NC = null; lastPublish = null; renderNovo(); break;
+  }
+});
+app.addEventListener('change', e=>{
+  const t = e.target;
+  if(t.dataset.num){ const v = Number(t.value); if(!isNaN(v)) setPath(W.config, t.dataset.num, v); touch(); return; }
+  if(t.dataset.numsel){ setPath(W.config, t.dataset.numsel, Number(t.value)); touch(); return; }
+  if(t.dataset.txt != null && t.dataset.txt !== ''){ setPath(W.config, t.dataset.txt, t.value.trim()); touch(); return; }
+  if(t.dataset.list){ setPath(W.config, t.dataset.list, t.value.split(/[,;\s]+/).map(Number).filter(n=>!isNaN(n) && n >= 0)); touch(); return; }
+  if(t.dataset.fxAte){ W.config.premiacao.faixas[Number(t.dataset.fxAte)].ate = Number(t.value)||2; touch(); return; }
+  if(t.dataset.fxPct){ W.config.premiacao.faixas[Number(t.dataset.fxPct)].pct = t.value.split(/[,;\s]+/).map(Number).filter(n=>n>0); touch(); return; }
+  if(t.dataset.tbN){ const r = W.config.premiacao.tabela[t.dataset.tbN]; r[Number(t.dataset.tbI)] = Math.max(0, Number(t.value)||0); touch(); return; }
+  if(t.dataset.blI){ W.config.mesa.blinds.niveis[Number(t.dataset.blI)][t.dataset.blK] = Math.max(0, Number(t.value)||0); touch(); return; }
+  if(t.dataset.color){ W.config.tema.cores = { ...(W.config.tema.cores||{}), [t.dataset.color]: t.value }; touch(); return; }
+  if(t.dataset.date){ if(t.value) W.dados.roundDates[t.dataset.date] = t.value; else delete W.dados.roundDates[t.dataset.date]; touch(); return; }
+  if(t.dataset.org){ if(t.value) W.dados.roundOrganizers[t.dataset.org] = t.value; else delete W.dados.roundOrganizers[t.dataset.org]; touch(); return; }
+  if(t.dataset.rename){ renamePlayer(t.dataset.rename, t.value); return; }
+  if(t.id === 'calStart') calStart = t.value;
+});
+app.addEventListener('input', e=>{
+  const t = e.target;
+  if(t.dataset.sim){ sim[t.dataset.sim] = Number(t.value); const o = document.getElementById('simOut'); if(o) o.innerHTML = simOut(); }
+});
+
+/* ---------- início ---------- */
+(async function init(){
+  if(NOVO){ REG = await MP.loadRegistry(); MP.applyTheme(CFGN); renderNovo(); return; }
+  if(!(await loadClub())) return;
+  document.title = `Gestão — ${CFGN.clube.nome}`;
+  gate();
+})();
+</script>
+</body>
+</html>
