@@ -1712,7 +1712,7 @@ document.getElementById('versionNote').textContent = `Ranking v${PAGE_VERSION} �
   if(T.descartes) hint.push(`Descartados os ${T.descartes} piores resultados de cada jogador (faltas contam como 0).`);
   if(P.presenca) hint.push(`Inclui ${P.presenca} pt${P.presenca===1?'':'s'} por presença.`);
   document.getElementById('geralHint').textContent = hint.join(' ');
-  document.getElementById('footLinks').innerHTML = `<a href="index.html">Portal</a><a href="${MP.clubUrl('rodada.html', SLUG)}">Lançar rodada</a><a href="${MP.clubUrl('admin.html', SLUG)}">Gestão</a>`;
+  document.getElementById('footLinks').innerHTML = `<a href="index.html">Portal</a><a href="${MP.clubUrl('rodada.html', SLUG)}">Lançar rodada</a>`;
   loadPublishedData();
 })();
 </script>

@@ -155,7 +155,7 @@
    Tudo é editado em memória (com rascunho salvo neste aparelho) e publicado como
    arquivos JSON: por download/ZIP ou direto no GitHub com um token pessoal.
    ========================================================================== */
-const PAGE_VERSION = '0.1.0';
+const PAGE_VERSION = '0.2.0';
 const params = new URLSearchParams(location.search);
 const SLUG = MP.slugFromUrl();
 const NOVO = !SLUG || params.has('novo');
@@ -169,7 +169,6 @@ let W = null;        // versão em edição {config, dados, temporadas, extra:{a
 let REG = [], REG_ORIG = [];
 let CFGN = MP.normalizeConfig({}), RULES = MP.makeRules(CFGN);
 let tab = ST.get('adminTab', 'rodadas');
-let pending = [];    // importações aguardando confirmação
 let sim = { n: 12, rb: 0, ad: 0 };
 let lastPublish = null;
 
@@ -267,7 +266,7 @@ function markPublished(){
 /* ---------- login simples (teste) ---------- */
 function gate(){
   const h = CFGN.acesso.senhaAdmin;
-  if(!h || ST.get('adminOk', '') === h) return render();
+  if(!h || ST.get('adminOk', '') === h) return afterLogin();
   app.innerHTML = `<div class="gate"><p class="eyebrow">${esc(CFGN.clube.nome)}</p><h1>Gestão do clube</h1>
     <p class="hint" style="margin-top:6px;">Digite a senha de gestão. <br><span style="font-size:12px;">Login simples, só para testes: os arquivos do clube ficam públicos no GitHub.</span></p>
     <form id="gateForm" autocomplete="off"><input type="password" id="gatePass" placeholder="Senha" autocomplete="current-password"><button class="btn primary" type="submit">Entrar</button></form>
@@ -275,9 +274,21 @@ function gate(){
   document.getElementById('gateForm').addEventListener('submit', e=>{
     e.preventDefault();
     const v = document.getElementById('gatePass').value;
-    if(MP.hash(v) === h){ ST.set('adminOk', h); render(); }
+    if(MP.hash(v) === h){ ST.set('adminOk', h); afterLogin(); }
     else document.getElementById('gateErr').textContent = v.trim() ? 'Senha incorreta.' : 'Digite a senha.';
   });
+}
+
+/* Link recebido do organizador (admin.html?c=clube#r=...) entra na caixa de entrada */
+async function afterLogin(){
+  const m = location.hash.match(/^#r=([\w-]+)/);
+  if(m){
+    try{ if(await readLinkOrJson(m[0])) toast('Rodada recebida. Confira e aprove.'); }
+    catch(e){ toast('Link da rodada inválido ou incompleto. Peça para o organizador enviar de novo.'); }
+    try{ history.replaceState(null, '', location.pathname + location.search); }catch(e){}
+    tab = 'rodadas'; ST.set('adminTab', tab); lastPublish = null;
+  }
+  render();
 }
 
 /* ---------- moldura ---------- */
@@ -301,7 +312,7 @@ function render(){
     </header>
     ${W._restored ? `<div class="banner muted">Rascunho deste aparelho restaurado (alterações ainda não publicadas). <button class="link" data-act="discard" type="button">Descartar rascunho</button></div>` : ''}
     ${!CFGN.acesso.senhaAdmin ? `<div class="banner">Este clube ainda não tem senha de gestão. Defina em <button class="link" data-tab="visual" type="button">Visual e acesso</button>.</div>` : ''}
-    <nav class="tabs" id="tabs">${TABS.map(([k,t])=>`<button type="button" data-tab="${k}" class="${k===tab?'on':''}">${t}${k==='publicar' && ch.length ? '<span class="dot"></span>' : ''}</button>`).join('')}</nav>
+    <nav class="tabs" id="tabs">${TABS.map(([k,t])=>`<button type="button" data-tab="${k}" class="${k===tab?'on':''}">${t}${k==='publicar' && ch.length ? '<span class="dot"></span>' : ''}${k==='rodadas' && INBOX.length ? ` <span class="mono">(${INBOX.length})</span>` : ''}</button>`).join('')}</nav>
     <div id="view">${viewFns[tab]()}</div>
     <div class="ver">Gestão v${PAGE_VERSION} · núcleo ${MP.CORE_VERSION}</div>`;
   window.scrollTo(0, y);
@@ -309,28 +320,179 @@ function render(){
 }
 
 /* ==========================================================================
-   RODADAS — importar arquivo da rodada, listar, excluir
+   RODADAS — caixa de entrada (links/arquivos dos organizadores), conferência,
+   ajuste e aprovação com um clique; lista e edição das rodadas publicadas
    ========================================================================== */
+let INBOX = ST.get('inbox', []);
+function saveInbox(){ ST.set('inbox', INBOX); }
+const normName = n => String(n||'').trim().replace(/\s+/g,' ');
+function canonical(name){ const k = normName(name).toLowerCase(); return W.dados.players.find(p=>p.toLowerCase() === k) || normName(name); }
+
+function parseExport(obj){
+  const r = obj && obj.round ? obj.round : obj;
+  if(!r || typeof r !== 'object') throw new Error('Arquivo sem rodada.');
+  if(!Array.isArray(r.standings) || r.standings.length < 2) throw new Error('Classificação vazia.');
+  const standings = r.standings.map(e=>{
+    const o = { name: canonical(typeof e === 'string' ? e : e && e.name), guest: !!(e && e.guest) };
+    if(!o.name) throw new Error('Jogador sem nome na classificação.');
+    ['out','by'].forEach(k=>{ if(e && e[k]) o[k] = k === 'by' ? canonical(e[k]) : e[k]; });
+    if(e && Number(e.rebuys) > 0) o.rebuys = Number(e.rebuys);
+    if(e && e.addon) o.addon = true;
+    return o;
+  });
+  const out = { roundNumber: Number(r.roundNumber)||0, buyIn: Number(r.buyIn)||CFGN.premiacao.buyIn,
+    prizes: (Array.isArray(r.prizes) ? r.prizes : [0]).map(v=>Number(v)||0), standings,
+    organizer: r.organizer ? canonical(r.organizer) : '', date: r.startedAt ? String(r.startedAt).slice(0,10) : '' };
+  ['rebuyValue','addonValue','pool'].forEach(k=>{ if(Number(r[k]) > 0) out[k] = Number(r[k]); });
+  ['startedAt','endedAt'].forEach(k=>{ if(r[k]) out[k] = r[k]; });
+  return out;
+}
+function addToInbox(obj, source){
+  let r;
+  try{ r = parseExport(obj); }catch(e){ toast(e.message); return false; }
+  const key = `${obj.club||SLUG}|${r.roundNumber}|${obj.exportedAt||''}`;
+  if(obj.exportedAt && INBOX.some(x=>x.key === key)){ toast(`A rodada ${r.roundNumber} já está para conferir.`); return false; }
+  INBOX.push({ key, source, receivedAt: new Date().toISOString(), club: obj.club || null, season: obj.season || null, origN: null, editing: false, r });
+  saveInbox();
+  return true;
+}
+function editPublished(n){
+  const round = W.dados.rounds.find(x=>x.roundNumber === n); if(!round) return;
+  if(INBOX.some(x=>x.origN === n)){ toast(`A rodada ${n} já está em edição.`); return; }
+  const r = clone(round);
+  INBOX.unshift({ key: `edit|${n}|${Date.now()}`, source: 'edicao', receivedAt: new Date().toISOString(), club: SLUG, season: W.dados.season.id, origN: n, editing: true,
+    r: { roundNumber: r.roundNumber, buyIn: r.buyIn, prizes: r.prizes.slice(), standings: r.standings, organizer: W.dados.roundOrganizers[n] || '', date: W.dados.roundDates[n] || '',
+      ...['rebuyValue','addonValue','pool','startedAt','endedAt','id'].reduce((o,k)=>{ if(r[k] != null) o[k] = r[k]; return o; }, {}) } });
+  saveInbox(); window.scrollTo({top:0, behavior:'smooth'}); render();
+}
+
+function poolOf(r){
+  const n = r.standings.length, net = Math.max(0, (Number(r.buyIn)||0) - CFGN.premiacao.taxaPorJogador);
+  const nR = r.standings.reduce((t,e)=>t+(Number(e.rebuys)||0),0), nA = r.standings.filter(e=>e.addon).length;
+  return n*net + nR*(Number(r.rebuyValue)||Number(CFGN.mesa.rebuy.valor)||0) + nA*(Number(r.addonValue)||Number(CFGN.mesa.addon.valor)||0);
+}
+function checks(it){
+  const r = it.r, err = [], warn = [], info = [];
+  if(!(r.roundNumber >= 1) || Math.floor(r.roundNumber) !== r.roundNumber) err.push('Número da rodada inválido.');
+  if(r.standings.length < 2) err.push('A rodada precisa de pelo menos 2 jogadores.');
+  if(r.standings.some(e=>!normName(e.name))) err.push('Há jogador sem nome.');
+  const seen = new Set(), dup = new Set();
+  r.standings.forEach(e=>{ const k = normName(e.name).toLowerCase(); if(seen.has(k)) dup.add(e.name); seen.add(k); });
+  if(dup.size) err.push(`Nome repetido: ${[...dup].map(esc).join(', ')}.`);
+  if(it.club && it.club !== SLUG) warn.push(`Veio do clube <b>${esc(it.club)}</b>, e este painel é do <b>${esc(SLUG)}</b>.`);
+  if(it.season && it.season !== W.dados.season.id) warn.push(`Gerada na temporada ${esc(it.season)}; a atual é ${esc(W.dados.season.id)}.`);
+  const ex = W.dados.rounds.find(x=>x.roundNumber === r.roundNumber);
+  if(ex && it.origN !== r.roundNumber){
+    const same = stable(ex.standings.map(e=>[e.name,!!e.guest])) === stable(r.standings.map(e=>[e.name,!!e.guest])) && stable(ex.prizes) === stable(r.prizes);
+    warn.push(same ? `A rodada ${r.roundNumber} já está publicada exatamente assim. Pode descartar.` : `A rodada ${r.roundNumber} já existe e será <b>substituída</b>.`);
+  }
+  const lastN = W.dados.rounds.reduce((m,x)=>Math.max(m, x.roundNumber), 0);
+  if(it.origN == null && !ex && r.roundNumber > lastN + 1) warn.push(`A última publicada é a ${lastN}; esta pula para a ${r.roundNumber}.`);
+  const pool = poolOf(r), sum = r.prizes.reduce((t,v)=>t+(Number(v)||0),0);
+  if(Math.abs(pool - sum) >= 1) warn.push(`Prêmios somam ${brl(sum)} e o pote calculado é ${brl(pool)} (${sum > pool ? 'sobra' : 'faltam'} ${brl(Math.abs(pool-sum))}).`);
+  if(r.prizes.length > r.standings.length) warn.push('Há mais posições premiadas do que jogadores.');
+  const cal = W.dados.roundDates[r.roundNumber];
+  if(r.date && cal && r.date !== cal) info.push(`Jogada em ${MP.dateBR(r.date)}; o calendário previa ${MP.dateBR(cal)}. Fica a data jogada.`);
+  const lower = new Set(W.dados.players.map(n=>n.toLowerCase()));
+  const novos = r.standings.filter(e=>!e.guest && !lower.has(normName(e.name).toLowerCase())).map(e=>e.name);
+  if(novos.length) info.push(`${plural(novos.length,'Entra como novo jogador','Entram como novos jogadores')} do clube: ${novos.map(esc).join(', ')}. Se for erro de digitação, ajuste o nome.`);
+  const g = r.standings.filter(e=>e.guest).length;
+  if(g) info.push(`${g} ${plural(g,'convidado','convidados')}${CFGN.pontuacao.convidadoPontua ? ', pontuando' : ', sem pontuar'}.`);
+  return { err, warn, info, novos };
+}
+function roundFromItem(it){
+  const r = it.r;
+  const prizes = r.prizes.map(v=>Number(v)||0); while(prizes.length > 1 && !prizes[prizes.length-1]) prizes.pop();
+  const round = { id: r.id || `r${r.roundNumber}-${Date.now().toString(36)}`, roundNumber: r.roundNumber, buyIn: Number(r.buyIn)||0, prizes,
+    standings: r.standings.map(e=>{ const o = { name: normName(e.name), guest: !!e.guest };
+      ['out','by'].forEach(k=>{ if(e[k]) o[k] = e[k]; }); if(Number(e.rebuys) > 0) o.rebuys = Number(e.rebuys); if(e.addon) o.addon = true; return o; }),
+    totalPlayers: r.standings.length };
+  const nR = round.standings.reduce((t,e)=>t+(e.rebuys||0),0), nA = round.standings.filter(e=>e.addon).length;
+  if(nR) round.rebuyValue = Number(r.rebuyValue) || CFGN.mesa.rebuy.valor;
+  if(nA) round.addonValue = Number(r.addonValue) || CFGN.mesa.addon.valor;
+  round.pool = poolOf(r);
+  ['startedAt','endedAt'].forEach(k=>{ if(r[k]) round[k] = r[k]; });
+  return round;
+}
+function applyItem(d, it){
+  const round = roundFromItem(it), n = round.roundNumber;
+  d.rounds = d.rounds.filter(x=> x.roundNumber !== n && x.roundNumber !== it.origN);
+  if(it.origN != null && it.origN !== n){ delete d.roundOrganizers[it.origN]; }
+  d.rounds.push(round); d.rounds.sort((a,b)=>a.roundNumber-b.roundNumber);
+  const lower = new Set(d.players.map(p=>p.toLowerCase()));
+  round.standings.forEach(e=>{ if(!e.guest && !lower.has(e.name.toLowerCase())){ d.players.push(e.name); lower.add(e.name.toLowerCase()); } });
+  if(it.r.organizer) d.roundOrganizers[n] = it.r.organizer;
+  if(it.r.date) d.roundDates[n] = it.r.date;
+  return round;
+}
+
+/* ---------- cartão de conferência ---------- */
+function reviewCard(it, ix){
+  const r = it.r, c = checks(it), ed = it.editing;
+  const sc = RULES.scoreRound({ standings: r.standings });
+  const pool = poolOf(r);
+  const showRb = CFGN.mesa.rebuy.ativo || r.standings.some(e=>e.rebuys), showAd = CFGN.mesa.addon.ativo || r.standings.some(e=>e.addon);
+  const src = it.source === 'link' ? 'recebida pelo link' : it.source === 'edicao' ? 'edição de rodada publicada' : 'importada de arquivo';
+  const names = [...W.dados.players].sort(cmp);
+  const notes = [...c.err.map(h=>`<div class="bad-txt">✕ ${h}</div>`), ...c.warn.map(h=>`<div class="gold-txt">⚠ ${h}</div>`), ...c.info.map(h=>`<div class="muted">• ${h}</div>`)].join('');
+  const fields = ed ? `<div class="grid" style="margin:12px 0;">
+      <label class="fld"><span>Rodada nº</span><input type="number" min="1" data-ix="${ix}" data-ibf="roundNumber" value="${r.roundNumber||''}"></label>
+      <label class="fld"><span>Data</span><input type="date" data-ix="${ix}" data-ibf="date" value="${esc(r.date||'')}"></label>
+      <label class="fld"><span>Organização</span><select data-ix="${ix}" data-ibf="organizer"><option value="">—</option>${names.map(n=>`<option${n===r.organizer?' selected':''}>${esc(n)}</option>`).join('')}${r.organizer && !names.includes(r.organizer) ? `<option selected>${esc(r.organizer)}</option>` : ''}</select></label>
+      <label class="fld"><span>Buy-in</span><input type="number" min="0" step="5" data-ix="${ix}" data-ibf="buyIn" value="${r.buyIn}"></label>
+    </div>
+    <div class="fld"><span>Prêmios por posição</span><div class="row">${r.prizes.map((v,i)=>`<label class="row" style="gap:4px;"><span class="mono muted" style="font-size:12px;">${i+1}º</span><input type="number" min="0" step="10" data-ix="${ix}" data-ibp="${i}" value="${v||0}" style="width:96px;"></label>`).join('')}
+      <button class="btn sm" data-act="ib-pz" data-ix="${ix}" data-d="1" type="button">+</button>${r.prizes.length>1?`<button class="btn sm" data-act="ib-pz" data-ix="${ix}" data-d="-1" type="button">−</button>`:''}
+      <button class="link" data-act="ib-pz-auto" data-ix="${ix}" type="button">recalcular pela regra do clube</button></div></div>`
+    : `<div class="prizes" style="margin:10px 0 4px;">${r.prizes.map((v,i)=>v>0?`<span class="${i===0?'first':''}"><span class="p">${i+1}º</span> ${brl(v)}</span>`:'').join('')}<span class="p">· pote ${brl(pool)} · buy-in ${brl(r.buyIn)}</span></div>`;
+  const rows = r.standings.map((e,i)=>{
+    const prize = Number(r.prizes[i])||0, pts = sc[i].pts;
+    if(!ed) return `<tr><td class="mono">${i+1}</td><td>${esc(e.name)}${e.guest?'<span class="tag guest">conv.</span>':''}${e.rebuys?`<span class="tag">${e.rebuys}R</span>`:''}${e.addon?'<span class="tag">A</span>':''}</td>
+      <td class="num">${pts === null ? '—' : pts}</td><td class="num">${prize ? brl(prize) : ''}</td></tr>`;
+    return `<tr><td class="mono">${i+1}</td>
+      <td><input type="text" list="dlPlayers" data-ix="${ix}" data-row="${i}" data-ibs="name" value="${esc(e.name)}" style="min-width:150px;"></td>
+      <td style="text-align:center;"><input type="checkbox" data-ix="${ix}" data-row="${i}" data-ibs="guest" ${e.guest?'checked':''} aria-label="Convidado"></td>
+      ${showRb ? `<td><input type="number" min="0" data-ix="${ix}" data-row="${i}" data-ibs="rebuys" value="${e.rebuys||0}" style="width:56px;"></td>` : ''}
+      ${showAd ? `<td style="text-align:center;"><input type="checkbox" data-ix="${ix}" data-row="${i}" data-ibs="addon" ${e.addon?'checked':''} aria-label="Add-on"></td>` : ''}
+      <td class="num">${pts === null ? '—' : pts}</td><td class="num">${prize ? brl(prize) : ''}</td>
+      <td style="white-space:nowrap;"><button class="btn sm ghost" data-act="ib-mv" data-ix="${ix}" data-row="${i}" data-d="-1" type="button" ${i===0?'disabled':''} aria-label="Subir">↑</button><button class="btn sm ghost" data-act="ib-mv" data-ix="${ix}" data-row="${i}" data-d="1" type="button" ${i===r.standings.length-1?'disabled':''} aria-label="Descer">↓</button><button class="btn sm ghost" data-act="ib-rm" data-ix="${ix}" data-row="${i}" type="button" aria-label="Remover">×</button></td></tr>`;
+  }).join('');
+  const head = ed ? `<tr><th>#</th><th>Jogador</th><th>Conv.</th>${showRb?'<th>Rebuys</th>':''}${showAd?'<th>Add-on</th>':''}<th class="num">Pts</th><th class="num">Prêmio</th><th></th></tr>`
+    : '<tr><th>#</th><th>Jogador</th><th class="num">Pts</th><th class="num">Prêmio</th></tr>';
+  const blocked = c.err.length > 0;
+  return `<div class="card review" style="border-color:${blocked ? 'var(--red)' : 'var(--gold)'};">
+    <div class="row" style="justify-content:space-between; align-items:flex-start;">
+      <div><p class="eyebrow" style="margin:0;">${esc(src)} · ${new Date(it.receivedAt).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</p>
+        <h2 style="margin:2px 0 0;">Rodada ${r.roundNumber || '?'}${r.date ? ` · ${MP.dateBR(r.date)}` : ''}</h2>
+        <p class="hint" style="margin:2px 0 0;">${r.standings[0] ? `Campeão <b style="color:var(--text);">${esc(r.standings[0].name)}</b> · ` : ''}${r.standings.length} jogadores${r.organizer ? ` · organização ${esc(r.organizer)}` : ''}</p></div>
+      <button class="btn sm ${ed?'':'ghost'}" data-act="ib-edit" data-ix="${ix}" type="button">${ed ? '✓ Fechar ajustes' : '✎ Ajustar'}</button>
+    </div>
+    ${notes ? `<div style="font-size:13px; line-height:1.55; margin-top:10px;">${notes}</div>` : `<div class="ok-txt" style="font-size:13px; margin-top:10px;">✓ Tudo confere.</div>`}
+    ${fields}
+    <div class="scroll-x" style="margin-top:8px;"><table class="t"><thead>${head}</thead><tbody>${rows}</tbody></table></div>
+    ${ed ? `<div class="row" style="margin-top:8px;"><input type="text" list="dlPlayers" id="ibAdd${ix}" placeholder="+ jogador (entra na última posição)" style="flex:1; min-width:180px;"><button class="btn sm" data-act="ib-add" data-ix="${ix}" type="button">Adicionar</button></div>` : ''}
+    <div class="row end" style="margin-top:14px;">
+      <button class="btn ghost" data-act="ib-drop" data-ix="${ix}" type="button">${it.source === 'edicao' ? 'Cancelar edição' : 'Descartar'}</button>
+      <button class="btn primary" data-act="ib-approve" data-ix="${ix}" type="button" ${blocked?'disabled':''}>${ghReady() ? '✓ Aprovar e publicar' : '✓ Aprovar'}</button>
+    </div>
+  </div>`;
+}
+
 function vRodadas(){
   const rounds = [...W.dados.rounds].sort((a,b)=> b.roundNumber - a.roundNumber);
   const nextN = W.dados.rounds.reduce((m,r)=>Math.max(m, r.roundNumber), 0) + 1;
-  const pend = pending.length ? `<div class="card" style="border-color:var(--gold);"><h2>Conferir importação</h2>
-      <p class="hint">Confira antes de incluir na temporada.</p>
-      ${pending.map((p,i)=>`<div class="round-item"><div style="padding:10px 12px;">
-        <div class="row" style="justify-content:space-between;"><b>Rodada ${p.round.roundNumber}</b><span class="muted">${p.round.standings.length} jogadores · campeão ${esc(p.round.standings[0].name)} · prêmios ${p.round.prizes.filter(v=>v>0).map(brl).join(' / ')}</span></div>
-        ${p.notes.map(n=>`<div class="${n.kind==='warn'?'gold-txt':'muted'}" style="font-size:12.5px; margin-top:6px;">${n.kind==='warn'?'⚠':'•'} ${n.html}</div>`).join('')}
-        <div class="row end" style="margin-top:10px;"><button class="btn sm ghost" data-act="pend-drop" data-i="${i}" type="button">Descartar</button><button class="btn sm primary" data-act="pend-ok" data-i="${i}" type="button">${p.replace ? 'Substituir rodada' : 'Incluir rodada'}</button></div>
-      </div></div>`).join('')}</div>` : '';
-  return `${pend}
-    <div class="card"><h2>Importar rodada</h2>
-      <p class="hint">Arquivo gerado no fim da rodada pela tela de lançamento (<span class="mono">${esc(SLUG)}-rodada-N.json</span>). A próxima rodada esperada é a <b>${nextN}</b>.</p>
-      <label class="drop" id="drop"><b>Arraste o arquivo aqui</b> ou toque para escolher<input type="file" id="fileIn" accept=".json,application/json" multiple hidden></label>
-      <details style="margin-top:10px;"><summary class="muted" style="cursor:pointer; font-size:13px;">ou colar o conteúdo do arquivo</summary>
-        <textarea id="pasteIn" placeholder='{"type":"multiPokerRoundExport", ...}' style="margin-top:8px;"></textarea>
-        <div class="row end" style="margin-top:8px;"><button class="btn sm" data-act="paste" type="button">Ler conteúdo colado</button></div></details>
-    </div>
-    <div class="card"><h2>Rodadas da ${esc(W.dados.season.label)}</h2>
-      <p class="hint">${rounds.length ? 'Toque numa rodada para ver a classificação.' : 'Nenhuma rodada ainda.'}</p>
+  const gh = ghReady();
+  const inbox = INBOX.length
+    ? `<div class="row" style="justify-content:space-between; margin:0 0 10px;"><h2 style="font-family:var(--f-display); font-size:18px; margin:0;">Para conferir (${INBOX.length})</h2>
+        ${gh ? '<span class="ok-txt" style="font-size:12.5px;">● publicação direta ligada</span>' : '<button class="link" data-tab="publicar" type="button">ligar publicação com um clique</button>'}</div>
+       ${INBOX.map(reviewCard).join('')}`
+    : `<div class="card"><h2>Nenhuma rodada para conferir</h2>
+        <p class="hint" style="margin:0;">Quando o organizador encerra a rodada, ele toca em <b>Enviar ao admin</b> e você recebe um link no WhatsApp. Ao abrir o link, a rodada ${nextN} aparece aqui para conferir e publicar.${gh ? '' : ' <button class="link" data-tab="publicar" type="button">Ligue a publicação com um clique</button> para aprovar e já atualizar o ranking.'}</p></div>`;
+  return `${lastPublish && tab === 'rodadas' ? `<div class="banner ${lastPublish.ok?'ok':'err'}">${lastPublish.html}</div>` : ''}
+    <datalist id="dlPlayers">${[...W.dados.players].sort(cmp).map(n=>`<option value="${esc(n)}">`).join('')}</datalist>
+    ${inbox}
+    <div class="card"><h2>Rodadas publicadas · ${esc(W.dados.season.label)}</h2>
+      <p class="hint">${rounds.length ? 'Toque numa rodada para ver a classificação ou corrigir.' : 'Nenhuma rodada ainda.'}</p>
       ${rounds.map(r=>{
         const sc = RULES.scoreRound(r);
         const nR = r.standings.reduce((t,e)=>t+(Number(e.rebuys)||0),0), nA = r.standings.filter(e=>e.addon).length;
@@ -343,74 +505,63 @@ function vRodadas(){
             <td class="num">${sc[i].pts === null ? '—' : sc[i].pts}</td><td class="num">${RULES.prizeAt(r,i) ? brl(RULES.prizeAt(r,i)) : ''}</td><td class="muted">${esc(e.by||'')}</td></tr>`).join('')}
           </tbody></table></div>
           <div class="row end" style="margin-top:10px;">${W.dados.roundOrganizers[r.roundNumber] ? `<span class="muted" style="margin-right:auto; font-size:12.5px;">Organização: ${esc(W.dados.roundOrganizers[r.roundNumber])}</span>` : ''}
-            <button class="btn sm danger" data-act="round-del" data-n="${r.roundNumber}" type="button">Excluir rodada</button></div></div></details>`;
+            <button class="btn sm danger" data-act="round-del" data-n="${r.roundNumber}" type="button">Excluir</button><button class="btn sm" data-act="round-edit" data-n="${r.roundNumber}" type="button">✎ Corrigir</button></div></div></details>`;
       }).join('')}
-    </div>`;
+    </div>
+    <details class="card" style="padding:14px 18px;"><summary class="muted" style="cursor:pointer; font-size:13px;">Plano B: importar arquivo ou colar conteúdo</summary>
+      <p class="hint" style="margin-top:10px;">Para quando o link não puder ser usado (ex.: o organizador tocou em "baixar arquivo").</p>
+      <label class="drop" id="drop"><b>Arraste o arquivo aqui</b> ou toque para escolher<input type="file" id="fileIn" accept=".json,application/json" multiple hidden></label>
+      <textarea id="pasteIn" placeholder="Cole aqui o link recebido ou o conteúdo do arquivo" style="margin-top:10px;"></textarea>
+      <div class="row end" style="margin-top:8px;"><button class="btn sm" data-act="paste" type="button">Ler</button></div>
+    </details>`;
 }
-function parseExport(obj){
-  const r = obj && obj.round ? obj.round : obj;
-  if(!r || typeof r !== 'object') throw new Error('Arquivo sem rodada.');
-  const rn = Number(r.roundNumber);
-  if(!(rn >= 1) || Math.floor(rn) !== rn) throw new Error('Número da rodada inválido.');
-  if(!Array.isArray(r.standings) || r.standings.length < 2) throw new Error('Classificação vazia.');
-  const standings = r.standings.map(e=>{
-    const name = String(typeof e === 'string' ? e : (e && e.name) || '').trim().replace(/\s+/g,' ');
-    if(!name) throw new Error('Jogador sem nome na classificação.');
-    const o = { name, guest: !!(e && e.guest) };
-    ['out','by'].forEach(k=>{ if(e && e[k]) o[k] = e[k]; });
-    if(e && Number(e.rebuys) > 0) o.rebuys = Number(e.rebuys);
-    if(e && e.addon) o.addon = true;
-    return o;
-  });
-  const round = { id: `r${rn}-${Date.now().toString(36)}`, roundNumber: rn, buyIn: Number(r.buyIn)||CFGN.premiacao.buyIn,
-    prizes: (Array.isArray(r.prizes) ? r.prizes : []).map(v=>Number(v)||0), standings, totalPlayers: standings.length };
-  ['rebuyValue','addonValue','pool'].forEach(k=>{ if(Number(r[k]) > 0) round[k] = Number(r[k]); });
-  ['startedAt','endedAt'].forEach(k=>{ if(r[k]) round[k] = r[k]; });
-  return { round, organizer: r.organizer || null, club: obj.club || null, season: obj.season || null };
-}
-function queueImport(obj, fname){
-  let p;
-  try{ p = parseExport(obj); }catch(e){ toast(`${fname ? fname + ': ' : ''}${e.message}`); return; }
-  const notes = [];
-  const rn = p.round.roundNumber;
-  if(p.club && p.club !== SLUG) notes.push({ kind:'warn', html:`O arquivo é do clube <b>${esc(p.club)}</b>, e este painel é do <b>${esc(SLUG)}</b>.` });
-  if(p.season && p.season !== W.dados.season.id) notes.push({ kind:'warn', html:`Gerado na temporada ${esc(p.season)}; a atual é ${esc(W.dados.season.id)}.` });
-  const exists = W.dados.rounds.some(r=>r.roundNumber === rn);
-  if(exists) notes.push({ kind:'warn', html:`A rodada ${rn} já existe e será <b>substituída</b>.` });
-  const lower = new Map(W.dados.players.map(n=>[n.toLowerCase(), n]));
-  const novos = [];
-  p.round.standings.forEach(e=>{
-    if(e.guest) return;
-    const k = e.name.toLowerCase();
-    if(lower.has(k)) e.name = lower.get(k); else novos.push(e.name);
-  });
-  if(novos.length) notes.push({ kind:'info', html:`${plural(novos.length,'Novo jogador','Novos jogadores')} na lista do clube: ${novos.map(esc).join(', ')}.` });
-  const g = p.round.standings.filter(e=>e.guest).length;
-  if(g) notes.push({ kind:'info', html:`${g} ${plural(g,'convidado','convidados')}${CFGN.pontuacao.convidadoPontua ? ' (pontuam neste clube)' : ' (não pontuam)'}.` });
-  const pool = Number(p.round.pool) || 0, sum = p.round.prizes.reduce((t,v)=>t+v,0);
-  if(pool && Math.abs(pool - sum) >= 1) notes.push({ kind:'warn', html:`Prêmios somam ${brl(sum)} e o pote informado é ${brl(pool)}.` });
-  if(p.organizer) notes.push({ kind:'info', html:`Organização: ${esc(p.organizer)}.` });
-  pending = pending.filter(x=>x.round.roundNumber !== rn);
-  pending.push({ ...p, notes, novos, replace: exists });
+
+/* ---------- aprovar: aplica a rodada e publica (GitHub) ou deixa pronta para publicar ---------- */
+async function approveItem(ix, btn){
+  const it = INBOX[ix]; if(!it) return;
+  const c = checks(it); if(c.err.length){ toast(c.err[0].replace(/<[^>]+>/g,'')); return; }
+  const n = it.r.roundNumber;
+  if(!ghReady()){
+    applyItem(W.dados, it); INBOX.splice(ix, 1); saveInbox();
+    lastPublish = { ok:true, html:`Rodada ${n} aprovada. Para ela aparecer no ranking, publique abaixo (ZIP) ou ligue a publicação com um clique.` };
+    tab = 'publicar'; ST.set('adminTab', tab); touch(); return;
+  }
+  if(btn){ btn.disabled = true; btn.textContent = 'Publicando…'; }
+  const conf = ghConf(), path = MP.clubBase(SLUG) + 'dados.json';
+  const before = clone(W.dados), origBefore = clone(ORIG.dados);
+  try{
+    // o site pode ter mudado em outro aparelho: parte sempre da versão mais nova do GitHub
+    const remote = await ghGetJson(conf, path);
+    if(remote && stable(remote) !== stable(ORIG.dados)){
+      if(stable(W.dados) !== stable(ORIG.dados)) throw new Error('o ranking foi alterado em outro aparelho e este tem mudanças não publicadas. Descarte o rascunho e tente de novo.');
+      ['rounds','players','archive'].forEach(k=>{ if(!Array.isArray(remote[k])) remote[k] = []; });
+      ['roundDates','roundOrganizers'].forEach(k=>{ if(!remote[k] || typeof remote[k] !== 'object') remote[k] = {}; });
+      ORIG.dados = clone(remote); W.dados = clone(remote);
+    }
+  }catch(e){ lastPublish = { ok:false, html:`Não publicou: ${esc(e.message)}` }; render(); return; }
+  applyItem(W.dados, it); refresh();
+  const files = changedFiles(); stampPublished(files);
+  const ok = await ghPublish(files, `Rodada ${n} ${SLUG}`, conf);
+  if(ok){
+    INBOX.splice(ix, 1); saveInbox(); markPublished(); refresh();
+    lastPublish = { ok:true, html:`Rodada ${n} publicada. O ranking atualiza em cerca de 1 minuto. <a href="${MP.clubUrl('ranking.html', SLUG)}" target="_blank" rel="noopener">Ver ranking ↗</a>` };
+  } else {
+    W.dados = before; ORIG.dados = origBefore; refresh();
+  }
   render();
 }
-function acceptImport(i){
-  const p = pending[i]; if(!p) return;
-  W.dados.rounds = W.dados.rounds.filter(r=>r.roundNumber !== p.round.roundNumber);
-  W.dados.rounds.push(p.round);
-  W.dados.rounds.sort((a,b)=>a.roundNumber-b.roundNumber);
-  p.novos.forEach(n=>{ if(!W.dados.players.includes(n)) W.dados.players.push(n); });
-  if(p.organizer) W.dados.roundOrganizers[p.round.roundNumber] = p.organizer;
-  if(!W.dados.roundDates[p.round.roundNumber] && p.round.startedAt) W.dados.roundDates[p.round.roundNumber] = String(p.round.startedAt).slice(0,10);
-  pending.splice(i, 1);
-  toast(`Rodada ${p.round.roundNumber} incluída. Publique para atualizar o ranking.`);
-  touch();
+async function readLinkOrJson(text){
+  text = String(text||'').trim();
+  const m = text.match(/#r=([\w-]+)/) || (/^[zj][\w-]{20,}$/.test(text) ? [null, text] : null);
+  if(m){ return addToInbox(await MP.unpackRound(m[1]), 'link'); }
+  return addToInbox(JSON.parse(text), 'arquivo');
 }
 async function readFiles(files){
   for(const f of files){
-    try{ queueImport(JSON.parse(await f.text()), f.name); }
+    try{ addToInbox(JSON.parse(await f.text()), 'arquivo'); }
     catch(e){ toast(`${f.name}: não é um JSON válido.`); }
   }
+  render();
 }
 
 /* ==========================================================================
@@ -641,6 +792,7 @@ function vVisual(){
         <label class="fld"><span>Nome curto (cabeçalho da rodada)</span><input type="text" data-txt="clube.nomeCurto" value="${esc(C.nomeCurto)}" maxlength="24"></label>
         <label class="fld"><span>Cidade</span><input type="text" data-txt="clube.cidade" value="${esc(C.cidade)}"></label>
         <label class="fld"><span>Frase de destaque</span><input type="text" data-txt="clube.slogan" value="${esc(C.slogan)}" maxlength="80"></label>
+        <label class="fld"><span>WhatsApp do admin</span><input type="text" inputmode="tel" data-txt="clube.whatsAdmin" value="${esc(C.whatsAdmin)}" placeholder="5547999998888"><small>Com DDI e DDD. No fim da rodada, o organizador toca em "Enviar ao admin" e abre a conversa direto com este número.</small></label>
       </div>
       <div class="fld" style="margin-top:12px;"><span>Símbolo</span><div class="sym">${['♠','♥','♦','♣','★','♛'].map(s=>`<button type="button" data-sym="${s}" class="${s===C.simbolo?'on':''}">${s}</button>`).join('')}</div></div>
     </div>
@@ -714,6 +866,27 @@ function ghDefaults(){
   if(!s.branch) s.branch = 'main';
   return s;
 }
+function ghConf(){
+  const el = id => document.getElementById(id);
+  const g = ghDefaults();
+  if(el('ghOwner')){
+    g.owner = el('ghOwner').value.trim(); g.repo = el('ghRepo').value.trim(); g.branch = el('ghBranch').value.trim() || 'main';
+    GH.set('cfg', { owner: g.owner, repo: g.repo, branch: g.branch });
+    const tk = el('ghToken').value.trim(); if(tk) GH.set('token', tk);
+  }
+  return { ...g, token: GH.get('token', '') };
+}
+function ghReady(){ const g = ghDefaults(); return !!(g.owner && g.repo && GH.get('token', '')); }
+function ghHeaders(conf){ return { 'Authorization': `Bearer ${conf.token}`, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' }; }
+function ghUrl(conf, path){ return `https://api.github.com/repos/${encodeURIComponent(conf.owner)}/${encodeURIComponent(conf.repo)}/contents/${path.split('/').map(encodeURIComponent).join('/')}`; }
+async function ghGetJson(conf, path){
+  const res = await fetch(`${ghUrl(conf, path)}?ref=${encodeURIComponent(conf.branch||'main')}&t=${Date.now()}`, { headers: ghHeaders(conf), cache:'no-store' });
+  if(res.status === 404) return null;
+  if(!res.ok) throw new Error(res.status === 401 ? 'token do GitHub inválido ou vencido' : res.status === 403 ? 'o token não tem permissão neste repositório' : `GitHub respondeu ${res.status}`);
+  const j = await res.json();
+  const bin = atob(String(j.content||'').replace(/\s/g,'')); const u = new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) u[i] = bin.charCodeAt(i);
+  return JSON.parse(new TextDecoder().decode(u));
+}
 function vPublicar(){
   const files = fileList(), ch = files.filter(f=>f.changed);
   const g = ghDefaults();
@@ -725,8 +898,8 @@ function vPublicar(){
       <div id="fview"></div>
       ${ch.length ? `<div class="row end" style="margin-top:14px;"><button class="btn" data-act="zip" type="button">Baixar alterados (.zip)</button><button class="btn ghost" data-act="mark" type="button">Já enviei, marcar como publicado</button></div>` : ''}
     </div>
-    <div class="card"><h2>Publicar direto no GitHub</h2>
-      <p class="hint">Use um <b>token fine-grained</b> com acesso só a este repositório e permissão <i>Contents: read and write</i>. O token fica salvo apenas neste aparelho. É o modo de teste: numa versão final isso passa para um servidor com login de verdade.</p>
+    <div class="card"><h2>Publicação com um clique ${ghReady() ? '<span class="ok-txt" style="font-size:13px; font-family:var(--f-body);">● ligada neste aparelho</span>' : ''}</h2>
+      <p class="hint">Com o GitHub conectado, o botão <b>Aprovar e publicar</b> das rodadas já atualiza o ranking. Crie um <b>token fine-grained</b> no GitHub (Settings → Developer settings → Fine-grained tokens) com acesso só a este repositório e permissão <i>Contents: read and write</i>. Ele fica salvo apenas neste aparelho, então só quem tem o token consegue publicar.</p>
       <div class="grid">
         <label class="fld"><span>Dono (usuário)</span><input type="text" id="ghOwner" value="${esc(g.owner||'')}" placeholder="jonathancaye"></label>
         <label class="fld"><span>Repositório</span><input type="text" id="ghRepo" value="${esc(g.repo||'')}" placeholder="multi-poker"></label>
@@ -734,6 +907,7 @@ function vPublicar(){
         <label class="fld"><span>Token</span><input type="password" id="ghToken" value="${esc(GH.get('token',''))}" placeholder="github_pat_…" autocomplete="off"></label>
       </div>
       <div class="row end" style="margin-top:12px;">${GH.get('token','') ? '<button class="btn sm ghost" data-act="gh-forget" type="button">Esquecer token</button>' : ''}
+        <button class="btn" data-act="gh-test" type="button">Salvar e testar conexão</button>
         <button class="btn primary" data-act="gh-publish" type="button" ${ch.length ? '' : 'disabled'}>Publicar ${ch.length || ''} no GitHub</button></div>
       <p class="hint" style="margin:10px 0 0; font-size:12px;">O GitHub Pages leva cerca de 1 minuto para mostrar a versão nova.</p>
     </div>
@@ -778,11 +952,10 @@ async function downloadZip(files, name){
   download(name, makeZip(files.map(f=>({ name: f.path, text: fileText(f) }))));
 }
 function b64(str){ const bytes = new TextEncoder().encode(str); let bin = ''; bytes.forEach(b=> bin += String.fromCharCode(b)); return btoa(bin); }
-async function ghPublish(files, message){
-  const owner = document.getElementById('ghOwner').value.trim(), repo = document.getElementById('ghRepo').value.trim();
-  const branch = document.getElementById('ghBranch').value.trim() || 'main', token = document.getElementById('ghToken').value.trim();
+async function ghPublish(files, message, conf){
+  conf = conf || ghConf();
+  const { owner, repo, token } = conf, branch = conf.branch || 'main';
   if(!owner || !repo || !token){ toast('Preencha dono, repositório e token.'); return false; }
-  GH.set('cfg', { owner, repo, branch }); GH.set('token', token);
   const api = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents/`;
   const headers = { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
   const done = [];
@@ -912,13 +1085,27 @@ app.addEventListener('click', async e=>{
     case 'go-publicar': tab = 'publicar'; ST.set('adminTab', tab); render(); break;
     case 'discard':
       if(!confirmBox('Descartar todas as alterações não publicadas?')) return;
-      ST.del('draft'); W = clone({ ...ORIG, extra: {} }); W._stamp = String(ORIG.dados.publishedAt||'') + '|' + stable(ORIG.config).length; REG = clone(REG_ORIG); pending = []; refresh(); render(); toast('Rascunho descartado.'); break;
+      ST.del('draft'); W = clone({ ...ORIG, extra: {} }); W._stamp = String(ORIG.dados.publishedAt||'') + '|' + stable(ORIG.config).length; REG = clone(REG_ORIG); refresh(); render(); toast('Rascunho descartado.'); break;
     case 'paste': {
-      const v = document.getElementById('pasteIn').value.trim();
-      try{ queueImport(JSON.parse(v)); }catch(err){ toast('Conteúdo colado não é um JSON válido.'); }
+      try{ if(await readLinkOrJson(document.getElementById('pasteIn').value)) render(); }catch(err){ toast('Não reconheci o link nem o conteúdo colado.'); }
       break; }
-    case 'pend-ok': acceptImport(Number(t.dataset.i)); break;
-    case 'pend-drop': pending.splice(Number(t.dataset.i), 1); render(); break;
+    case 'ib-edit': { const it = INBOX[t.dataset.ix]; it.editing = !it.editing; saveInbox(); render(); break; }
+    case 'ib-drop': {
+      const it = INBOX[t.dataset.ix];
+      if(it.source !== 'edicao' && !confirmBox(`Descartar a rodada ${it.r.roundNumber} recebida? Ela não entra no ranking.`)) return;
+      INBOX.splice(Number(t.dataset.ix), 1); saveInbox(); render(); break; }
+    case 'ib-approve': approveItem(Number(t.dataset.ix), t); break;
+    case 'ib-mv': { const r = INBOX[t.dataset.ix].r, i = Number(t.dataset.row), j = i + Number(t.dataset.d); if(j < 0 || j >= r.standings.length) return; [r.standings[i], r.standings[j]] = [r.standings[j], r.standings[i]]; saveInbox(); render(); break; }
+    case 'ib-rm': { const r = INBOX[t.dataset.ix].r, i = Number(t.dataset.row); if(!confirmBox(`Tirar ${r.standings[i].name} da rodada?`)) return; r.standings.splice(i, 1); saveInbox(); render(); break; }
+    case 'ib-add': {
+      const inp = document.getElementById('ibAdd' + t.dataset.ix), name = canonical(inp.value), r = INBOX[t.dataset.ix].r;
+      if(!name) return;
+      const isMember = W.dados.players.some(p=>p.toLowerCase() === name.toLowerCase());
+      r.standings.push({ name, guest: !isMember && confirmBox(`${name} não está na lista do clube. É convidado? (Cancelar = entra como novo jogador)`) });
+      saveInbox(); render(); break; }
+    case 'ib-pz': { const r = INBOX[t.dataset.ix].r; if(t.dataset.d === '1') r.prizes.push(0); else if(r.prizes.length > 1) r.prizes.pop(); saveInbox(); render(); break; }
+    case 'ib-pz-auto': { const r = INBOX[t.dataset.ix].r; r.prizes = RULES.prizesFor(r.standings.length, poolOf(r)); saveInbox(); render(); toast('Prêmios recalculados pelo pote.'); break; }
+    case 'round-edit': editPublished(Number(t.dataset.n)); break;
     case 'round-del': {
       const n = Number(t.dataset.n);
       if(!confirmBox(`Excluir a rodada ${n}? O ranking será recalculado.`)) return;
@@ -983,6 +1170,12 @@ app.addEventListener('click', async e=>{
       if(!NOVO) stampPublished(files);
       await downloadZip(files, `${NOVO ? NC.slug : SLUG}-publicar.zip`); break; }
     case 'mark': if(confirmBox('Confirma que os arquivos já estão no GitHub?')){ markPublished(); toast('Marcado como publicado.'); render(); } break;
+    case 'gh-test': {
+      const conf = ghConf();
+      if(!conf.owner || !conf.repo || !conf.token){ toast('Preencha dono, repositório e token.'); return; }
+      try{ const c = await ghGetJson(conf, MP.clubBase(SLUG) + 'config.json'); lastPublish = c ? { ok:true, html:'Conectado ao GitHub. A partir de agora, “Aprovar e publicar” atualiza o ranking direto.' } : { ok:false, html:'Conectou, mas não achei a pasta deste clube no repositório. Confira dono, repositório e branch.' }; }
+      catch(e){ lastPublish = { ok:false, html:`Não conectou: ${esc(e.message)}.` }; }
+      render(); break; }
     case 'gh-forget': GH.del('token'); render(); toast('Token apagado deste aparelho.'); break;
     case 'gh-publish': {
       t.disabled = true;
@@ -997,6 +1190,18 @@ app.addEventListener('click', async e=>{
 });
 app.addEventListener('change', e=>{
   const t = e.target;
+  if(t.dataset.ix != null && (t.dataset.ibf || t.dataset.ibp != null || t.dataset.ibs)){
+    const r = INBOX[t.dataset.ix].r;
+    if(t.dataset.ibf){ const k = t.dataset.ibf; r[k] = (k === 'roundNumber' || k === 'buyIn') ? Math.max(0, Number(t.value)||0) : (k === 'organizer' ? canonical(t.value) : t.value); }
+    else if(t.dataset.ibp != null) r.prizes[Number(t.dataset.ibp)] = Math.max(0, Number(t.value)||0);
+    else {
+      const e2 = r.standings[Number(t.dataset.row)], k = t.dataset.ibs;
+      if(k === 'name'){ const old = e2.name; e2.name = canonical(t.value) || old; r.standings.forEach(x=>{ if(x.by === old) x.by = e2.name; }); if(r.organizer === old) r.organizer = e2.name; }
+      else if(k === 'rebuys'){ const v = Math.max(0, Number(t.value)||0); if(v) e2.rebuys = v; else delete e2.rebuys; }
+      else if(k === 'guest' || k === 'addon'){ if(t.checked) e2[k] = true; else delete e2[k]; }
+    }
+    saveInbox(); render(); return;
+  }
   if(t.dataset.num){ const v = Number(t.value); if(!isNaN(v)) setPath(W.config, t.dataset.num, v); touch(); return; }
   if(t.dataset.numsel){ setPath(W.config, t.dataset.numsel, Number(t.value)); touch(); return; }
   if(t.dataset.txt != null && t.dataset.txt !== ''){ setPath(W.config, t.dataset.txt, t.value.trim()); touch(); return; }
@@ -1022,6 +1227,8 @@ app.addEventListener('input', e=>{
   if(!(await loadClub())) return;
   document.title = `Gestão — ${CFGN.clube.nome}`;
   gate();
+  // link novo aberto com a gestão já aberta: o navegador só troca o #, sem recarregar
+  window.addEventListener('hashchange', ()=>{ if(/^#r=/.test(location.hash)) gate(); });
 })();
 </script>
 </body>

@@ -16,10 +16,14 @@ Ranking, lançamento de rodada e gestão de temporada para **vários clubes de p
 
 ## Fluxo de uma rodada
 
-1. **Gestão** cadastra jogadores e gera o calendário.
-2. **Rodada** (no celular do organizador): marca presença, sorteia as mesas, conduz a partida com relógio de blinds, rebuy e add-on, registra as eliminações e gera `<clube>-rodada-N.json`.
-3. **Gestão** importa esse arquivo, confere e publica.
-4. **Ranking** mostra o resultado para todos.
+1. **Gestão** (admin) cadastra jogadores e gera o calendário.
+2. **Rodada** (celular do organizador da noite, sem login nem acesso aos dados do clube): presença, sorteio de mesas, relógio de blinds, rebuy/add-on e eliminações. No fim, **Enviar ao admin pelo WhatsApp** manda um link com a rodada dentro (`admin.html?c=clube#r=…`). Se o clube tiver o WhatsApp do admin configurado, a conversa abre direto.
+3. **Gestão → Rodadas**: o admin toca no link, a rodada entra em *Para conferir* com os avisos (pote × prêmios, jogador novo, rodada repetida, data diferente do calendário). Se estiver certo, **Aprovar e publicar**. Se não, **Ajustar**: ordem, nomes, convidado, rebuys, add-on, prêmios, organização e data.
+4. **Ranking** atualiza em cerca de 1 minuto. Rodadas já publicadas podem ser corrigidas em *Corrigir*, com o mesmo editor.
+
+A rodada viaja no próprio link, depois do `#`, e não passa por servidor nenhum. Baixar/importar arquivo continua como plano B.
+
+**Publicação com um clique**: em *Gestão → Publicar*, o admin conecta um token *fine-grained* do GitHub (só este repositório, *Contents: read and write*). Só quem tem o token publica; o organizador nunca precisa dele. Antes de gravar, a gestão relê o `dados.json` do GitHub, então aprovar de aparelhos diferentes não apaga nada.
 
 ## Estrutura
 
@@ -45,7 +49,7 @@ clubes/<clube>/
 
 Qualquer campo ausente vem do padrão em `assets/core.js`. Tudo é editável pela Gestão.
 
-- **clube**: `nome`, `nomeCurto`, `cidade`, `simbolo`, `slogan`
+- **clube**: `nome`, `nomeCurto`, `cidade`, `simbolo`, `slogan`, `whatsAdmin`
 - **tema**: `preset` (`feltro`, `noite`, `vinho`, `grafite`, `petroleo`) e `cores` para ajuste fino
 - **pontuacao**: `porPosicao` (lista), `demais`, `presenca`, `convidadoPontua`
 - **premiacao**: `buyIn`, `taxaPorJogador`, `modo` (`tabela` | `percentual`), `arredondar`, `tabela` (por nº de jogadores), `faixas` (% por faixa de jogadores)

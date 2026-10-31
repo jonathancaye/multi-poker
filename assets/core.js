@@ -7,7 +7,7 @@
 (function(global){
 'use strict';
 
-const CORE_VERSION = '0.1.0';
+const CORE_VERSION = '0.2.0';
 
 /* ---------- Config padrão (qualquer campo ausente no config.json do clube vem daqui) ---------- */
 const DEFAULT_CONFIG = {
@@ -17,7 +17,8 @@ const DEFAULT_CONFIG = {
     nomeCurto: 'Pôker Clube',
     cidade: '',
     simbolo: '♠',
-    slogan: ''
+    slogan: '',
+    whatsAdmin: ''   // WhatsApp do admin (DDI+DDD+número, só dígitos): a rodada abre a conversa direto
   },
   tema: { preset: 'feltro', cores: {} },
   pontuacao: {
@@ -179,6 +180,7 @@ function normalizeConfig(raw){
   if(!isObj(pr.tabela)) pr.tabela = {};
   if(!Array.isArray(pr.faixas) || !pr.faixas.length) pr.faixas = clone(DEFAULT_CONFIG.premiacao.faixas);
   pr.faixas = pr.faixas.map(f=>({ ate: Number(f.ate)||999, pct: (f.pct||[]).map(Number).filter(x=>x>0) })).sort((a,b)=>a.ate-b.ate);
+  c.clube.whatsAdmin = String(c.clube.whatsAdmin||'').replace(/\D/g,'');
   const t = c.temporada;
   t.rodadas = Math.max(1, Math.round(Number(t.rodadas)||22));
   t.classificados = Math.max(1, Math.round(Number(t.classificados)||4));
@@ -378,6 +380,29 @@ function generateDates(startIso, weekday, count, skipIsos){
   return out;
 }
 
+/* ---------- Rodada empacotada num link (sem arquivo, sem servidor) ----------
+   'z' + base64url(deflate-raw(JSON))  ou  'j' + base64url(JSON) quando o navegador não comprime */
+function b64urlFromBytes(u8){ let bin = ''; for(let i=0;i<u8.length;i++) bin += String.fromCharCode(u8[i]); return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+function bytesFromB64url(str){ const b = atob(str.replace(/-/g,'+').replace(/_/g,'/') + '==='.slice((str.length + 3) % 4)); const u = new Uint8Array(b.length); for(let i=0;i<b.length;i++) u[i] = b.charCodeAt(i); return u; }
+async function streamBytes(u8, Stream, fmt){ return new Uint8Array(await new Response(new Blob([u8]).stream().pipeThrough(new Stream(fmt))).arrayBuffer()); }
+async function packRound(obj){
+  const raw = new TextEncoder().encode(JSON.stringify(obj));
+  if(typeof CompressionStream === 'function'){
+    try{ return 'z' + b64urlFromBytes(await streamBytes(raw, CompressionStream, 'deflate-raw')); }catch(e){}
+  }
+  return 'j' + b64urlFromBytes(raw);
+}
+async function unpackRound(str){
+  str = String(str||'').trim();
+  const kind = str[0], body = str.slice(1);
+  let u8 = bytesFromB64url(body);
+  if(kind === 'z'){
+    if(typeof DecompressionStream !== 'function') throw new Error('Este navegador não abre links compactados. Atualize o navegador.');
+    u8 = await streamBytes(u8, DecompressionStream, 'deflate-raw');
+  } else if(kind !== 'j') throw new Error('Link de rodada inválido.');
+  return JSON.parse(new TextDecoder().decode(u8));
+}
+
 /* ---------- Página padrão de erro / sem clube ---------- */
 function noClubHtml(msg){
   return `<div style="max-width:520px;margin:12vh auto;padding:24px;font-family:Inter,system-ui,sans-serif;color:var(--text,#F5EFE0);text-align:center;">
@@ -391,6 +416,6 @@ global.MP = {
   CORE_VERSION, DEFAULT_CONFIG, THEMES, THEME_KEYS, WEEKDAYS,
   clone, deepMerge, escapeHtml, money, dateBR, hexToRgb, hash, isoDate,
   slugFromUrl, clubBase, clubUrl, fetchJson, loadRegistry, loadConfig, normalizeConfig,
-  themeColors, applyTheme, store, stName, stIsGuest, makeRules, generateDates, noClubHtml
+  themeColors, applyTheme, store, stName, stIsGuest, makeRules, generateDates, noClubHtml, packRound, unpackRound
 };
 })(window);

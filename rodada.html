@@ -255,7 +255,7 @@
 
 <script>
 /* ---------- Versão deste arquivo (atualizar manualmente a cada upload) ---------- */
-const PAGE_VERSION = '0.1.0';
+const PAGE_VERSION = '0.2.0';
 
 /* ---------- Clube e regras (config.json do clube; ver assets/core.js) ---------- */
 const SLUG = MP.slugFromUrl();
@@ -283,7 +283,7 @@ function normalizePlayerEntry(entry){
 }
 function blankRound(keep){
   return {
-    step:1, maxStep:1, closed:false, exportJson:null, search:'',
+    step:1, maxStep:1, closed:false, exportJson:null, sentAt:null, search:'',
     participants: (keep.publishedPlayers||[]).map(name=>({name, guest:false, present:false})),
     tables:null, roundPlayers:[], eliminatedOrder:[], elimInfo:{}, startedAt:null, endedAt:null,
     round:{ roundNumber:null, buyIn:BUY_IN, prizes:null, prizesFor:null, prizesManual:false, organizer:null },
@@ -860,13 +860,12 @@ function exportFileName(){ return `${SLUG}-rodada-${state.round.roundNumber}.jso
 function s5(){
   const f = finalRows();
   if(state.closed){
-    const canShare = shareSupported();
     return `<div class="screen"><div class="card done-card"><div class="suit">♠ ♥ ♦ ♣</div><h2>Rodada ${state.round.roundNumber} encerrada</h2>
       <p class="lead">Campeão: <b style="color:var(--gold-soft);">${escapeHtml(f[0].name)}</b> · ${f.length} jogadores · ${elapsedTxt(state.startedAt, state.endedAt)} de jogo</p>
-      <div class="row">${canShare ? '<button class="btn primary" id="share" type="button">Enviar pelo WhatsApp</button>' : ''}
-        <button class="btn ${canShare?'':'primary'}" id="dl" type="button">Baixar ${escapeHtml(exportFileName())}</button></div>
-      <p class="lead small" style="margin-top:14px;">Mande o arquivo para quem importa a rodada no painel de gestão. Ele fica disponível aqui até você começar uma nova rodada.</p>
-      <p class="lead small"><a class="link" href="${MP.clubUrl('admin.html', SLUG)}">Abrir o painel de gestão</a></p></div></div>`;
+      <div class="row" style="flex-direction:column; align-items:stretch; max-width:340px; margin:18px auto 0;">
+        <button class="btn primary" id="sendAdmin" type="button" style="padding:14px;">${state.sentAt ? '✓ Enviar de novo ao admin' : 'Enviar ao admin pelo WhatsApp'}</button>
+        <div class="row" style="justify-content:center;"><button class="link" id="copyLink" type="button">copiar link</button><button class="link" id="dl" type="button">baixar arquivo</button></div></div>
+      <p class="lead small" style="margin-top:14px;">${state.sentAt ? `Enviado às ${hhmm(state.sentAt)}. ` : ''}O admin abre o link, confere e publica o ranking. A rodada fica guardada aqui até você começar uma nova.</p></div></div>`;
   }
   return `<div class="screen">
     <div class="head"><p class="eyebrow">Etapa 5 de 5</p><h1>Conferência final</h1>
@@ -883,27 +882,52 @@ function s5(){
 function bind5(){
   if(state.closed){
     dock(`<button class="btn grow" id="newR" type="button">Começar nova rodada</button>`);
-    const sh = document.getElementById('share'); if(sh) sh.onclick = shareJson;
+    document.getElementById('sendAdmin').onclick = sendToAdmin;
+    document.getElementById('copyLink').onclick = copyAdminLink;
     document.getElementById('dl').onclick = downloadJson;
-    document.getElementById('newR').onclick = ()=> confirmSheet('Começar nova rodada?', 'Confirme que o arquivo desta rodada já foi enviado. Os dados dela serão apagados deste aparelho.', 'Começar nova', ()=>{
+    document.getElementById('newR').onclick = ()=> confirmSheet('Começar nova rodada?', state.sentAt ? 'Os dados desta rodada serão apagados deste aparelho.' : '<b>A rodada ainda não foi enviada ao admin.</b> Os dados dela serão apagados deste aparelho.', 'Começar nova', ()=>{
       freshRound(); render(); showToast('Pronto para a próxima rodada.');
     });
     return;
   }
-  dock(`<button class="btn ghost" id="undo5" type="button">↩ Desfazer última</button><button class="btn primary" id="close" type="button">Encerrar e gerar arquivo</button>`);
+  dock(`<button class="btn ghost" id="undo5" type="button">↩ Desfazer última</button><button class="btn primary" id="close" type="button">Encerrar rodada</button>`);
   document.getElementById('undo5').onclick = undoLast;
   document.getElementById('close').onclick = ()=>{
     if(!roundIsComplete()){ showToast('A rodada ainda não está completa.'); return; }
     if(!(state.round.roundNumber >= 1)){ showToast('Número da rodada não definido.'); return; }
     confirmSheet('Encerrar a rodada?', 'Depois de encerrar, a colocação não pode mais ser alterada nesta ferramenta.', 'Encerrar', ()=>{
       state.exportJson = JSON.stringify(buildExport(), null, 2);
-      state.closed = true; render(); showToast('Arquivo da rodada gerado.');
+      state.closed = true; render(); showToast('Rodada encerrada. Envie ao admin.');
     }, 'primary');
   };
 }
 function exportBlob(){ return new Blob([state.exportJson], {type:'application/json'}); }
-function shareSupported(){
-  try{ return !!(navigator.canShare && typeof File === 'function' && navigator.canShare({files:[new File(['{}'], 'x.json', {type:'application/json'})]})); }catch(e){ return false; }
+/* Link para o admin: admin.html?c=clube#r=<rodada compactada>. O que vai depois do # não passa por servidor nenhum. */
+async function adminLink(){
+  const packed = await MP.packRound(JSON.parse(state.exportJson));
+  const u = new URL('admin.html', location.href);
+  u.search = '?c=' + encodeURIComponent(SLUG); u.hash = 'r=' + packed;
+  return u.toString();
+}
+async function adminMessage(){
+  const f = finalRows();
+  return `♠ ${CFG.clube.nomeCurto} — Rodada ${state.round.roundNumber} encerrada\nCampeão: ${f[0].name} · ${f.length} jogadores${currentOrg() ? `\nOrganização: ${currentOrg()}` : ''}\n\nConferir e publicar:\n${await adminLink()}`;
+}
+async function sendToAdmin(){
+  let text;
+  try{ text = await adminMessage(); }catch(e){ showToast('Não deu para gerar o link. Use "baixar arquivo".'); return; }
+  const num = CFG.clube.whatsAdmin;
+  state.sentAt = isoLocal(); saveState();
+  if(num){ location.href = `https://wa.me/${num}?text=${encodeURIComponent(text)}`; return; }
+  if(navigator.share){
+    try{ await navigator.share({ text }); render(); return; }
+    catch(e){ if(e && e.name === 'AbortError'){ state.sentAt = null; saveState(); return; } }
+  }
+  location.href = `https://wa.me/?text=${encodeURIComponent(text)}`;
+}
+async function copyAdminLink(){
+  try{ await navigator.clipboard.writeText(await adminMessage()); showToast('Mensagem com o link copiada.'); }
+  catch(e){ showToast('Não deu para copiar. Use "baixar arquivo".'); }
 }
 function downloadJson(){
   const url = URL.createObjectURL(exportBlob());
@@ -912,15 +936,7 @@ function downloadJson(){
   setTimeout(()=>URL.revokeObjectURL(url), 1500);
   showToast('Arquivo baixado.');
 }
-async function shareJson(){
-  try{
-    const file = new File([state.exportJson], exportFileName(), {type:'application/json'});
-    await navigator.share({ files:[file], title:`Rodada ${state.round.roundNumber}`, text:`${CFG.clube.nomeCurto} — Rodada ${state.round.roundNumber}` });
-  }catch(e){
-    if(e && e.name === 'AbortError') return;
-    showToast('Não deu para compartilhar. Use "Baixar" e envie o arquivo.');
-  }
-}
+
 
 /* ---------- Folhas ---------- */
 function openSheet(html){
